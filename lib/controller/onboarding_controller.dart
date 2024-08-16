@@ -1,7 +1,9 @@
 import 'package:ecom_modwir/core/constant/routes.dart';
-import 'package:ecom_modwir/data/datasource/static/static.dart';
-import 'package:flutter/material.dart';
+import 'package:ecom_modwir/core/services/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+
+import '../data/datasource/static/static.dart';
 
 abstract class OnBoardingController extends GetxController {
   next();
@@ -10,11 +12,17 @@ abstract class OnBoardingController extends GetxController {
 
 class OnBoardingControllerImp extends OnBoardingController {
   late PageController pageController;
+
   int currentPage = 0;
+
+  MyServices myServices = Get.find();
+
   @override
   next() {
     currentPage++;
+
     if (currentPage > onBoardingList.length - 1) {
+      myServices.sharedPreferences.setString("step", "1");
       Get.offAllNamed(AppRoute.login);
     } else {
       pageController.animateToPage(currentPage,

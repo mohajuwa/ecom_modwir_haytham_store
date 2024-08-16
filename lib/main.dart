@@ -1,39 +1,32 @@
-import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/bindings/intialbindings.dart';
+import 'package:ecom_modwir/core/localization/translation.dart';
+import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/routes.dart';
-import 'package:ecom_modwir/view/screen/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'core/localization/changelocal.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initialServices();
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  //kjdksj
+  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    LocaleController controller = Get.put(LocaleController());
     return GetMaterialApp(
+      translations: MyTranslation(),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-          fontFamily: "PlayfairDisplay",
-          primarySwatch: Colors.blue,
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColor.black),
-            bodyLarge: TextStyle(
-                height: 2,
-                color: AppColor.grey,
-                fontWeight: FontWeight.bold,
-                fontSize: 14),
-          )),
-      home: const OnBoarding(),
-      routes: routes,
+      locale: controller.language,
+      theme: controller.appTheme,
+      initialBinding: InitialBindings(),
+      // routes: routes,
+      getPages: routes,
     );
   }
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1076214660058",
+    "project_id": "ecommodwir",
+    "storage_bucket": "ecommodwir.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076214660058:android:ec720d7478ad48f15f9ee3",
+        "android_client_info": {
+          "package_name": "com.modwir.ecom_modwir"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYPLA1ifVEhXmpI5LOn8R5-GQfKJL5U4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

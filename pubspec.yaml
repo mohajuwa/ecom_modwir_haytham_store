@@ -2,7 +2,7 @@ name: ecom_modwir
 description: ecommerce for modwir devloper
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.2 <4.0.0'
+  sdk: ">=3.1.2 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,52 +31,57 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  get: ^4.6.6
+  cupertino_icons:
+  get:
   # DateTime
-  jiffy: ^6.2.1
-  intl: ^0.18.1
-  http: ^1.1.0
+  jiffy:
+  intl:
+  http:
   # Images
-  cached_network_image: ^3.3.0
-  image_picker: ^1.0.4
+  cached_network_image:
+  image_picker:
   # Animate
-  show_up_animation: ^2.0.0
-  auto_animated: ^3.2.0
-  # Google Maps 
-  flutter_polyline_points: ^2.0.0
-  google_maps_flutter: ^2.5.0
-  geocoding: ^2.1.1
-  geolocator: ^10.1.0
+  show_up_animation:
+  auto_animated:
+  # Google Maps
+  flutter_polyline_points:
+  google_maps_flutter:
+  geocoding:
+  geolocator:
   # FireBase And Notifications
-  firebase_messaging: ^14.7.4
-  firebase_core: ^2.22.0
-  flutter_local_notifications: ^16.1.0
-  cloud_firestore: ^4.13.1
+  firebase_messaging:
+  firebase_core:
+  flutter_local_notifications:
+  cloud_firestore:
   # Local Data Cache
-  sqflite: ^2.3.0
-  shared_preferences: ^2.2.2
+  sqflite:
+  shared_preferences:
   # Qrcode
-  qr_flutter: ^4.1.0
-  scan: ^1.6.0
-  grouped_list: ^5.1.2
-  url_launcher: ^6.2.1
-  dropdown_search: ^5.0.6
-  badges: ^3.1.2
+  qr_flutter:
+  scan:
+  grouped_list:
+  url_launcher:
+  dropdown_search:
+  badges:
   # Icons
-  font_awesome_flutter: ^10.6.0
-  fluttericon: ^2.0.0
-  dartz: ^0.10.1
+  font_awesome_flutter:
+  fluttericon:
+  dartz:
 
   # Google Auth
-  google_sign_in: ^6.1.6
-  device_preview: ^1.1.0
-  responsive_builder: ^0.7.0
-  image_pickers: ^2.0.4+5
-  path: ^1.8.3
+  google_sign_in:
+  device_preview:
+  responsive_builder:
+  image_pickers:
+  path:
+  flutter_svg:
+  flutter_otp_text_field:
+  lottie:
+  permission_handler:
+  flutter_ringtone_player:
+
 
 dev_dependencies:
   flutter_test:
@@ -87,14 +92,13 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -103,7 +107,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-
+    - assets/lottie/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -119,14 +123,12 @@ flutter:
   fonts:
     - family: Cairo
       fonts:
-      
         - asset: assets/fonts/Cairo/Cairo-Regular.ttf
         - asset: assets/fonts/Cairo/Cairo-Bold.ttf
           weight: 700
 
     - family: PlayfairDisplay
       fonts:
-      
         - asset: assets/fonts/PlayfairDisplay/PlayfairDisplay-Regular.ttf
         - asset: assets/fonts/PlayfairDisplay/PlayfairDisplay-Bold.ttf
           weight: 700
@@ -138,6 +140,6 @@ flutter:
     #     - asset: fonts/TrajanPro.ttf
     #     - asset: fonts/TrajanPro_Bold.ttf
     #       weight: 700
-  
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
