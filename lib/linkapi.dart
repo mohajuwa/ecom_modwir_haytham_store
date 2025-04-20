@@ -1,16 +1,15 @@
 class AppLink {
   // ============================ Server Link  Links ============================//
 
-  static const String server = "https://modwir.shmmry.com";
+  static const String server = "http://10.0.2.2/apis/haytham_store";
+  // static const String server = "http://192.168.33.187/apis/haytham_store";
 
 // ============================ Images Links  Links ============================//
 
   static const String imageStatic = "$server/upload";
   static const String imageCategories = "$imageStatic/categories";
-  static const String imageItems = "$imageStatic/items";
-
-// ============================ Test Data  Links ============================//
-  static const String test = "$server/test.php";
+  static const String vehiclesImgLink = "$imageStatic/vehicles";
+  static const String carMakeLogo = "$imageStatic/cars";
 
 // ============================ Auth  Links ============================//
   static const String authLink = "$server/auth";
@@ -28,20 +27,34 @@ class AppLink {
 
   // ============================ Home  Links ============================//
   static const String homeLink = "$server";
-  static const String homePage = "$homeLink/home.php";
+  static const String homePage = "$homeLink/";
   static const String offers = "$homeLink/offers.php";
 
   // ============================ Items  Links ============================//
-  static const String itemsLink = "$server/items";
-  static const String items = "$itemsLink/items.php";
+  static const String itemsLink = "$server/services";
+  static const String items = "$itemsLink/services.php";
   static const String searchitems = "$itemsLink/search.php";
+  static const String serviceDisplay = "$itemsLink/services_display.php";
 
+  // ============================ Items  Links ============================//
+  static const String carsMakeLink = "$server/cars";
+  static const String carsMakeDisplay = "$carsMakeLink/view.php";
+  static const String updateVehicleWithLang =
+      "$carsMakeLink/updateWithLang.php";
+  static const String createVehicle = "$carsMakeLink/create.php";
+
+  static const String updateVehicle = "$carsMakeLink/update.php";
+  static const String getVehicleEssentials = "$carsMakeLink/view.php";
+
+  // ============================ Product By Car Links ============================//
+  static const String productByCar = "$carsMakeLink/product_by_car.php";
   // ============================ Favorite  Links ============================//
-  static const String favoriteLink = "$server/favorite";
-  static const String favoriteAdd = "$favoriteLink/add.php";
-  static const String favoriteRemove = "$favoriteLink/remove.php";
-  static const String favoriteView = "$favoriteLink/view.php";
-  static const String deletefromFav = "$favoriteLink/deletefromfavroite.php";
+  static const String vehiclesLink = "$server/vehicles";
+  static const String vehicleAdd = "$vehiclesLink/add.php";
+  static const String vehicleUpdate = "$vehiclesLink/update.php";
+  static const String vehicleRemove = "$vehiclesLink/remove.php";
+  static const String vehicleView = "$vehiclesLink/view.php";
+  static const String deleteFromVe = "$vehiclesLink/delete_from_vehicles.php";
 
   // ============================ Cart  Links ============================//
   static const String cartLink = "$server/cart";
@@ -67,6 +80,10 @@ class AppLink {
   static const String ordersArchive = "$ordersLink/archive.php";
   static const String ordersDetails = "$ordersLink/details.php";
   static const String ordersDelete = "$ordersLink/delete.php";
+
+  // ============================ Orders Rating Links ============================//
+  static const String ratingLink = "$server";
+  static const String rating = "$ratingLink/rating.php";
 
   // ============================ Notification  Links ============================//
   static const String notificationLink = "$server";

@@ -6,7 +6,7 @@ class CheckoutData {
 
   CheckoutData(this.crud);
 
-  checkout(Map data) async {
+  checkout(Map<String, dynamic> data) async {
     var response = await crud.postData(AppLink.checkout, data);
     return response.fold((l) => l, (r) => r);
   }

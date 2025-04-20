@@ -1,5 +1,4 @@
 import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:flutter/material.dart';
 
 class CardDeliveryTypeChecout extends StatelessWidget {
@@ -18,8 +17,8 @@ class CardDeliveryTypeChecout extends StatelessWidget {
       height: 120,
       width: 120,
       decoration: BoxDecoration(
-        color: isActive ? AppColor.secondColor : null,
-        border: Border.all(color: AppColor.secondColor),
+        color: isActive ? AppColor.secondaryColor : null,
+        border: Border.all(color: AppColor.secondaryColor),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +31,7 @@ class CardDeliveryTypeChecout extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: isActive ? Colors.white : AppColor.secondColor,
+              color: isActive ? Colors.white : AppColor.secondaryColor,
               fontWeight: FontWeight.bold,
             ),
           ),

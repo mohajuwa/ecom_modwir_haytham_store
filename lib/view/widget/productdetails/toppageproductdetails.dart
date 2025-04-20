@@ -15,7 +15,7 @@ class TopProductPageDetails extends GetView<ProductDetailsControllerImp> {
       children: [
         Container(
           height: 180,
-          decoration: const BoxDecoration(color: AppColor.secondColor),
+          decoration: BoxDecoration(color: AppColor.secondaryColor),
         ),
         Positioned(
             top: 30.0,
@@ -25,7 +25,7 @@ class TopProductPageDetails extends GetView<ProductDetailsControllerImp> {
               tag: "${controller.itemsModel.itemsId}",
               child: CachedNetworkImage(
                 imageUrl:
-                    "${AppLink.imageItems}/${controller.itemsModel.itemsImage!}",
+                    "${AppLink.vehiclesImgLink}/${controller.itemsModel.itemsImage!}",
                 height: 250,
                 fit: BoxFit.fill,
               ),

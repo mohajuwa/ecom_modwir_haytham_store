@@ -4,8 +4,10 @@ import 'package:ecom_modwir/linkapi.dart';
 class HomeData {
   Crud crud;
   HomeData(this.crud);
-  getData() async {
-    var response = await crud.postData(AppLink.homePage, {});
+  getData(String lang) async {
+    var response = await crud.postData(AppLink.homePage, {
+      "lang": lang,
+    });
     return response.fold((l) => l, (r) => r);
   }
 

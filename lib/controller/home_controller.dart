@@ -3,31 +3,41 @@ import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/home_data.dart';
-import 'package:ecom_modwir/data/model/itemsmodel.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:ecom_modwir/data/model/services/services_model.dart';
+import 'package:ecom_modwir/data/model/settings_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 abstract class HomeController extends SearchMixController {
   initialData();
   getdata();
-  goToItems(List categories, int selectedCat, String categoryid);
 }
 
 class HomeControllerImp extends HomeController {
   MyServices myServices = Get.find();
+
+  // Change from single SettingsModel to a list of them.
+  List<SettingsModel> settingsModel = [];
+
   String? username;
   String? id;
   String? lang;
+
+  String titleHomeCard = "";
+  String bodyHomeCard = "";
+
+  String delivetTime = "";
+
   HomeData homedata = HomeData(Get.find());
 
-  List categories = [];
+  List services = [];
   List items = [];
+  bool showAllCategories = false;
 
   late StatusRequest statusRequest;
 
   @override
-  initialData() {
+  initialData() async {
     lang = myServices.sharedPreferences.getString("lang");
     username = myServices.sharedPreferences.getString("username");
     id = myServices.sharedPreferences.getString("id");
@@ -43,46 +53,68 @@ class HomeControllerImp extends HomeController {
 
   @override
   getdata() async {
+    settingsModel.clear();
+    var language = myServices.sharedPreferences.getString("lang");
+    lang = myServices.sharedPreferences.getString("lang");
+
     statusRequest = StatusRequest.loading;
-    var response = await homedata.getData();
-    print("=============================== HomeController $response ");
+    var response = await homedata.getData(language.toString());
     statusRequest = handlingData(response);
+
     if (StatusRequest.success == statusRequest) {
       if (response['status'] == "success") {
-        if (response['categories']['status'] == "success" &&
-            response['items']['status'] == "success") {
-          categories = response['categories']['data'] as List;
-          items = response['items']['data'] as List;
-        } else {
-          print("Categories or items status is not success");
-          statusRequest = StatusRequest.failure;
+        // Parse settings data from the response
+        List settingsData = response['settings'];
+        settingsModel
+            .addAll(settingsData.map((e) => SettingsModel.fromJson(e)));
+        // Use the first slide data for convenience (if needed)
+        if (settingsModel.isNotEmpty) {
+          titleHomeCard = settingsModel[0].settingsTitle ?? "";
+          bodyHomeCard = settingsModel[0].settingsBody ?? "";
+          delivetTime = settingsData[0]['settings_deliverytime'].toString();
+          myServices.sharedPreferences.setString("deliverytime", delivetTime);
         }
+
+        // Parse services data as before.
+        List servicesData = response['services'];
+        services = servicesData;
+        print("تم تحميل ${services.length} خدمات بنجاح");
       } else {
-        print("Response status is not success");
+        print("فشل في تحميل البيانات");
         statusRequest = StatusRequest.failure;
       }
     } else {
-      print("Status request is not success");
+      print("خطأ في الاتصال");
     }
     update();
   }
 
-  @override
-  goToItems(categories, selectedCat, categoryid) {
-    Get.toNamed(AppRoute.items, arguments: {
-      "categories": categories,
-      "selectedcat": selectedCat,
-      "catid": categoryid
-    });
+  void toggleShowAllCategories() {
+    showAllCategories = !showAllCategories;
+    update(); // Refresh UI
   }
 
-  goToPageProductDetails(itemsModel) {
-    Get.toNamed("productdetails", arguments: {"itemsmodel": itemsModel});
+  bool _isValidRasterImage(String filename) {
+    final validExtensions = ['.png', '.jpg', '.jpeg'];
+    return validExtensions.any((ext) => filename.toLowerCase().endsWith(ext));
+  }
+
+// From previous screen
+  void navigateToServiceDetails(String serviceId) {
+    if (serviceId.isEmpty) {
+      Get.snackbar('Error'.tr, 'Invalid service selection'.tr);
+      return;
+    }
+
+    Get.toNamed(
+      AppRoute.servicesDisplay,
+      arguments: {'service_id': serviceId},
+    );
   }
 }
 
 class SearchMixController extends GetxController {
-  List<ItemsModel> listdata = [];
+  List<ServicesModel> listdata = [];
   late StatusRequest statusRequest;
   HomeData homedata = HomeData(Get.find());
 
@@ -111,7 +143,7 @@ class SearchMixController extends GetxController {
       if (response['status'] == "success") {
         listdata.clear();
         List responsedata = response['data'];
-        listdata.addAll(responsedata.map((e) => ItemsModel.fromJson(e)));
+        listdata.addAll(responsedata.map((e) => ServicesModel.fromJson(e)));
       } else {
         statusRequest = StatusRequest.failure;
       }

@@ -5,11 +5,13 @@ import "package:ecom_modwir/core/services/services.dart";
 import "package:ecom_modwir/data/datasource/remote/address_data.dart";
 import "package:ecom_modwir/data/datasource/remote/checkout_data.dart";
 import "package:ecom_modwir/data/model/address_model.dart";
+import "package:ecom_modwir/data/model/services/services_model.dart";
 import "package:get/get.dart";
 
 class CheckoutController extends GetxController {
   AddressData addressData = Get.put(AddressData(Get.find()));
   CheckoutData checkoutDate = Get.put(CheckoutData(Get.find()));
+  late ServicesModel servicesModel;
 
   StatusRequest statusRequest = StatusRequest.none;
   MyServices myServices = Get.find();
@@ -24,6 +26,13 @@ class CheckoutController extends GetxController {
   late String priceOrders;
 
   List<AddressModel> dataAddress = [];
+  intialData() async {
+    statusRequest = StatusRequest.loading;
+    servicesModel = Get.arguments['servicemodel'];
+
+    statusRequest = StatusRequest.success;
+    update();
+  }
 
   choosePaymentMethod(String val) {
     paymentMethod = val;
@@ -55,6 +64,7 @@ class CheckoutController extends GetxController {
       if (response['status'] == "success") {
         List listData = response['data'];
         dataAddress.addAll(listData.map((e) => AddressModel.fromJson(e)));
+        addressId = dataAddress[0].Id.toString();
 
         if (dataAddress.isEmpty) {
           statusRequest = StatusRequest.failure;
@@ -68,12 +78,20 @@ class CheckoutController extends GetxController {
   }
 
   checkout() async {
-    if (paymentMethod == null)
+    if (paymentMethod == null) {
       return Get.snackbar("Error", "Please select payment method");
-    if (deliveryType == null)
-      return Get.snackbar("Error", "Please select a delivery type ");
+    }
+    if (deliveryType == null) {
+      return Get.snackbar("Error", "Please select an order type ");
+    }
+    if (dataAddress.isEmpty) {
+      // oABO = Order Address Before Order
+      myServices.sharedPreferences.setBool("oABO", true);
+      return Get.snackbar("Error", "Please select shipping address");
+    }
+
     statusRequest = StatusRequest.loading;
-    Map data = {
+    Map<String, dynamic> data = {
       "usersid": myServices.sharedPreferences.getString("id"),
       "addressid": addressId.toString(),
       "orderstype": deliveryType.toString(),
@@ -116,7 +134,7 @@ class CheckoutController extends GetxController {
     couponId = Get.arguments['couponid'];
     priceOrders = Get.arguments['priceorder'];
     discountCoupon = Get.arguments['coupondiscount'];
-
+    intialData();
     getShippingAddress();
     super.onInit();
   }

@@ -1,9 +1,10 @@
 enum StatusRequest {
-  none  , 
-  loading , 
-  success , 
-  failure , 
-  serverfailure , 
-  serverException , 
-  offlinefailure, error 
+  none,
+  loading,
+  success,
+  failure,
+  serverFailure,
+  serverException,
+  offlinefailure,
+  error
 }

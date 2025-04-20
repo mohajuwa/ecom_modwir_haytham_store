@@ -73,6 +73,29 @@ class OrdersArchiveController extends GetxController {
     getOrders();
   }
 
+  submitRating(String orderId, double rating, String comment) async {
+    data.clear();
+
+    statusRequest = StatusRequest.loading;
+
+    update();
+
+    var response =
+        await archiveData.rating(orderId, rating.toString(), comment);
+    print("=============Order Rate Controller $response ");
+    statusRequest = handlingData(response);
+    if (StatusRequest.success == statusRequest) {
+      // Start backend
+      if (response['status'] == "success") {
+        getOrders();
+      } else {
+        statusRequest = StatusRequest.failure;
+      }
+      // End
+    }
+    update();
+  }
+
   @override
   void onInit() {
     getOrders();

@@ -1,40 +1,40 @@
 class AddressModel {
-  int? addressId;
-  int? addressUsersid;
-  String? addressName;
-  String? addressCity;
-  String? addressStreet;
-  double? addressLat;
-  double? addressLong;
+  int? Id;
+  int? Usersid;
+  String? Name;
+  String? City;
+  String? Street;
+  double? Lat;
+  double? Long;
 
   AddressModel(
-      {this.addressId,
-      this.addressUsersid,
-      this.addressName,
-      this.addressCity,
-      this.addressStreet,
-      this.addressLat,
-      this.addressLong});
+      {this.Id,
+      this.Usersid,
+      this.Name,
+      this.City,
+      this.Street,
+      this.Lat,
+      this.Long});
 
   AddressModel.fromJson(Map<String, dynamic> json) {
-    addressId = json['address_id'];
-    addressUsersid = json['address_usersid'];
-    addressName = json['address_name'];
-    addressCity = json['address_city'];
-    addressStreet = json['address_street'];
-    addressLat = json['address_lat'];
-    addressLong = json['address_long'];
+    Id = json['id'];
+    Usersid = json['usersid'];
+    Name = json['name'];
+    City = json['city'];
+    Street = json['street'];
+    Lat = json['latitude'];
+    Long = json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['address_id'] = this.addressId;
-    data['address_usersid'] = this.addressUsersid;
-    data['address_name'] = this.addressName;
-    data['address_city'] = this.addressCity;
-    data['address_street'] = this.addressStreet;
-    data['address_lat'] = this.addressLat;
-    data['address_long'] = this.addressLong;
+    data['id'] = this.Id;
+    data['usersid'] = this.Usersid;
+    data['name'] = this.Name;
+    data['city'] = this.City;
+    data['street'] = this.Street;
+    data['latitude'] = this.Lat;
+    data['longitude'] = this.Long;
     return data;
   }
 }

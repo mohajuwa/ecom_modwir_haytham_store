@@ -1,6 +1,4 @@
 import 'package:ecom_modwir/controller/homescreen_controller.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/view/widget/home/custombottomappbarhome.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,17 +10,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(HomeScreenControllerImp());
     return GetBuilder<HomeScreenControllerImp>(
-        builder: (controller) => Scaffold(
-              floatingActionButton: FloatingActionButton(
-                  backgroundColor: AppColor.primaryColor,
-                  onPressed: () {
-                    Get.toNamed(AppRoute.cart);
-                  },
-                  child: const Icon(Icons.shopping_basket_outlined)),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              bottomNavigationBar: const CustomBottomAppBarHome(),
-              body: controller.listPage.elementAt(controller.currentpage),
-            ));
+      builder: (controller) => Scaffold(
+        bottomNavigationBar: CustomBottomAppBarHome(),
+        body: controller.listPage[controller.currentpage],
+      ),
+    );
   }
 }

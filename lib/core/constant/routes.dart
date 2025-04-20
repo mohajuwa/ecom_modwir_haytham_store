@@ -14,6 +14,7 @@ class AppRoute {
   static const String offers = "/offers";
   static const String items = "/items";
   static const String productdetails = "/productdetails";
+  static const String productByCar = "/product_by_car";
 
   // My Favorite
   static const String myfavorite = "/myfavorite";
@@ -21,10 +22,14 @@ class AppRoute {
   // Cart
   static const String cart = "/cart";
 
+// Services
+  static const String servicesDisplay = "/services_display";
+
   // Orders
   static const String checkout = "/checkout";
   static const String ordersPending = "/orders_pending";
   static const String ordersArchive = "/orders_archive";
+  static const String ordersTracking = "/orders_tracking";
   static const String ordersDelete = "/orders_delete";
   static const String ordersDetails = "/orders_details";
 

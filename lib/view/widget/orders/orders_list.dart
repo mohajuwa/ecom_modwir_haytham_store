@@ -28,7 +28,7 @@ class CardOrderList extends GetView<OrdersPendingController> {
               Spacer(),
               Text(
                 "${Jiffy.parse(listData.ordersDatetime!).fromNow()}",
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
                 ),
@@ -61,7 +61,7 @@ class CardOrderList extends GetView<OrdersPendingController> {
                       arguments: {"ordersmodel": listData});
                 },
                 color: AppColor.thirdColor,
-                textColor: AppColor.secondColor,
+                textColor: AppColor.secondaryColor,
                 child: const Text("Details"),
               ),
               SizedBox(width: 10),
@@ -73,6 +73,15 @@ class CardOrderList extends GetView<OrdersPendingController> {
                   color: AppColor.deleteColor,
                   textColor: Colors.white,
                   child: const Text("Delete"),
+                ),
+              if (listData.ordersStatus == 3)
+                MaterialButton(
+                  onPressed: () {
+                    controller.goToPageTrackingOrder(listData);
+                  },
+                  color: AppColor.deleteColor,
+                  textColor: Colors.white,
+                  child: const Text("Tracking"),
                 ),
             ],
           )

@@ -4,15 +4,15 @@ import 'package:ecom_modwir/linkapi.dart';
 class AddressData {
   Crud crud;
   AddressData(this.crud);
-  getData(String usersid) async {
+  getData(String userId) async {
     var response = await crud.postData(AppLink.addressView, {
-      "usersid": usersid,
+      "userId": userId,
     });
     return response.fold((l) => l, (r) => r);
   }
 
   addData(
-    String usersid,
+    String userId,
     String name,
     String city,
     String street,
@@ -20,7 +20,7 @@ class AddressData {
     String long,
   ) async {
     var response = await crud.postData(AppLink.addressAdd, {
-      "usersid": usersid,
+      "userId": userId,
       "name": name,
       "city": city,
       "street": street,
@@ -30,9 +30,9 @@ class AddressData {
     return response.fold((l) => l, (r) => r);
   }
 
-  editData(String usersid, String addressId) async {
+  editData(String userId, String addressId) async {
     var response = await crud.postData(AppLink.addressEdit, {
-      "usersid": usersid,
+      "userId": userId,
       "addressid": addressId,
     });
     return response.fold((l) => l, (r) => r);

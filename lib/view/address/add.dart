@@ -1,8 +1,6 @@
 import 'package:ecom_modwir/controller/address/add_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/routes.dart';
-import 'package:ecom_modwir/view/widget/auth/custombuttonauth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

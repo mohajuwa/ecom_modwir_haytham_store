@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/controller/favorite_controller.dart';
-import 'package:ecom_modwir/controller/items_controller.dart';
+import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/core/functions/translatefatabase.dart';
@@ -9,7 +9,7 @@ import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CustomListItems extends GetView<ItemsControllerImp> {
+class CustomListItems extends GetView<ProductByCarController> {
   final ItemsModel itemsModel;
   // final bool active;
   const CustomListItems({
@@ -22,7 +22,7 @@ class CustomListItems extends GetView<ItemsControllerImp> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        controller.goToPageProductDetails(itemsModel);
+        // controller.goToPageProductDetails(itemsModel);
       },
       child: Card(
         child: Stack(
@@ -36,39 +36,40 @@ class CustomListItems extends GetView<ItemsControllerImp> {
                   Hero(
                     tag: "${itemsModel.itemsId}",
                     child: CachedNetworkImage(
-                      imageUrl:
-                          AppLink.imageItems + "/" + itemsModel.itemsImage!,
-                      height: 100,
+                      imageUrl: AppLink.vehiclesImgLink +
+                          "/" +
+                          itemsModel.itemsImage!,
+                      height: 90,
                       fit: BoxFit.fill,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
                   Text(
                       translateDatabase(
                           itemsModel.itemsNameAr, itemsModel.itemsName),
                       maxLines: 1,
-                      style: const TextStyle(
-                          color: AppColor.black,
-                          fontSize: 16,
+                      style: TextStyle(
+                          color: AppColor.blackColor,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Rating 3.5 ", textAlign: TextAlign.center),
                       Container(
-                        alignment: Alignment.bottomCenter,
-                        height: 22,
-                        child: Row(
-                          children: [
-                            ...List.generate(
-                                5,
-                                (index) => const Icon(
-                                      Icons.star,
-                                      size: 15,
-                                    ))
-                          ],
+                        margin: EdgeInsets.only(top: 5),
+                        child: Icon(
+                          Icons.timer_sharp,
+                          color: AppColor.grey,
                         ),
-                      )
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        "${controller} Menute/s",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: "sans",
+                        ),
+                      ),
                     ],
                   ),
                   Container(
@@ -77,7 +78,7 @@ class CustomListItems extends GetView<ItemsControllerImp> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("${itemsModel.itemsPriceDiscount} \$",
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: AppColor.primaryColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

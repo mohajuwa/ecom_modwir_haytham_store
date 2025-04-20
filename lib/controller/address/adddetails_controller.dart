@@ -51,6 +51,11 @@ class AddAddressDetailsController extends GetxController {
     if (StatusRequest.success == statusRequest) {
       // Start backend
       if (response['status'] == "success") {
+        if (myServices.sharedPreferences.getBool("oABO") == true) {
+          Get.offAllNamed(AppRoute.checkout);
+
+          Get.snackbar("success", "Now you can complete your order");
+        }
         Get.offAllNamed(AppRoute.addressview);
       } else {
         statusRequest = StatusRequest.failure;

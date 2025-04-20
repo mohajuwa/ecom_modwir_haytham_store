@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +28,7 @@ class CustomItemsCartList extends StatelessWidget {
           Expanded(
             flex: 2,
             child: CachedNetworkImage(
-              imageUrl: "${AppLink.imageItems}/$imagename",
+              imageUrl: "${AppLink.vehiclesImgLink}/$imagename",
               height: 80,
             ),
           ),
@@ -57,7 +56,7 @@ class CustomItemsCartList extends StatelessWidget {
                 Container(
                   height: 35,
                   child: IconButton(
-                    onPressed:onAdd,
+                    onPressed: onAdd,
                     icon: Icon(Icons.add),
                   ),
                 ),

@@ -1,11 +1,12 @@
+import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/data/datasource/remote/offers_data.dart';
-import 'package:ecom_modwir/data/model/cartmodel.dart';
 import 'package:ecom_modwir/data/model/itemsmodel.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-class OfferController extends GetxController {
+class OfferController extends SearchMixController {
   OffersData offersData = OffersData(Get.find());
 
   List<ItemsModel> data = [];
@@ -37,6 +38,7 @@ class OfferController extends GetxController {
 
   @override
   void onInit() {
+    search = TextEditingController();
     getData();
     super.onInit();
   }

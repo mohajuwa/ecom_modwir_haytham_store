@@ -94,7 +94,7 @@ class OrdersDetails extends StatelessWidget {
                     Card(
                       child: Container(
                         child: ListTile(
-                          title: const Text(
+                          title: Text(
                             "Shipping Address",
                             style: TextStyle(
                               color: AppColor.primaryColor,

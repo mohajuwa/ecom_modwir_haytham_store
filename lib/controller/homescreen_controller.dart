@@ -30,14 +30,15 @@ class HomeScreenControllerImp extends HomeScreenController {
 
   List bottomappbar = [
     {"title": "home", "icon": Icons.home},
-    {"title": "ca", "icon": Icons.notifications_active_outlined},
-    {"title": "profile", "icon": Icons.person_pin_sharp},
+    {"title": "orders", "icon": Icons.list_alt_rounded},
+    {"title": "offers", "icon": Icons.align_vertical_bottom_sharp},
     {"title": "settings", "icon": Icons.settings},
   ];
 
   @override
   changePage(int i) {
     currentpage = i;
+
     update();
   }
 }

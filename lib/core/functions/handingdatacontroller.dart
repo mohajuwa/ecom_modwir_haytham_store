@@ -1,9 +1,10 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 
-handlingData(response) {
-  if (response is StatusRequest) {
-    return response;
-  } else {
-    return StatusRequest.success;
+StatusRequest handlingData(dynamic response) {
+  if (response is Map<String, dynamic>) {
+    if (response.containsKey('status')) {
+      return StatusRequest.success;
+    }
   }
+  return StatusRequest.failure;
 }

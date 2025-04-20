@@ -19,7 +19,7 @@ class NotificatoinView extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: ListView(
               children: [
-                const Center(
+                 Center(
                   child: Text(
                     "Notification",
                     style: TextStyle(
@@ -46,7 +46,7 @@ class NotificatoinView extends StatelessWidget {
                                 right: 5,
                                 child: Text(
                                   "${Jiffy.parse(controller.data[index]['notification_datetime']).fromNow()}",
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     color: AppColor.primaryColor,
                                     fontWeight: FontWeight.bold,
                                   ),

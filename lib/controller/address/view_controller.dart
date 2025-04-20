@@ -16,7 +16,7 @@ class AddressViewController extends GetxController {
 
   deleteAddress(String addressId) {
     addressData.deleteData(addressId);
-    data.removeWhere((element) => element.addressId == addressId);
+    data.removeWhere((element) => element.Id == addressId);
     update();
   }
 

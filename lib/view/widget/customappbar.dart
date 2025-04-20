@@ -1,19 +1,20 @@
+import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String titleappbar;
-  // final void Function()? onPressedIcon;
-  final void Function() onPressedIconFavorite;
+  final void Function() oeTapIconVehicle;
   final void Function()? onPressedSearch;
   final void Function(String)? onChanged;
   final TextEditingController mycontroller;
+
   const CustomAppBar({
     Key? key,
     required this.titleappbar,
-    // this.onPressedIcon,
     this.onPressedSearch,
-    required this.onPressedIconFavorite,
+    required this.oeTapIconVehicle,
     this.onChanged,
     required this.mycontroller,
   }) : super(key: key);
@@ -21,38 +22,62 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 10),
-      child: Row(children: [
-        Expanded(
-            child: TextFormField(
-          onChanged: onChanged,
-          controller: mycontroller,
-          decoration: InputDecoration(
-              prefixIcon: IconButton(
-                  icon: Icon(Icons.search), onPressed: onPressedSearch),
-              hintText: titleappbar,
-              hintStyle: TextStyle(fontSize: 18),
-              border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10)),
-              filled: true,
-              fillColor: Colors.grey[200]),
-        )),
-        SizedBox(width: 10),
-        Container(
-          decoration: BoxDecoration(
-              color: Colors.grey[200], borderRadius: BorderRadius.circular(10)),
-          width: 60,
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: IconButton(
-              onPressed: onPressedIconFavorite,
-              icon: Icon(
-                Icons.favorite_border_outlined,
-                size: 30,
-                color: Colors.grey[600],
-              )),
-        ),
-      ]),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+      ),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: onPressedSearch,
+            child: Row(
+              children: [
+                const SizedBox(width: 5),
+                const FaIcon(
+                  FontAwesomeIcons.magnifyingGlassLocation,
+                  size: 35,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: SizedBox(
+                    width: 150, // Adjust width as needed
+                    child: TextFormField(
+                      onChanged: onChanged,
+                      controller: mycontroller,
+                      decoration: InputDecoration(
+                        hintText: "search_here".tr,
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          InkWell(
+            onTap: oeTapIconVehicle,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(40),
+              ),
+              child: Row(
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.car,
+                    color: AppColor.primaryColor,
+                    size: 25,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

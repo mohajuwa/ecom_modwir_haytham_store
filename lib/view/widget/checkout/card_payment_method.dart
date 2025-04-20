@@ -14,13 +14,13 @@ class CardPaymentMethodCheckout extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-        color: isActive == true ? AppColor.secondColor : AppColor.thirdColor,
+        color: isActive == true ? AppColor.secondaryColor : AppColor.thirdColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         title,
         style: TextStyle(
-          color: isActive == true ? Colors.white : AppColor.secondColor,
+          color: isActive == true ? Colors.white : AppColor.secondaryColor,
           height: 1,
           fontWeight: FontWeight.bold,
         ),

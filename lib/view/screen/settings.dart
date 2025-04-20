@@ -2,6 +2,7 @@ import 'package:ecom_modwir/controller/settings_controller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/view/widget/language/custombuttomlang.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,14 +46,15 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ListTile(
-                      onTap: () {},
-                      trailing: Switch(
-                        onChanged: (val) {},
-                        value: true,
-                      ),
-                      title: Text("Disable Notifications"),
-                    ),
+                    // ListTile(
+                    //   onTap: () {},
+                    //   trailing: Switch(
+                    //     onChanged: (val) {},
+                    //     value: true,
+                    //   ),
+                    //   title: Text("Disable Notifications"),
+                    // ),
+
                     ListTile(
                       onTap: () {
                         Get.toNamed(AppRoute.ordersPending);
@@ -93,6 +95,18 @@ class SettingsPage extends StatelessWidget {
                       trailing: Icon(Icons.exit_to_app),
                       title: Text("Logout"),
                     ),
+                    CustomButtonLang(
+                        textbutton: "Ar",
+                        onPressed: () {
+                          controller.changeLang("ar");
+                          Get.toNamed(AppRoute.homepage);
+                        }),
+                    CustomButtonLang(
+                        textbutton: "En",
+                        onPressed: () {
+                          controller.changeLang("en");
+                          Get.toNamed(AppRoute.homepage);
+                        }),
                   ]),
             ),
           ),

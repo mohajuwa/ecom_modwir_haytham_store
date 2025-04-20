@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/controller/favorite_controller.dart';
-import 'package:ecom_modwir/controller/items_controller.dart';
 import 'package:ecom_modwir/controller/offers_contrller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
@@ -35,8 +34,9 @@ class CustomListItemsOffer extends GetView<OfferController> {
                   Hero(
                     tag: "${itemsModel.itemsId}",
                     child: CachedNetworkImage(
-                      imageUrl:
-                          AppLink.imageItems + "/" + itemsModel.itemsImage!,
+                      imageUrl: AppLink.vehiclesImgLink +
+                          "/" +
+                          itemsModel.itemsImage!,
                       height: 100,
                       fit: BoxFit.fill,
                     ),
@@ -46,37 +46,17 @@ class CustomListItemsOffer extends GetView<OfferController> {
                       translateDatabase(
                           itemsModel.itemsNameAr, itemsModel.itemsName),
                       maxLines: 1,
-                      style: const TextStyle(
-                          color: AppColor.black,
+                      style: TextStyle(
+                          color: AppColor.blackColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Rating 3.5 ", textAlign: TextAlign.center),
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        height: 22,
-                        child: Row(
-                          children: [
-                            ...List.generate(
-                                5,
-                                (index) => const Icon(
-                                      Icons.star,
-                                      size: 15,
-                                    ))
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
                   Container(
                     height: 27,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("${itemsModel.itemsPriceDiscount} \$",
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: AppColor.primaryColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

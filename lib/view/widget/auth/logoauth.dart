@@ -13,7 +13,7 @@ class LogoAuth extends StatelessWidget {
           padding: const EdgeInsets.all(0), // Border radius
           child: ClipOval(
             child: Image.asset(
-              AppImageAsset.logo,
+              AppImageAsset.loginAuthImg,
             ),
           ),
         ));

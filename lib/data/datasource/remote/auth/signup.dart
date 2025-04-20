@@ -4,11 +4,34 @@ import 'package:ecom_modwir/linkapi.dart';
 class SignupData {
   Crud crud;
   SignupData(this.crud);
-  postData(String username, String password, String email, String phone) async {
+  postData(String fullName, String phone) async {
     var response = await crud.postData(AppLink.signUp, {
-      "username": username,
-      "password": password,
-      "email": email,
+      "fullName": fullName,
+      "phone": phone,
+    });
+    return response.fold((l) => l, (r) => r);
+  }
+
+  getVerfiyCode(String vCode, String phone) async {
+    var response = await crud.postData(AppLink.verfiyCodeSignUp, {
+      "verifycode": vCode,
+      "phone": phone,
+      "isLogin": "0",
+    });
+    return response.fold((l) => l, (r) => r);
+  }
+
+  loginWithOtp(String vCode, String phone) async {
+    var response = await crud.postData(AppLink.verfiyCodeSignUp, {
+      "verifycode": vCode,
+      "phone": phone,
+      "isLogin": "1",
+    });
+    return response.fold((l) => l, (r) => r);
+  }
+
+  resendCode(String phone) async {
+    var response = await crud.postData(AppLink.resendverfiyCode, {
       "phone": phone,
     });
     return response.fold((l) => l, (r) => r);

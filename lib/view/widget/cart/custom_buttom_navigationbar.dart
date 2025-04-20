@@ -1,6 +1,5 @@
 import 'package:ecom_modwir/controller/cart_controller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/view/widget/cart/buttonorder.dart';
 import 'package:ecom_modwir/view/widget/cart/custom_button_coupon.dart';
 import 'package:flutter/material.dart';

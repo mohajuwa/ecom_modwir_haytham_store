@@ -2,6 +2,7 @@ import 'package:ecom_modwir/controller/checkout_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
+import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_payment_method.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_shipping_address.dart';
@@ -16,7 +17,7 @@ class Checkout extends StatelessWidget {
     CheckoutController pageController = Get.put(CheckoutController());
     return Scaffold(
       appBar: AppBar(
-        title: Text("Checkout"),
+        title: Text("checkout".tr),
       ),
       bottomNavigationBar: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -24,10 +25,10 @@ class Checkout extends StatelessWidget {
             onPressed: () {
               pageController.checkout();
             },
-            color: AppColor.secondColor,
+            color: AppColor.secondaryColor,
             textColor: Colors.white,
             child: Text(
-              "Checkout",
+              "checkout".tr,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -40,10 +41,10 @@ class Checkout extends StatelessWidget {
           widget: Container(
             child: ListView(
               children: [
-                const Text(
-                  "Choose Payment Method",
+                Text(
+                  "choose_payment_method".tr,
                   style: TextStyle(
-                    color: AppColor.secondColor,
+                    color: AppColor.secondaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -54,7 +55,7 @@ class Checkout extends StatelessWidget {
                     controller.choosePaymentMethod('0');
                   },
                   child: CardPaymentMethodCheckout(
-                    title: "Cash On Delivery",
+                    title: "chash_on_delivery".tr,
                     isActive: controller.paymentMethod == "0" ? true : false,
                   ),
                 ),
@@ -64,15 +65,15 @@ class Checkout extends StatelessWidget {
                     controller.choosePaymentMethod('1');
                   },
                   child: CardPaymentMethodCheckout(
-                    title: "Payment Cards",
+                    title: "payment_cards".tr,
                     isActive: controller.paymentMethod == "1" ? true : false,
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  "Choose Delivery Type",
+                Text(
+                  "choose_delivery_type".tr,
                   style: TextStyle(
-                    color: AppColor.secondColor,
+                    color: AppColor.secondaryColor,
                     height: 1,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -87,7 +88,7 @@ class Checkout extends StatelessWidget {
                       },
                       child: CardDeliveryTypeChecout(
                         imageName: AppImageAsset.deliveryImage,
-                        title: "Delivery",
+                        title: "delivery".tr,
                         isActive: controller.deliveryType == "0" ? true : false,
                       ),
                     ),
@@ -98,7 +99,7 @@ class Checkout extends StatelessWidget {
                       },
                       child: CardDeliveryTypeChecout(
                         imageName: AppImageAsset.deliveryImage,
-                        title: "Recive",
+                        title: "recive".tr,
                         isActive: controller.deliveryType == "1" ? true : false,
                       ),
                     ),
@@ -109,31 +110,48 @@ class Checkout extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Shipping Address",
-                        style: TextStyle(
-                          color: AppColor.secondColor,
-                          height: 1,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                      if (controller.dataAddress.isNotEmpty)
+                        Text(
+                          "shipping_".tr,
+                          style: TextStyle(
+                            color: AppColor.secondaryColor,
+                            height: 1,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
+                      if (controller.dataAddress.isEmpty)
+                        InkWell(
+                          onTap: () {
+                            Get.toNamed(AppRoute.addressadd);
+                          },
+                          child: Container(
+                            child: Center(
+                              child: Text(
+                                "please_add_shipping_".tr,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColor.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       const SizedBox(height: 10),
                       ...List.generate(
                         controller.dataAddress.length,
                         (index) => InkWell(
                           onTap: () {
                             controller.chooseShippingAddress(
-                                "${controller.dataAddress[index].addressId}");
+                                "${controller.dataAddress[index].Id}");
                           },
                           child: CardShippingAddressCheckout(
-                            title:
-                                "${controller.dataAddress[index].addressName}",
+                            title: "${controller.dataAddress[index].Name}",
                             body:
-                                "${controller.dataAddress[index].addressCity} , ${controller.dataAddress[index].addressStreet}",
+                                "${controller.dataAddress[index].City} , ${controller.dataAddress[index].Street}",
                             isActive: controller.addressId.toString() ==
-                                    controller.dataAddress[index].addressId
-                                        .toString()
+                                    controller.dataAddress[index].Id.toString()
                                 ? true
                                 : false,
                           ),

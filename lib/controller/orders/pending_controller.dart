@@ -1,4 +1,5 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
+import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/pending_data.dart';
@@ -13,6 +14,15 @@ class OrdersPendingController extends GetxController {
   List<OrdersModel> data = [];
 
   late StatusRequest statusRequest;
+
+  goToPageTrackingOrder(OrdersModel ordersModel) {
+    Get.toNamed(
+      AppRoute.ordersTracking,
+      arguments: {
+        "ordersmodel": ordersModel,
+      },
+    );
+  }
 
   String printOrderType(String val) {
     if (val == "0") {
