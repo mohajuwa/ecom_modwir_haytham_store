@@ -1,4 +1,4 @@
-import 'package:ecom_modwir/core/constant/color_manger.dart';
+import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
 
 class MyTextStyle {
@@ -25,7 +25,7 @@ class MyTextStyle {
     fontFamily: "El_Messiri",
     fontSize: 14,
     fontWeight: FontWeight.normal,
-    color: ColorApp.deepblue,
+    color: AppColor.deepblue,
   );
   static TextStyle smallBold = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -33,7 +33,7 @@ class MyTextStyle {
   static TextStyle notBold = const TextStyle(
     fontWeight: FontWeight.w300,
   );
-  static TextStyle textbutton = TextStyle(color: ColorApp.lightblue);
+  static TextStyle textbutton = TextStyle(color: AppColor.grey2);
   static TextStyle meduimBold = const TextStyle(
       fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
   static TextStyle modelbottomsheet = const TextStyle(
