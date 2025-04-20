@@ -150,22 +150,7 @@ flutter:
           weight: 700
 
 
-    - family: Amiri_Quran
-      fonts:
-        - asset: assets/fonts/Amiri_Quran/AmiriQuran-Regular.ttf
-          weight: 700
-
-    - family: IBM_Plex_Sans_Arabic
-      fonts:
-        - asset: assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Regular.ttf
-        - asset: assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Bold.ttf
-          weight: 700
-
-    - family: PlayfairDisplay
-      fonts:
-        - asset: assets/fonts/PlayfairDisplay/PlayfairDisplay-Regular.ttf
-        - asset: assets/fonts/PlayfairDisplay/PlayfairDisplay-Bold.ttf
-          weight: 700
+   
 
     #     - asset: fonts/Schyler-Italic.ttf
     #       style: italic
