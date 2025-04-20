@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ecom_modwir/controller/license_plate_controller.dart';
@@ -624,6 +625,7 @@ class ProductByCarController extends GetxController {
         "vehicle_id": isEditingVehicle.value && vehicleToEditIndex != null
             ? userVehicles[vehicleToEditIndex!.value].vehicleId.toString()
             : "0",
+        "lang": lang,
         "user_id": userId,
         "car_make_id": selectedMake.makeId.toString(),
         "car_model_id": selectedModel.modelId.toString(),
@@ -632,26 +634,31 @@ class ProductByCarController extends GetxController {
       };
 
       final finalData = jsonEncode(data);
-
+      if (kDebugMode) {
+        print(finalData);
+      }
       // Save to API
       final response = isEditingVehicle.value
           ? await userVehicleData.updateVehicle(finalData)
-          : await userVehicleData.addVehicle(vehicle);
+          : await userVehicleData.addVehicle(finalData);
 
       statusRequest = handlingData(response);
 
       if (StatusRequest.success == statusRequest) {
         if (response['status'] == "success" ||
-            response['message'] == "No changes made") {
+            response['message'] == "No changes made" ||
+            response['message'] == "Insert successful") {
           // Handle successful save
           if (isEditingVehicle.value && vehicleToEditIndex != null) {
             // Update existing vehicle in the list
             userVehicles[vehicleToEditIndex!.value] = vehicle;
           } else {
             // Add new vehicle to the list
-            final savedVehicle = UserCarModel.fromJson(response['data']);
-            userVehicles.add(savedVehicle);
-            selectedVehicleIndex.value = userVehicles.length - 1;
+            final responseData = response['data'];
+
+            final savedVehicle = responseData is List
+                ? UserCarModel.fromJson(responseData.first)
+                : UserCarModel.fromJson(responseData);
           }
 
           // Reset form state
@@ -665,6 +672,7 @@ class ProductByCarController extends GetxController {
               isEditingVehicle.value
                   ? 'vehicle_updated'.tr
                   : 'vehicle_added'.tr);
+          update();
         } else if (response['status'] == "error") {
           showErrorSnackbar('error'.tr, response['message'] ?? 'error'.tr);
         } else {

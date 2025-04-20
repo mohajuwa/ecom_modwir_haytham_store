@@ -1,10 +1,9 @@
 import 'dart:ui';
-
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/constant/apptheme.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/services/services.dart';
-import 'package:flutter/src/material/theme_data.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingsController extends GetxController {
@@ -12,11 +11,10 @@ class SettingsController extends GetxController {
 
   ThemeData appTheme = ThemeData();
 
-  logout() {
-    // String userId = myServices.sharedPreferences.getString("userId")!;
+  // Add this getter to determine the current language
+  bool get isArabic => myServices.sharedPreferences.getString("lang") == "ar";
 
-    // FirebaseMessaging.instance.subscribeToTopic("users");
-    // FirebaseMessaging.instance.unsubscribeFromTopic("users$userId");
+  logout() {
     myServices.sharedPreferences.clear();
     Get.offAllNamed(AppRoute.homepage);
   }
@@ -29,11 +27,6 @@ class SettingsController extends GetxController {
     Get.updateLocale(locale);
     Get.find<HomeControllerImp>().getdata();
 
-    update();
+    update(); // Update the UI to reflect language change
   }
-
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  // }
 }

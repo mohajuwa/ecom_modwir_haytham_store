@@ -1,5 +1,7 @@
-// UserCarModel Model class
 import 'dart:convert';
+
+import 'package:ecom_modwir/core/services/services.dart';
+import 'package:get/get.dart';
 
 class UserCarModel {
   final int vehicleId;
@@ -26,31 +28,55 @@ class UserCarModel {
     this.status = 0,
   });
 
-  factory UserCarModel.fromJson(Map<String, dynamic> json) {
+  factory UserCarModel.fromJson(dynamic json) {
+    final MyServices myServices = Get.find();
+
+    // Handle both Map and List responses
+    final lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
+    final data = json is List ? json.first : json;
+
+    // Handle license plate decoding
+    dynamic licensePlate = data['license_plate_number'];
+    if (licensePlate is String) {
+      try {
+        licensePlate = jsonDecode(licensePlate);
+      } catch (e) {
+        licensePlate = {'en': '-', 'ar': '-'};
+      }
+    }
+
     return UserCarModel(
-      vehicleId: json['vehicle_id'] ?? 0,
-      userId: json['user_id'],
-      makeId: json['make_id'] ?? 0,
-      modelId: json['model_id'] ?? 0,
-      makeName: json['make_name'] ?? '',
-      modelName: json['model_name'] ?? '',
-      makeLogo: json['make_logo'] ?? '',
-      year: json['year'] ?? DateTime.now().year,
-      licensePlate: json['license_plate_number'] is String
-          ? jsonDecode(json['license_plate_number'])
-          : json['license_plate_number'] ?? {'en': '-', 'ar': '-'},
-      status: json['status'] ?? 0,
+      vehicleId: data['vehicle_id'] ?? 0,
+      userId: data['user_id'],
+      makeId: data['make_id'] ??
+          data['car_make_id'] ??
+          0, // Handle both make_id and car_make_id
+      modelId: data['model_id'] ?? data['car_model_id'] ?? 0,
+      makeName: data['make_name'] is String
+          ? data['make_name']
+          : (data['make_name'][lang] ?? ''),
+      modelName: data['model_name'] is String
+          ? data['model_name']
+          : (data['model_name'][lang] ?? ''),
+      makeLogo: data['make_logo'] ?? '',
+      year: data['year'] ?? DateTime.now().year,
+      licensePlate: licensePlate is Map<String, dynamic>
+          ? licensePlate
+          : {'en': '-', 'ar': '-'},
+      status: data['status'] ?? 0,
     );
   }
-
+  // Convert UserCarModel object to JSON format
   String toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vehicle_id'] = this.vehicleId;
-    data['user_id'] = this.userId;
-    data['make_id'] = this.makeId;
-    data['model_id'] = this.modelId;
-    data['year'] = this.year;
-    data['license_plate_number'] = this.licensePlate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['vehicle_id'] = vehicleId;
+    data['user_id'] = userId;
+    data['make_id'] = makeId;
+    data['model_id'] = modelId;
+    data['year'] = year;
+    data['license_plate_number'] =
+        licensePlate; // Ensure correct structure of license plate
     return jsonEncode(data);
   }
 }

@@ -2,7 +2,6 @@ import 'package:ecom_modwir/controller/settings_controller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
-import 'package:ecom_modwir/view/widget/language/custombuttomlang.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,6 +12,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SettingsController controller = Get.put(SettingsController());
+    
     return Container(
       child: ListView(
         children: [
@@ -46,15 +46,6 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // ListTile(
-                    //   onTap: () {},
-                    //   trailing: Switch(
-                    //     onChanged: (val) {},
-                    //     value: true,
-                    //   ),
-                    //   title: Text("Disable Notifications"),
-                    // ),
-
                     ListTile(
                       onTap: () {
                         Get.toNamed(AppRoute.ordersPending);
@@ -95,18 +86,42 @@ class SettingsPage extends StatelessWidget {
                       trailing: Icon(Icons.exit_to_app),
                       title: Text("Logout"),
                     ),
-                    CustomButtonLang(
-                        textbutton: "Ar",
-                        onPressed: () {
-                          controller.changeLang("ar");
-                          Get.toNamed(AppRoute.homepage);
-                        }),
-                    CustomButtonLang(
-                        textbutton: "En",
-                        onPressed: () {
-                          controller.changeLang("en");
-                          Get.toNamed(AppRoute.homepage);
-                        }),
+                    Divider(),
+                    GetBuilder<SettingsController>(
+                      builder: (controller) => Column(
+                        children: [
+                          ListTile(
+                            title: Text("Language"),
+                            subtitle: Text("Choose your preferred language"),
+                            leading: Icon(Icons.language),
+                          ),
+                          SwitchListTile(
+                            title: Text("العربية"),
+                            subtitle: Text("Arabic"),
+                            secondary: Icon(Icons.translate),
+                            value: controller.isArabic,
+                            activeColor: AppColor.primaryColor,
+                            onChanged: (bool value) {
+                              if (value) {
+                                controller.changeLang("ar");
+                              }
+                            },
+                          ),
+                          SwitchListTile(
+                            title: Text("English"),
+                            subtitle: Text("الإنجليزية"),
+                            secondary: Icon(Icons.translate),
+                            value: !controller.isArabic,
+                            activeColor: AppColor.primaryColor,
+                            onChanged: (bool value) {
+                              if (value) {
+                                controller.changeLang("en");
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ]),
             ),
           ),

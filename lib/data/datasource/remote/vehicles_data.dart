@@ -15,16 +15,8 @@ class VehicleData {
     return response.fold((l) => l, (r) => r);
   }
 
-  addVehicle(UserCarModel vehicle) async {
-    var response = await crud.postData(AppLink.vehicleAdd, {
-      "vehicle_id": vehicle.vehicleId.toString(),
-      "user_id": vehicle.userId.toString(),
-      "car_make_id": vehicle.makeId.toString(), // Removed space after key name
-      "car_model_id":
-          vehicle.modelId.toString(), // Removed space after key name
-      "year": vehicle.year.toString(),
-      "license_plate_number": vehicle.licensePlate
-    });
+  addVehicle(data) async {
+    var response = await crud.postData(AppLink.vehicleAdd, data);
     return response.fold((l) => l, (r) => r);
   }
 
