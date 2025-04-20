@@ -10,11 +10,11 @@ class ServiceCardWidget extends StatefulWidget {
   final Function(int) onSelected;
 
   const ServiceCardWidget({
-    Key? key,
+    super.key,
     required this.service,
     required this.index,
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<ServiceCardWidget> createState() => _ServiceCardWidgetState();

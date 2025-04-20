@@ -12,7 +12,7 @@ class CustomCarSelectionSlider extends StatelessWidget {
   final bool autoPlay;
 
   const CustomCarSelectionSlider({
-    Key? key,
+    super.key,
     required this.items,
     required this.imageUrlBuilder,
     required this.titleBuilder,
@@ -20,7 +20,7 @@ class CustomCarSelectionSlider extends StatelessWidget {
     required this.onItemSelected,
     this.backgroundColor,
     this.autoPlay = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -6,8 +6,7 @@ import 'package:get/get.dart';
 class CustomListServices extends StatelessWidget {
   final SubServiceModel subServiceModel;
 
-  const CustomListServices({Key? key, required this.subServiceModel})
-      : super(key: key);
+  const CustomListServices({super.key, required this.subServiceModel});
 
   @override
   Widget build(BuildContext context) {
