@@ -26,7 +26,8 @@ class MyTextButton extends StatelessWidget {
           horizontal: paddinghorizontal,
           vertical: paddingvertical,
         ),
-        child: Text(text, style: textStyle ?? MyTextStyle.textButtonTow),
+        child:
+            Text(text, style: textStyle ?? MyTextStyle.textButtonTow(context)),
       ),
     );
   }

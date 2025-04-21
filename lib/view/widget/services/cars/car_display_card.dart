@@ -1,7 +1,5 @@
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 
-import 'package:ecom_modwir/core/constant/app_dimensions.dart';
-
 import 'package:ecom_modwir/core/constant/color.dart';
 
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
@@ -37,7 +35,7 @@ class CarInfoWidget extends StatelessWidget {
                 children: [
                   Text(
                     'your_vehicles'.tr,
-                    style: MyTextStyle.styleBold.copyWith(fontSize: 18),
+                    style: MyTextStyle.styleBold(context),
                   ),
                   TextButton.icon(
                     onPressed: controller.toggleAddCarForm,
@@ -51,8 +49,7 @@ class CarInfoWidget extends StatelessWidget {
                       controller.showAddCarForm.value
                           ? 'cancel'.tr
                           : 'add_another_car'.tr,
-                      style: MyTextStyle.smallBold
-                          .copyWith(color: AppColor.primaryColor),
+                      style: MyTextStyle.smallBold(context),
                     ),
                   ),
                 ],
@@ -90,13 +87,10 @@ class CarInfoWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            controller.isEditingVehicle.value
-                ? 'edit_vehicle'.tr
-                : 'add_new_vehicle'.tr,
-            style: MyTextStyle.meduimBold.copyWith(
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-            ),
-          ),
+              controller.isEditingVehicle.value
+                  ? 'edit_vehicle'.tr
+                  : 'add_new_vehicle'.tr,
+              style: MyTextStyle.meduimBold(context)),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -109,10 +103,10 @@ class CarInfoWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('year'.tr,
-                  style: MyTextStyle.meduimBold.copyWith(
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  )),
+              Text(
+                'year'.tr,
+                style: MyTextStyle.meduimBold(context),
+              ),
               const SizedBox(height: 8),
               YearScrollWheel(
                 scrollController: controller.scrollController,
@@ -168,9 +162,7 @@ class CarInfoWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 selectedMake,
-                style: MyTextStyle.meduimBold.copyWith(
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                style: MyTextStyle.meduimBold(context),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -223,7 +215,9 @@ class CarInfoWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 selectedModel,
-                style: MyTextStyle.meduimBold.copyWith(
+                style: MyTextStyle.meduimBold(
+                  context,
+                ).copyWith(
                   color: hasModels
                       ? Theme.of(context).textTheme.bodyLarge?.color
                       : (isDark ? Colors.grey[600] : AppColor.grey),
@@ -341,14 +335,14 @@ class VehicleCard extends StatelessWidget {
   final bool isDark;
 
   const VehicleCard({
-    Key? key,
+    super.key,
     required this.vehicle,
     required this.isSelected,
     required this.onTap,
     required this.onEdit,
     required this.onDelete,
     required this.isDark,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -462,22 +456,14 @@ class VehicleCard extends StatelessWidget {
           const SizedBox(height: 24),
           Text(
             '${vehicle.makeName} ${vehicle.modelName}',
-            style: MyTextStyle.styleBold.copyWith(
-              fontSize: 18,
-              height: 1.2,
-              color: Theme.of(context).textTheme.displayMedium?.color,
+            style: MyTextStyle.styleBold(
+              context,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
-          Text(
-            '${vehicle.year}',
-            style: MyTextStyle.bigCapiton.copyWith(
-              color: isDark ? Colors.grey[400]! : AppColor.grey2,
-              fontSize: 14,
-            ),
-          ),
+          Text('${vehicle.year}', style: MyTextStyle.bigCapiton(context)),
           const Spacer(),
           _DualLicensePlateDisplay(
             licensePlate: vehicle.licensePlate,
@@ -561,11 +547,7 @@ class _LicensePlateRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
                 letters.trim(),
-                style: MyTextStyle.styleBold.copyWith(
-                  fontSize: 16,
-                  letterSpacing: 1.5,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                style: MyTextStyle.styleBold(context),
                 textAlign: TextAlign.right,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -584,10 +566,7 @@ class _LicensePlateRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
                 numbers.trim(),
-                style: MyTextStyle.styleBold.copyWith(
-                  fontSize: 16,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                style: MyTextStyle.styleBold(context),
                 textAlign: TextAlign.left,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

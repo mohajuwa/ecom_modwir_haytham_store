@@ -48,7 +48,9 @@ class YearScrollWheel extends StatelessWidget {
             return Center(
               child: Text(
                 year.toString(),
-                style: MyTextStyle.meduimBold.copyWith(
+                style: MyTextStyle.meduimBold(
+                  context,
+                ).copyWith(
                   color: year == selectedYear
                       ? AppColor.primaryColor
                       : isDark

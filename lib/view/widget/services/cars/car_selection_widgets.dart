@@ -108,7 +108,7 @@ class SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          Text(title, style: MyTextStyle.smallBold),
+          Text(title, style: MyTextStyle.smallBold(context)),
           const Spacer(),
           if (showAllButton)
             MyTextButton(
@@ -116,9 +116,7 @@ class SectionHeader extends StatelessWidget {
               ontap: onShowAll,
               paddinghorizontal: 0,
               paddingvertical: 0,
-              textStyle: MyTextStyle.textButtonTow.copyWith(
-                fontSize: 11,
-              ),
+              textStyle: MyTextStyle.textButtonTow(context),
             ),
         ],
       ),
@@ -133,12 +131,12 @@ class CarMakeItem extends StatelessWidget {
   final bool isDark;
 
   const CarMakeItem({
-    Key? key,
+    super.key,
     required this.make,
     required this.isSelected,
     required this.onTap,
     required this.isDark,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +242,7 @@ class CarModelItem extends StatelessWidget {
         ),
         child: Text(
           model.name[lang] ?? '',
-          style: MyTextStyle.smallBold.copyWith(
+          style: MyTextStyle.smallBold(context).copyWith(
             color: isSelected
                 ? AppColor.secondaryColor
                 : Theme.of(context).textTheme.bodyLarge?.color,
@@ -268,19 +266,14 @@ class MakeName extends StatelessWidget {
         children: [
           Text(
             name['en'] ?? 'N/A',
-            style: MyTextStyle.smallBold.copyWith(
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-            ),
+            style: MyTextStyle.smallBold(context),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           if (name.containsKey('ar'))
             Text(
               name['ar']!,
-              style: MyTextStyle.smallBold.copyWith(
-                fontFamily: 'Cairo',
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
+              style: MyTextStyle.smallBold(context),
               textDirection: TextDirection.rtl,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

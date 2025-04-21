@@ -79,24 +79,14 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(
-            widget.service.name ?? "",
-            style: MyTextStyle.meduimBold.copyWith(
-              fontSize: 16,
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-            ),
-          ),
+          child: Text(widget.service.name ?? "",
+              style: MyTextStyle.meduimBold(context)),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              "${widget.service.price} SR",
-              style: MyTextStyle.meduimBold.copyWith(
-                fontSize: 16,
-                color: AppColor.primaryColor,
-              ),
-            ),
+            Text("${widget.service.price} SR",
+                style: MyTextStyle.meduimBold(context)),
             if (widget.service.isSelected)
               Icon(Icons.check_circle, size: 18, color: AppColor.primaryColor),
           ],
@@ -129,11 +119,7 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
       widget.service.notes.first.content ?? "",
       maxLines: _isExpanded ? null : 1,
       overflow: _isExpanded ? null : TextOverflow.ellipsis,
-      style: MyTextStyle.bigCapiton.copyWith(
-        fontSize: 14,
-        fontFamily: "El_Messiri",
-        color: Theme.of(context).textTheme.bodyMedium?.color,
-      ),
+      style: MyTextStyle.bigCapiton(context),
     );
   }
 
@@ -148,14 +134,8 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
                   Icon(Icons.circle, size: 8, color: AppColor.primaryColor),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      note.content ?? "",
-                      style: MyTextStyle.bigCapiton.copyWith(
-                        fontSize: 14,
-                        fontFamily: "El_Messiri",
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
-                    ),
+                    child: Text(note.content ?? "",
+                        style: MyTextStyle.bigCapiton(context)),
                   ),
                 ],
               ),
@@ -174,13 +154,8 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
         onTap: _handleTap,
         child: Padding(
           padding: const EdgeInsets.only(top: 8),
-          child: Text(
-            'see_more_notes'.tr,
-            style: MyTextStyle.smallBold.copyWith(
-              color: AppColor.primaryColor,
-              decoration: TextDecoration.underline,
-            ),
-          ),
+          child:
+              Text('see_more_notes'.tr, style: MyTextStyle.smallBold(context)),
         ),
       ),
     );

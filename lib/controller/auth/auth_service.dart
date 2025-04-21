@@ -12,6 +12,7 @@ import 'package:ecom_modwir/data/datasource/remote/auth/signup.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
+import 'package:path/path.dart';
 
 class AuthService extends GetxController {
   final MyServices myServices = Get.find();
@@ -115,15 +116,15 @@ class AuthService extends GetxController {
                   ),
                   Obx(() {
                     if (isVerifying.value) {
-                      return _buildOtpVerification();
+                      return _buildOtpVerification(context);
                     } else if (needsAddress.value) {
-                      return _buildAddressCollection();
+                      return _buildAddressCollection(context);
                     } else if (editingInfo.value) {
-                      return _buildEditSignupInfo();
+                      return _buildEditSignupInfo(context);
                     } else {
                       return isLoginMode.value
-                          ? _buildLoginForm()
-                          : _buildSignupForm();
+                          ? _buildLoginForm(context)
+                          : _buildSignupForm(context);
                     }
                   }),
                 ],
@@ -143,7 +144,7 @@ class AuthService extends GetxController {
     }
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildLoginForm(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,11 +152,11 @@ class AuthService extends GetxController {
         Center(
           child: Text(
             'login_to_continue'.tr,
-            style: MyTextStyle.styleBold.copyWith(fontSize: 20),
+            style: MyTextStyle.styleBold(context),
           ),
         ),
         const SizedBox(height: 24),
-        _buildPhoneField(),
+        _buildPhoneField(context),
         const SizedBox(height: 24),
         PrimaryButton(
           text: 'login'.tr,
@@ -168,8 +169,8 @@ class AuthService extends GetxController {
             onPressed: toggleMode,
             child: Text(
               'new_user_register'.tr,
-              style:
-                  MyTextStyle.meduimBold.copyWith(color: AppColor.primaryColor),
+              style: MyTextStyle.meduimBold(context)
+                  .copyWith(color: AppColor.primaryColor),
             ),
           ),
         ),
@@ -177,7 +178,7 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildSignupForm() {
+  Widget _buildSignupForm(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,13 +186,13 @@ class AuthService extends GetxController {
         Center(
           child: Text(
             'create_account'.tr,
-            style: MyTextStyle.styleBold.copyWith(fontSize: 20),
+            style: MyTextStyle.styleBold(context),
           ),
         ),
         const SizedBox(height: 20),
-        _buildNameFields(),
+        _buildNameFields(context),
         const SizedBox(height: 16),
-        _buildPhoneField(),
+        _buildPhoneField(context),
         const SizedBox(height: 24),
         PrimaryButton(
           text: 'sign_up'.tr,
@@ -204,8 +205,8 @@ class AuthService extends GetxController {
             onPressed: toggleMode,
             child: Text(
               'already_have_account'.tr,
-              style:
-                  MyTextStyle.meduimBold.copyWith(color: AppColor.primaryColor),
+              style: MyTextStyle.meduimBold(context)
+                  .copyWith(color: AppColor.primaryColor),
             ),
           ),
         ),
@@ -213,7 +214,7 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildOtpVerification() {
+  Widget _buildOtpVerification(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,16 +222,16 @@ class AuthService extends GetxController {
         Center(
           child: Text(
             'verify_phone'.tr,
-            style: MyTextStyle.styleBold.copyWith(fontSize: 20),
+            style: MyTextStyle.styleBold(context),
           ),
         ),
         const SizedBox(height: 16),
         Text(
           'code_sent_to'.tr + ' +966${phoneController.text}',
-          style: MyTextStyle.meduimBold,
+          style: MyTextStyle.meduimBold(context),
         ),
         const SizedBox(height: 24),
-        _buildOtpField(),
+        _buildOtpField(context),
         const SizedBox(height: 24),
         PrimaryButton(
           text: 'verify'.tr,
@@ -245,7 +246,7 @@ class AuthService extends GetxController {
               onPressed: _resendCode,
               child: Text(
                 'resend_code'.tr,
-                style: MyTextStyle.meduimBold
+                style: MyTextStyle.meduimBold(context)
                     .copyWith(color: AppColor.primaryColor),
               ),
             ),
@@ -256,7 +257,7 @@ class AuthService extends GetxController {
               },
               child: Text(
                 'edit_info'.tr,
-                style: MyTextStyle.meduimBold
+                style: MyTextStyle.meduimBold(context)
                     .copyWith(color: AppColor.primaryColor),
               ),
             ),
@@ -266,7 +267,7 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildEditSignupInfo() {
+  Widget _buildEditSignupInfo(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,13 +275,13 @@ class AuthService extends GetxController {
         Center(
           child: Text(
             'edit_information'.tr,
-            style: MyTextStyle.styleBold.copyWith(fontSize: 20),
+            style: MyTextStyle.styleBold(context),
           ),
         ),
         const SizedBox(height: 20),
-        _buildNameFields(),
+        _buildNameFields(context),
         const SizedBox(height: 16),
-        _buildPhoneField(),
+        _buildPhoneField(context),
         const SizedBox(height: 24),
         PrimaryButton(
           text: 'update_info'.tr,
@@ -296,8 +297,8 @@ class AuthService extends GetxController {
             },
             child: Text(
               'back_to_verification'.tr,
-              style:
-                  MyTextStyle.meduimBold.copyWith(color: AppColor.primaryColor),
+              style: MyTextStyle.meduimBold(context)
+                  .copyWith(color: AppColor.primaryColor),
             ),
           ),
         ),
@@ -305,7 +306,7 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildAddressCollection() {
+  Widget _buildAddressCollection(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,13 +314,13 @@ class AuthService extends GetxController {
         Center(
           child: Text(
             'add_delivery_address'.tr,
-            style: MyTextStyle.styleBold.copyWith(fontSize: 20),
+            style: MyTextStyle.styleBold(context),
           ),
         ),
         const SizedBox(height: 16),
         Text(
           'we_need_your_address'.tr,
-          style: MyTextStyle.meduimBold,
+          style: MyTextStyle.meduimBold(context),
         ),
         const SizedBox(height: 20),
         if (address != null && address!.isNotEmpty)
@@ -336,20 +337,19 @@ class AuthService extends GetxController {
               children: [
                 Text(
                   'current_location'.tr,
-                  style: MyTextStyle.smallBold.copyWith(color: AppColor.grey),
+                  style: MyTextStyle.smallBold(context),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   address!,
-                  style: MyTextStyle.meduimBold,
+                  style: MyTextStyle.meduimBold(context),
                 ),
                 if (latitude != null && longitude != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       'Lat: ${latitude!.toStringAsFixed(6)}, Long: ${longitude!.toStringAsFixed(6)}',
-                      style:
-                          MyTextStyle.smallBold.copyWith(color: AppColor.grey),
+                      style: MyTextStyle.smallBold(context),
                     ),
                   ),
               ],
@@ -363,7 +363,9 @@ class AuthService extends GetxController {
         ),
         const SizedBox(height: 16),
         OutlinedButton(
-          onPressed: _showManualAddressDialog,
+          onPressed: () => _showManualAddressDialog(
+              context), // Pass the function reference instead of calling it immediately
+
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(double.infinity, 48),
             shape: RoundedRectangleBorder(
@@ -373,8 +375,8 @@ class AuthService extends GetxController {
           ),
           child: Text(
             'enter_manually'.tr,
-            style:
-                MyTextStyle.meduimBold.copyWith(color: AppColor.primaryColor),
+            style: MyTextStyle.meduimBold(context)
+                .copyWith(color: AppColor.primaryColor),
           ),
         ),
         if (address != null && address!.isNotEmpty)
@@ -389,25 +391,27 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildNameFields() {
+  Widget _buildNameFields(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('first_name'.tr, style: MyTextStyle.meduimBold),
+              Text(
+                'first_name'.tr,
+                style: MyTextStyle.meduimBold(context),
+              ),
               const SizedBox(height: AppDimensions.smallSpacing),
               Container(
                 height: AppDimensions.inputHeight,
                 decoration: AppDecorations.inputContainer,
                 child: TextField(
                   controller: firstNameController,
-                  style: MyTextStyle.meduimBold,
+                  style: MyTextStyle.meduimBold(context),
                   decoration: InputDecoration(
                     hintText: 'first_name'.tr,
-                    hintStyle:
-                        MyTextStyle.bigCapiton.copyWith(color: AppColor.grey),
+                    hintStyle: MyTextStyle.bigCapiton(context),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
@@ -421,18 +425,20 @@ class AuthService extends GetxController {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('last_name'.tr, style: MyTextStyle.meduimBold),
+              Text(
+                'last_name'.tr,
+                style: MyTextStyle.meduimBold(context),
+              ),
               const SizedBox(height: AppDimensions.smallSpacing),
               Container(
                 height: AppDimensions.inputHeight,
                 decoration: AppDecorations.inputContainer,
                 child: TextField(
                   controller: lastNameController,
-                  style: MyTextStyle.meduimBold,
+                  style: MyTextStyle.meduimBold(context),
                   decoration: InputDecoration(
                     hintText: 'last_name'.tr,
-                    hintStyle:
-                        MyTextStyle.bigCapiton.copyWith(color: AppColor.grey),
+                    hintStyle: MyTextStyle.bigCapiton(context),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
@@ -445,11 +451,14 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildPhoneField() {
+  Widget _buildPhoneField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('phone_number'.tr, style: MyTextStyle.meduimBold),
+        Text(
+          'phone_number'.tr,
+          style: MyTextStyle.meduimBold(context),
+        ),
         const SizedBox(height: AppDimensions.smallSpacing),
         Container(
           height: AppDimensions.inputHeight,
@@ -471,7 +480,7 @@ class AuthService extends GetxController {
                 child: Center(
                   child: Text(
                     "+966",
-                    style: MyTextStyle.meduimBold,
+                    style: MyTextStyle.meduimBold(context),
                   ),
                 ),
               ),
@@ -479,11 +488,10 @@ class AuthService extends GetxController {
                 child: TextField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
-                  style: MyTextStyle.meduimBold,
+                  style: MyTextStyle.meduimBold(context),
                   decoration: InputDecoration(
                     hintText: '5XXXXXXXX',
-                    hintStyle:
-                        MyTextStyle.bigCapiton.copyWith(color: AppColor.grey),
+                    hintStyle: MyTextStyle.bigCapiton(context),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
@@ -496,11 +504,14 @@ class AuthService extends GetxController {
     );
   }
 
-  Widget _buildOtpField() {
+  Widget _buildOtpField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('verification_code'.tr, style: MyTextStyle.meduimBold),
+        Text(
+          'verification_code'.tr,
+          style: MyTextStyle.meduimBold(context),
+        ),
         const SizedBox(height: AppDimensions.smallSpacing),
         Container(
           height: AppDimensions.inputHeight,
@@ -508,10 +519,10 @@ class AuthService extends GetxController {
           child: TextField(
             controller: otpController,
             keyboardType: TextInputType.number,
-            style: MyTextStyle.meduimBold,
+            style: MyTextStyle.meduimBold(context),
             decoration: InputDecoration(
               hintText: '000000',
-              hintStyle: MyTextStyle.bigCapiton.copyWith(color: AppColor.grey),
+              hintStyle: MyTextStyle.bigCapiton(context),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             ),
@@ -723,7 +734,7 @@ class AuthService extends GetxController {
     update();
   }
 
-  void _showManualAddressDialog() {
+  void _showManualAddressDialog(BuildContext context) {
     final TextEditingController addressController = TextEditingController();
     final TextEditingController cityController = TextEditingController();
     final TextEditingController streetController = TextEditingController();
@@ -746,12 +757,15 @@ class AuthService extends GetxController {
             children: [
               Text(
                 'enter_address'.tr,
-                style: MyTextStyle.styleBold.copyWith(fontSize: 18),
+                style: MyTextStyle.styleBold(context),
               ),
               const SizedBox(height: 16),
 
               // City field
-              Text('city'.tr, style: MyTextStyle.meduimBold),
+              Text(
+                'city'.tr,
+                style: MyTextStyle.meduimBold(context),
+              ),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
@@ -772,7 +786,10 @@ class AuthService extends GetxController {
               const SizedBox(height: 12),
 
               // Street field
-              Text('street'.tr, style: MyTextStyle.meduimBold),
+              Text(
+                'street'.tr,
+                style: MyTextStyle.meduimBold(context),
+              ),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
@@ -793,7 +810,7 @@ class AuthService extends GetxController {
               const SizedBox(height: 12),
 
               // Full address field
-              Text('full_address'.tr, style: MyTextStyle.meduimBold),
+              Text('full_address'.tr, style: MyTextStyle.meduimBold(context)),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(

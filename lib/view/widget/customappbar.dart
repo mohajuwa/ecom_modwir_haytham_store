@@ -42,7 +42,7 @@ class CustomAppBar extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: SizedBox(
-                    width: 150, // Adjust width as needed
+                    width: 250, // Adjust width as needed
                     child: TextFormField(
                       onChanged: onChanged,
                       controller: mycontroller,

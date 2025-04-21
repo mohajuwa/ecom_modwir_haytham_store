@@ -60,13 +60,7 @@ class PrimaryButton extends StatelessWidget {
                     ),
                   ),
                 )
-              : Text(
-                  text,
-                  style: MyTextStyle.meduimBold.copyWith(
-                    color: textColor ?? Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
+              : Text(text, style: MyTextStyle.meduimBold(context)),
         ),
       ),
     );

@@ -1,32 +1,26 @@
+// lib/controller/settings_controller.dart
 import 'dart:ui';
 import 'package:ecom_modwir/controller/home_controller.dart';
-import 'package:ecom_modwir/core/constant/apptheme.dart';
-import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/controller/theme_controller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingsController extends GetxController {
   MyServices myServices = Get.find();
+  final ThemeController themeController = Get.find();
+  RxString currentLang = 'en'.obs;
 
-  ThemeData appTheme = ThemeData();
-
-  // Add this getter to determine the current language
-  bool get isArabic => myServices.sharedPreferences.getString("lang") == "ar";
-
-  logout() {
-    myServices.sharedPreferences.clear();
-    Get.offAllNamed(AppRoute.homepage);
+  @override
+  void onInit() {
+    super.onInit();
+    currentLang.value = myServices.sharedPreferences.getString("lang") ?? 'en';
   }
 
-  changeLang(String langcode) {
-    Locale locale = Locale(langcode);
+  void changeLang(String langcode) {
+    currentLang.value = langcode;
     myServices.sharedPreferences.setString("lang", langcode);
-    appTheme = langcode == "ar" ? themeArabic : themeEnglish;
-    Get.changeTheme(appTheme);
-    Get.updateLocale(locale);
+    Get.updateLocale(Locale(langcode));
     Get.find<HomeControllerImp>().getdata();
-
-    update(); // Update the UI to reflect language change
   }
 }

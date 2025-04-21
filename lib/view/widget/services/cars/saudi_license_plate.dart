@@ -28,9 +28,7 @@ class ModernSaudiLicensePlate extends StatelessWidget {
             children: [
               Text(
                 'license_plate'.tr,
-                style: MyTextStyle.meduimBold.copyWith(
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                style: MyTextStyle.meduimBold(context),
               ),
               _ClearButton(controller: controller, isDark: isDark),
             ],
@@ -161,11 +159,9 @@ class _LettersSection extends StatelessWidget {
             _BidirectionalField(
               value: controller.arabicLetters,
               onChanged: controller.handleArabicLettersInput,
-              style: MyTextStyle.notBold.copyWith(
-                fontSize: 20,
-                fontFamily: 'El_Messiri',
+              style: MyTextStyle.notBold(
+                context,
                 letterSpacing: 5,
-                color: isDark ? Colors.grey[400] : AppColor.grey,
               ),
               hint: 'أ ب ج',
               isDark: isDark,
@@ -181,10 +177,9 @@ class _LettersSection extends StatelessWidget {
             _BidirectionalField(
               value: controller.englishLetters,
               onChanged: controller.handleEnglishLettersInput,
-              style: MyTextStyle.notBold.copyWith(
-                fontSize: 14,
+              style: MyTextStyle.notBold(
+                context,
                 letterSpacing: 3,
-                color: isDark ? Colors.grey[400] : AppColor.grey,
               ),
               hint: 'A B C',
               isDark: isDark,
@@ -219,11 +214,9 @@ class _NumbersSection extends StatelessWidget {
             _BidirectionalField(
               value: controller.arabicNumbers,
               onChanged: controller.handleArabicNumbersInput,
-              style: MyTextStyle.notBold.copyWith(
-                fontSize: 20,
-                fontFamily: 'IBM_Plex_Sans_Arabic',
+              style: MyTextStyle.notBold(
+                context,
                 letterSpacing: 3,
-                color: isDark ? Colors.grey[400] : AppColor.grey,
               ),
               hint: '١ ٢ ٣ ٤',
               keyboardType: TextInputType.number,
@@ -240,11 +233,9 @@ class _NumbersSection extends StatelessWidget {
             _BidirectionalField(
               value: controller.englishNumbers,
               onChanged: controller.handleEnglishNumbersInput,
-              style: MyTextStyle.notBold.copyWith(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+              style: MyTextStyle.notBold(
+                context,
                 letterSpacing: 3,
-                color: isDark ? Colors.grey[400] : AppColor.grey,
               ),
               hint: '1 2 3 4',
               keyboardType: TextInputType.number,
@@ -283,47 +274,37 @@ class _BidirectionalField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: TextField(
-        // Don't set a controller directly with the value - this causes issues
-
-        // with cursor position when the value changes
-
         onChanged: (newValue) {
-          // Pass the cleaned value to the controller
-
           onChanged(newValue.replaceAll(' ', ''));
         },
-
         inputFormatters: [
-          // Add this to maintain proper spacing
-
           FilteringTextInputFormatter.allow(RegExp(r'[\S ]')),
         ],
-
         controller: TextEditingController.fromValue(
           TextEditingValue(
             text: value,
-
-            // Set the cursor position at the end
-
             selection: TextSelection.fromPosition(
               TextPosition(offset: value.length),
             ),
           ),
         ),
-
         keyboardType: keyboardType,
-
         textAlign: TextAlign.center,
-
         style: style,
-
         decoration: InputDecoration(
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
           contentPadding: EdgeInsets.zero,
           hintText: hint,
-          hintStyle:
-              TextStyle(color: isDark ? Colors.grey[700] : AppColor.grey),
+          hintStyle: TextStyle(
+            color: isDark ? Colors.grey[700] : AppColor.grey,
+          ),
           counterText: '',
+          isDense: true,
         ),
       ),
     );

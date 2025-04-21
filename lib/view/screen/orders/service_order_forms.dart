@@ -19,7 +19,7 @@ class ServiceOrderForm extends StatelessWidget {
   final ProductByCarController controller;
   final AuthService authService = Get.put(AuthService());
 
-  ServiceOrderForm({Key? key, required this.controller}) : super(key: key);
+  ServiceOrderForm({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +31,8 @@ class ServiceOrderForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'additional_requirements'.tr,
-              style: MyTextStyle.styleBold.copyWith(
-                fontSize: 18,
-                color: Theme.of(context).textTheme.displayMedium?.color,
-              ),
-            ),
+            Text('additional_requirements'.tr,
+                style: MyTextStyle.styleBold(context)),
             const SizedBox(height: 12),
             _NotesField(controller: controller, isDark: isDark),
             const SizedBox(height: 16),
@@ -100,7 +95,8 @@ class ServiceOrderForm extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => FractionallySizedBox(
-        heightFactor: 0.85,
+        // Conditional height factor based on user vehicles
+        heightFactor: controller.userVehicles.isNotEmpty ? 0.45 : 0.85,
         child: Container(
           decoration: BoxDecoration(
             color: isDark ? Color(0xFF1E1E1E) : Colors.white,
@@ -179,12 +175,7 @@ class _AttachmentSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'attachments'.tr,
-          style: MyTextStyle.styleBold.copyWith(
-            color: Theme.of(context).textTheme.displayMedium?.color,
-          ),
-        ),
+        Text('attachments'.tr, style: MyTextStyle.styleBold(context)),
         const SizedBox(height: AppDimensions.smallSpacing),
         Container(
           width: double.infinity,
@@ -198,7 +189,7 @@ class _AttachmentSection extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Obx(() => _buildAttachmentsList()),
+              Obx(() => _buildAttachmentsList(context)),
               const SizedBox(height: 16),
               _buildAttachButton(context),
             ],
@@ -208,15 +199,13 @@ class _AttachmentSection extends StatelessWidget {
     );
   }
 
-  Widget _buildAttachmentsList() {
+  Widget _buildAttachmentsList(BuildContext context) {
     if (controller.attachments.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Text(
           'empty'.tr,
-          style: MyTextStyle.bigCapiton.copyWith(
-            color: isDark ? Colors.grey[600] : AppColor.grey,
-          ),
+          style: MyTextStyle.bigCapiton(context),
           textAlign: TextAlign.center,
         ),
       );
@@ -239,9 +228,7 @@ class _AttachmentSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     _getFileName(file),
-                    style: MyTextStyle.smallBold.copyWith(
-                      color: isDark ? Colors.grey[300] : AppColor.blackColor,
-                    ),
+                    style: MyTextStyle.smallBold(context),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -261,9 +248,7 @@ class _AttachmentSection extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               '+ ${controller.attachments.length - 3} more',
-              style: MyTextStyle.smallBold.copyWith(
-                color: isDark ? Colors.grey[600] : AppColor.grey,
-              ),
+              style: MyTextStyle.smallBold(context),
             ),
           ),
       ],
@@ -296,8 +281,7 @@ class _AttachmentSection extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               'attach_files'.tr,
-              style:
-                  MyTextStyle.smallBold.copyWith(color: AppColor.primaryColor),
+              style: MyTextStyle.smallBold(context),
             ),
           ],
         ),
@@ -388,33 +372,32 @@ class _UserCarDetailsForm extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          'car_details'.tr,
-          style: MyTextStyle.styleBold.copyWith(
-            fontSize: 20,
-            color: Theme.of(context).textTheme.displayLarge?.color,
+        Text('car_details'.tr, style: MyTextStyle.styleBold(context)),
+        const SizedBox(height: 24),
+
+        // Conditional rendering based on user vehicles
+        if (controller.userVehicles.isEmpty) ...[
+          ModernSaudiLicensePlate(isDark: isDark),
+          const SizedBox(height: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'year'.tr,
+                style: MyTextStyle.meduimBold(context),
+              ),
+              const SizedBox(height: 8),
+              YearScrollWheel(
+                scrollController: controller.scrollController,
+                selectedYear: controller.selectedYear,
+                onYearChanged: controller.updateYear,
+                isDark: isDark,
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 24),
-        ModernSaudiLicensePlate(isDark: isDark),
-        const SizedBox(height: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('year'.tr,
-                style: MyTextStyle.meduimBold.copyWith(
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                )),
-            const SizedBox(height: 8),
-            YearScrollWheel(
-              scrollController: controller.scrollController,
-              selectedYear: controller.selectedYear,
-              onYearChanged: (year) => controller.updateYear(year),
-              isDark: isDark,
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
+          const SizedBox(height: 24),
+        ],
+
         _buildOrderSummary(context),
         const SizedBox(height: 32),
         PrimaryButton(
@@ -462,10 +445,10 @@ class _UserCarDetailsForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('order_summary'.tr,
-              style: MyTextStyle.styleBold.copyWith(
-                color: Theme.of(context).textTheme.displayMedium?.color,
-              )),
+          Text(
+            'order_summary'.tr,
+            style: MyTextStyle.styleBold(context),
+          ),
           const SizedBox(height: 12),
           if (selectedService != null)
             _summaryItem(
@@ -500,15 +483,11 @@ class _UserCarDetailsForm extends StatelessWidget {
         children: [
           Text(
             label,
-            style: MyTextStyle.meduimBold.copyWith(
-              color: isDark ? Colors.grey[400] : AppColor.grey2,
-            ),
+            style: MyTextStyle.meduimBold(context),
           ),
           Text(
             value,
-            style: MyTextStyle.meduimBold.copyWith(
-              color: valueColor ?? Theme.of(context).textTheme.bodyLarge?.color,
-            ),
+            style: MyTextStyle.meduimBold(context),
           ),
         ],
       ),

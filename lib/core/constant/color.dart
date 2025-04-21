@@ -1,3 +1,4 @@
+// lib/core/constant/color.dart
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -9,13 +10,7 @@ class AppColor {
   static Color greenColor = Colors.green.shade700;
 
   static const Color grey2 = Color.fromARGB(255, 66, 66, 66);
-  // static const Color primaryColor = Color(0xff5DB1DF);
   static Color backgroundColor = HexColor('#fbf4f4');
-
-  // static Color primaryColor = Color(0xFF9C2315);
-  // static Color primaryColor = HexColor('#537FE7');
-
-  // static Color secondaryColor = HexColor('#00337c');
   static const Color deleteColor = Color(0xFFC41401);
 
   static const Color fourthColor = Color(0xFF084B93);

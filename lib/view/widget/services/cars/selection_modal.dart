@@ -145,13 +145,7 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.title,
-                  style: MyTextStyle.styleBold.copyWith(
-                    fontSize: 18,
-                    color: Theme.of(context).textTheme.displayMedium?.color,
-                  ),
-                ),
+                Text(widget.title, style: MyTextStyle.styleBold(context)),
                 IconButton(
                   icon: Icon(
                     Icons.close,
@@ -289,18 +283,13 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
                 children: [
                   Text(
                     make.name['en'] ?? 'N/A',
-                    style: MyTextStyle.smallBold.copyWith(
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
+                    style: MyTextStyle.smallBold(context),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     make.name['ar'] ?? 'N/A',
-                    style: MyTextStyle.smallBold.copyWith(
-                      fontFamily: 'Cairo',
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
+                    style: MyTextStyle.smallBold(context),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -327,19 +316,14 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
             Expanded(
               child: Text(
                 model.name['ar'] ?? 'N/A',
-                style: MyTextStyle.meduimBold.copyWith(
-                  fontFamily: 'Cairo',
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                style: MyTextStyle.meduimBold(context),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 model.name['en'] ?? 'N/A',
-                style: MyTextStyle.meduimBold.copyWith(
-                  color: widget.isDark ? Colors.grey[400] : AppColor.grey2,
-                ),
+                style: MyTextStyle.meduimBold(context),
                 textAlign: TextAlign.end,
               ),
             ),

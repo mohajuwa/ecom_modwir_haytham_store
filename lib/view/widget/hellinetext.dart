@@ -18,7 +18,7 @@ class HeadLineText extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 bigtext,
-                style: MyTextStyle.styleBold,
+                style: MyTextStyle.styleBold(context),
                 textAlign: TextAlign.center,
               ),
             ),

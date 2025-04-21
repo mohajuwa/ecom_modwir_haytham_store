@@ -117,11 +117,7 @@ class Services extends GetView<HomeControllerImp> {
                 const SizedBox(height: 12),
                 Text(
                   "${serviceModel.serviceName}",
-                  style: MyTextStyle.smallBold.copyWith(
-                    color: AppColor.blackColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: MyTextStyle.smallBold(context),
                   maxLines: 1,
                   textAlign: TextAlign.center,
                 ),

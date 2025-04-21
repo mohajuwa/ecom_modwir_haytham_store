@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
                         children: [
                           Text(
                             'services_text'.tr,
-                            style: MyTextStyle.meduimBold,
+                            style: MyTextStyle.meduimBold(context),
                           ),
                           const Spacer(),
                           if (controller.services.length > 5)
@@ -75,7 +75,7 @@ class HomePage extends StatelessWidget {
                       ),
                       Text(
                         'services_text'.tr,
-                        style: MyTextStyle.meduimBold,
+                        style: MyTextStyle.meduimBold(context),
                       ),
                       ListItemsHome(),
                     ],

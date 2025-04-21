@@ -3,8 +3,6 @@ import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 
-import 'package:ecom_modwir/core/constant/apptheme.dart';
-
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/keys.dart';
 
@@ -26,39 +24,34 @@ class ProductByCarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(ProductByCarController());
 
-    return Obx(() => Theme(
-          data: controller.isDarkMode.value
-              ? AppThemes.darkTheme
-              : AppThemes.lightTheme,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text('make_an_order'.tr, style: MyTextStyle.styleBold),
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Get.back(),
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(controller.isDarkMode.value
-                      ? Icons.light_mode
-                      : Icons.dark_mode),
-                  onPressed: controller.toggleTheme,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () => controller.initializeData(),
-                ),
-              ],
-            ),
-            body: GetBuilder<ProductByCarController>(
-              builder: (controller) => HandlingDataView(
-                statusRequest: controller.statusRequest,
-                widget: _MainContent(controller: controller),
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('make_an_order'.tr, style: MyTextStyle.styleBold(context)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(controller.isDarkMode.value
+                ? Icons.light_mode
+                : Icons.dark_mode),
+            onPressed: controller.toggleTheme,
           ),
-        ));
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => controller.initializeData(),
+          ),
+        ],
+      ),
+      body: GetBuilder<ProductByCarController>(
+        builder: (controller) => HandlingDataView(
+          statusRequest: controller.statusRequest,
+          widget: _MainContent(controller: controller),
+        ),
+      ),
+    );
   }
 }
 
@@ -71,7 +64,7 @@ class _MainContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        _buildHeaderSection(),
+        _buildHeaderSection(context),
 
         // Conditional sliver section based on user vehicles
 
@@ -81,7 +74,7 @@ class _MainContent extends StatelessWidget {
               )
             : _buildCarSelectionSection(context),
 
-        _buildServicesHeader(),
+        _buildServicesHeader(context),
 
         _buildServicesList(),
 
@@ -92,18 +85,22 @@ class _MainContent extends StatelessWidget {
     );
   }
 
-  SliverPadding _buildHeaderSection() {
+  SliverPadding _buildHeaderSection(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       sliver: SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('make_an_order'.tr,
-                style: MyTextStyle.styleBold.copyWith(fontSize: 24)),
+            Text(
+              'make_an_order'.tr,
+              style: MyTextStyle.styleBold(context),
+            ),
             const SizedBox(height: 8),
-            Text('select_your_car'.tr,
-                style: MyTextStyle.bigCapiton.copyWith(color: AppColor.grey)),
+            Text(
+              'select_your_car'.tr,
+              style: MyTextStyle.bigCapiton(context),
+            ),
           ],
         ),
       ),
@@ -126,7 +123,7 @@ class _MainContent extends StatelessWidget {
     );
   }
 
-  SliverPadding _buildServicesHeader() {
+  SliverPadding _buildServicesHeader(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       sliver: SliverToBoxAdapter(
@@ -135,7 +132,7 @@ class _MainContent extends StatelessWidget {
           children: [
             Text(
               'available_services'.tr,
-              style: MyTextStyle.styleBold.copyWith(fontSize: 20),
+              style: MyTextStyle.styleBold(context),
             ),
             _buildSortDropdown(),
           ],
@@ -158,7 +155,7 @@ class _MainContent extends StatelessWidget {
             children: [
               Icon(Icons.arrow_upward_rounded, size: 18, color: AppColor.grey2),
               const SizedBox(width: 8),
-              Text('low_to_high'.tr, style: MyTextStyle.smallBold),
+              Text('low_to_high'.tr, style: MyTextStyle.smallBold(context)),
             ],
           ),
         ),
@@ -169,7 +166,7 @@ class _MainContent extends StatelessWidget {
               Icon(Icons.arrow_downward_rounded,
                   size: 18, color: AppColor.grey2),
               const SizedBox(width: 8),
-              Text('high_to_low'.tr, style: MyTextStyle.smallBold),
+              Text('high_to_low'.tr, style: MyTextStyle.smallBold(context)),
             ],
           ),
         ),
