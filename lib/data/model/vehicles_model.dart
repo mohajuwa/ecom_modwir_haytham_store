@@ -31,17 +31,17 @@ class VehiclesModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vehicle_id'] = this.vehicleId;
-    data['user_id'] = this.userId;
-    data['car_model_id'] = this.carModelId;
-    data['car_make_id'] = this.carMakeId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['vehicle_id'] = vehicleId;
+    data['user_id'] = userId;
+    data['car_model_id'] = carModelId;
+    data['car_make_id'] = carMakeId;
 
-    data['year'] = this.year;
-    data['license_plate_number'] = this.licensePlateNumber;
+    data['year'] = year;
+    data['license_plate_number'] = licensePlateNumber;
 
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
+    data['status'] = status;
+    data['created_at'] = createdAt;
     return data;
   }
 }

@@ -18,11 +18,11 @@ class ServiceNote {
     );
   }
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    data['note_id'] = this.noteId;
-    data['sub_service_id'] = this.subServiceId;
-    data['content'] = this.content;
+    data['note_id'] = noteId;
+    data['sub_service_id'] = subServiceId;
+    data['content'] = content;
     return data;
   }
 }

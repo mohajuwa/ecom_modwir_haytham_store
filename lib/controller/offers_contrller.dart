@@ -11,6 +11,7 @@ class OfferController extends SearchMixController {
 
   List<ItemsModel> data = [];
 
+  @override
   late StatusRequest statusRequest;
 
   getData() async {

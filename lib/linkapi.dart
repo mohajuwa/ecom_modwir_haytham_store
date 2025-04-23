@@ -26,7 +26,7 @@ class AppLink {
   static const String verfiyCodeForPass = "$forgetPasswordLink/verifycode.php";
 
   // ============================ Home  Links ============================//
-  static const String homeLink = "$server";
+  static const String homeLink = server;
   static const String homePage = "$homeLink/";
   static const String offers = "$homeLink/offers.php";
 
@@ -82,10 +82,10 @@ class AppLink {
   static const String ordersDelete = "$ordersLink/delete.php";
 
   // ============================ Orders Rating Links ============================//
-  static const String ratingLink = "$server";
+  static const String ratingLink = server;
   static const String rating = "$ratingLink/rating.php";
 
   // ============================ Notification  Links ============================//
-  static const String notificationLink = "$server";
+  static const String notificationLink = server;
   static const String notificatoin = "$notificationLink/notification.php";
 }

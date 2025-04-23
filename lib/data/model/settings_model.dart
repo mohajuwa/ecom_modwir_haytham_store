@@ -20,12 +20,12 @@ class SettingsModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.settingsId;
-    data['settings_titlehome'] = this.settingsTitle;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = settingsId;
+    data['settings_titlehome'] = settingsTitle;
 
-    data['settings_img'] = this.settingsImg;
-    data['settings_bodyhome'] = this.settingsBody;
+    data['settings_img'] = settingsImg;
+    data['settings_bodyhome'] = settingsBody;
     return data;
   }
 }

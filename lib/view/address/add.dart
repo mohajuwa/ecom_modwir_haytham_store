@@ -51,14 +51,14 @@ class AddressAdd extends StatelessWidget {
                               onPressed: () {
                                 controllerpage.goToPageAddDetailsAddress();
                               },
+                              color: AppColor.primaryColor,
+                              textColor: Colors.white,
                               child: Text(
                                 "إكمال",
                                 style: TextStyle(
                                   fontSize: 18,
                                 ),
                               ),
-                              color: AppColor.primaryColor,
-                              textColor: Colors.white,
                             ),
                           ),
                         ),

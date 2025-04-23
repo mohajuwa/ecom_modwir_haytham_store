@@ -28,12 +28,14 @@ class HomeControllerImp extends HomeController {
 
   String delivetTime = "";
 
+  @override
   HomeData homedata = HomeData(Get.find());
 
   List services = [];
   List items = [];
   bool showAllCategories = false;
 
+  @override
   late StatusRequest statusRequest;
 
   @override

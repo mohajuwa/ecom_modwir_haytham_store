@@ -25,9 +25,9 @@ Future getPolyline(lat, long, destLat, destLong) async {
   List<PointLatLng> result = polylinePoints.decodePolyline(point);
 
   if (result.isNotEmpty) {
-    result.forEach((PointLatLng pointLatLng) {
+    for (var pointLatLng in result) {
       polylineCo.add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
-    });
+    }
   }
 
   Polyline polyline = Polyline(

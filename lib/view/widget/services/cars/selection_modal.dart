@@ -67,13 +67,13 @@ class SelectionModal<T> extends StatefulWidget {
   final bool isDark;
 
   const SelectionModal({
-    Key? key,
+    super.key,
     required this.title,
     required this.items,
     required this.onSelect,
     required this.isDark,
     this.scrollController,
-  }) : super(key: key);
+  });
 
   @override
   State<SelectionModal<T>> createState() => _SelectionModalState<T>();
@@ -257,7 +257,7 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
             Flexible(
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: make.logo!.isNotEmpty
+                child: make.logo.isNotEmpty
                     ? Image.network(
                         "${AppLink.carMakeLogo}/${make.logo}",
                         width: 60,

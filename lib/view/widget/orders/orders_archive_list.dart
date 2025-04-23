@@ -28,7 +28,7 @@ class CardOrderListArchive extends GetView<OrdersArchiveController> {
               ),
               Spacer(),
               Text(
-                "${Jiffy.parse(listData.ordersDatetime!).fromNow()}",
+                Jiffy.parse(listData.ordersDatetime!).fromNow(),
                 style: TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,

@@ -1,5 +1,4 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/settings_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,7 @@ class CustomCardHomeSlider extends StatelessWidget {
   final List<SettingsModel> settingsModels;
 
   const CustomCardHomeSlider(
-      {Key? key, required this.settingsModels, this.isArabic})
-      : super(key: key);
+      {super.key, required this.settingsModels, this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class CustomCardHomeSlider extends StatelessWidget {
                 child: Container(
                   width: screenWidth,
                   decoration: BoxDecoration(
-                    color: AppColor.secondaryColor,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Stack(
@@ -51,48 +49,23 @@ class CustomCardHomeSlider extends StatelessWidget {
                           width: 150,
                           child: Stack(
                             children: [
-                              // 1. الخلفية الدائرية
+                              // Background circle
                               SizedBox(
-                                width: 150, // تحديد العرض
-                                height: 150, // تحديد الارتفاع
+                                width: 150,
+                                height: 150,
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                    color: AppColor.grey,
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                               ),
-
-                              // 2. طبقة اللون الأساسي (لـ AMPER)
+                              // Logo overlay
                               ColorFiltered(
                                 colorFilter: ColorFilter.mode(
-                                  AppColor.accentColor,
-                                  BlendMode
-                                      .srcIn, // يطبق اللون على المناطق البيضاء فقط
-                                ),
-                                child: Image.asset(
-                                  "assets/images/logo.png",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-
-                              // 3. طبقة الرموز السوداء (+/-)
-                              ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  AppColor.accentColor,
-                                  BlendMode.dstIn, // يدمج مع الطبقة السابقة
-                                ),
-                                child: Image.asset(
-                                  "assets/images/logo.png",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-
-                              // 4. طبقة النص الأبيض (For Car Batteries)
-                              ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  AppColor.accentColor,
-                                  BlendMode.dstIn, // يضيء المناطق الداكنة
+                                  Theme.of(context).colorScheme.primary,
+                                  BlendMode.srcIn,
                                 ),
                                 child: Image.asset(
                                   "assets/images/logo.png",
@@ -112,14 +85,16 @@ class CustomCardHomeSlider extends StatelessWidget {
                             fit: BoxFit.fitWidth,
                             alignment: Alignment.topCenter,
                             errorBuilder: (context, error, stackTrace) =>
-                                Container(color: Colors.grey),
+                                Container(
+                                    color:
+                                        Theme.of(context).colorScheme.surface),
                           ),
                         ),
                       // Text content (overlay for image cards)
                       Positioned(
                         top: 10,
                         bottom: 20,
-                        left: isArabic! ? 130 : 30, // تجنب التداخل مع الدائرة
+                        left: isArabic! ? 130 : 30,
                         right: isArabic! ? 30 : 130,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +105,9 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 child: Text(
                                   settingsModel.settingsTitle!,
                                   style: TextStyle(
-                                    color: AppColor.blackColor,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
                                     fontSize: 20,
                                     height: 1.3,
                                   ),
@@ -141,7 +118,8 @@ class CustomCardHomeSlider extends StatelessWidget {
                               Text(
                                 settingsModel.settingsBody!,
                                 style: TextStyle(
-                                  color: AppColor.blackColor,
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),

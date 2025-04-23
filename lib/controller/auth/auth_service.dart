@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/data/datasource/remote/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,6 @@ import 'package:ecom_modwir/data/datasource/remote/auth/signup.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
-import 'package:path/path.dart';
 
 class AuthService extends GetxController {
   final MyServices myServices = Get.find();
@@ -55,14 +55,52 @@ class AuthService extends GetxController {
 
   // For storing the callback to execute after successful auth
   Function? onAuthSuccess;
+  Timer? _loadingTimer;
+
+  final int _loadingTimeoutSeconds = 10; // 30 seconds timeout
 
   @override
   void onClose() {
-    phoneController.dispose();
-    firstNameController.dispose();
-    lastNameController.dispose();
-    otpController.dispose();
+    _loadingTimer?.cancel();
+
+    // Safely dispose controllers
+    try {
+      phoneController.dispose();
+    } catch (e) {
+      // Controller may already be disposed
+    }
+
+    try {
+      firstNameController.dispose();
+    } catch (e) {
+      // Controller may already be disposed
+    }
+
+    try {
+      lastNameController.dispose();
+    } catch (e) {
+      // Controller may already be disposed
+    }
+
+    try {
+      otpController.dispose();
+    } catch (e) {
+      // Controller may already be disposed
+    }
+
     super.onClose();
+  }
+
+  void _startLoadingTimer() {
+    _loadingTimer?.cancel();
+
+    _loadingTimer = Timer(Duration(seconds: _loadingTimeoutSeconds), () {
+      if (isLoading.value) {
+        isLoading.value = false;
+
+        showErrorSnackbar('error'.tr, 'request_timed_out'.tr);
+      }
+    });
   }
 
   void toggleMode() {
@@ -141,6 +179,8 @@ class AuthService extends GetxController {
     if (_dialogContext != null && Navigator.canPop(_dialogContext!)) {
       Navigator.pop(_dialogContext!);
       _dialogContext = null;
+      // Clear the callback to prevent it from being used later
+      onAuthSuccess = null;
     }
   }
 
@@ -227,7 +267,7 @@ class AuthService extends GetxController {
         ),
         const SizedBox(height: 16),
         Text(
-          'code_sent_to'.tr + ' +966${phoneController.text}',
+          '${'code_sent_to'.tr} ${phoneController.text}',
           style: MyTextStyle.meduimBold(context),
         ),
         const SizedBox(height: 24),
@@ -465,25 +505,6 @@ class AuthService extends GetxController {
           decoration: AppDecorations.inputContainer,
           child: Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                height: AppDimensions.inputHeight,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(11),
-                    bottomLeft: Radius.circular(11),
-                  ),
-                  border:
-                      Border(right: BorderSide(color: Colors.grey.shade300)),
-                ),
-                child: Center(
-                  child: Text(
-                    "+966",
-                    style: MyTextStyle.meduimBold(context),
-                  ),
-                ),
-              ),
               Expanded(
                 child: TextField(
                   controller: phoneController,
@@ -539,6 +560,7 @@ class AuthService extends GetxController {
     }
 
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       var response = await loginData.postData(phoneController.text);
@@ -546,6 +568,11 @@ class AuthService extends GetxController {
       if (response['status'] == "success") {
         myServices.sharedPreferences
             .setString("userId", response['data']['user_id'].toString());
+        myServices.sharedPreferences
+            .setString("username", response['data']['full_name'].toString());
+        myServices.sharedPreferences
+            .setString("phone", response['data']['phone'].toString());
+
         isLoginFor.value = true;
         isVerifying.value = true;
       } else {
@@ -554,6 +581,8 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'failed_to_send_code'.tr);
     } finally {
+      _loadingTimer?.cancel();
+
       isLoading.value = false;
     }
   }
@@ -570,6 +599,7 @@ class AuthService extends GetxController {
     }
 
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       var response = await signupData.postData(
@@ -588,6 +618,7 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'failed_to_register'.tr);
     } finally {
+      _loadingTimer?.cancel();
       isLoading.value = false;
     }
   }
@@ -604,6 +635,7 @@ class AuthService extends GetxController {
     }
 
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       var response = await signupData.postData(
@@ -621,6 +653,7 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'failed_to_update_info'.tr);
     } finally {
+      _loadingTimer?.cancel();
       isLoading.value = false;
     }
   }
@@ -632,6 +665,7 @@ class AuthService extends GetxController {
     }
 
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       var response;
@@ -669,12 +703,14 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'invalid_verification_code'.tr);
     } finally {
+      _loadingTimer?.cancel();
       isLoading.value = false;
     }
   }
 
   Future<void> _getCurrentLocation() async {
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       // Check permission
@@ -686,6 +722,8 @@ class AuthService extends GetxController {
 
       if (permission == LocationPermission.deniedForever) {
         showErrorSnackbar('error'.tr, 'location_permission_denied'.tr);
+        _loadingTimer?.cancel();
+
         isLoading.value = false;
         return;
       }
@@ -722,6 +760,7 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'failed_to_get_location'.tr);
     } finally {
+      _loadingTimer?.cancel();
       isLoading.value = false;
     }
   }
@@ -873,6 +912,7 @@ class AuthService extends GetxController {
 
   void _resendCode() async {
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       // Call your resend code API here
@@ -888,12 +928,14 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'failed_to_resend_code'.tr);
     } finally {
+      _loadingTimer?.cancel();
       isLoading.value = false;
     }
   }
 
   void _finalizeAuth() async {
     isLoading.value = true;
+    _startLoadingTimer();
 
     try {
       // Save user data
@@ -930,7 +972,15 @@ class AuthService extends GetxController {
 
       // Execute callback if provided
       if (onAuthSuccess != null) {
-        onAuthSuccess!();
+        // Add a small delay to ensure SharedPreferences has time to persist
+        await Future.delayed(Duration(milliseconds: 100));
+
+        // Create a local reference to the callback before clearing it
+        final callback = onAuthSuccess;
+        onAuthSuccess = null; // Clear the callback reference
+
+        // Now call the callback
+        callback!();
       }
 
       // Close dialog and show success message
@@ -939,27 +989,8 @@ class AuthService extends GetxController {
     } catch (e) {
       showErrorSnackbar('error'.tr, 'authentication_failed'.tr);
     } finally {
+      _loadingTimer?.cancel();
       isLoading.value = false;
     }
-  }
-
-  void showErrorSnackbar(String title, String message) {
-    Get.snackbar(
-      title,
-      message,
-      backgroundColor: Colors.red.withOpacity(0.1),
-      colorText: Colors.red,
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  void showSuccessSnackbar(String title, String message) {
-    Get.snackbar(
-      title,
-      message,
-      backgroundColor: Colors.green.withOpacity(0.1),
-      colorText: Colors.green,
-      snackPosition: SnackPosition.BOTTOM,
-    );
   }
 }

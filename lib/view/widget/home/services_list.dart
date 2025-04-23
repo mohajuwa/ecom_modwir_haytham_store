@@ -1,5 +1,4 @@
 import 'package:ecom_modwir/controller/home_controller.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/sizes_manger.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/data/model/services/services_model.dart';
@@ -11,8 +10,7 @@ import 'package:get/get.dart';
 class ListCategoriesHome extends GetView<HomeControllerImp> {
   final int itemCount;
   final bool? showAll;
-  const ListCategoriesHome({Key? key, this.showAll, required this.itemCount})
-      : super(key: key);
+  const ListCategoriesHome({super.key, this.showAll, required this.itemCount});
 
   @override
   Widget build(BuildContext context) {
@@ -56,25 +54,22 @@ class ListCategoriesHome extends GetView<HomeControllerImp> {
 }
 
 // Modified Services widget
-
 class Services extends GetView<HomeControllerImp> {
   final ServicesModel serviceModel;
-
   final int? i;
 
-  const Services({Key? key, required this.serviceModel, required this.i})
-      : super(key: key);
+  const Services({super.key, required this.serviceModel, required this.i});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: AppSizes.getHight(context, 5)),
       decoration: BoxDecoration(
-        color: AppColor.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColor.grey2.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 2),
@@ -85,7 +80,6 @@ class Services extends GetView<HomeControllerImp> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-// In ListCategoriesHome's Services widget
           onTap: () {
             final serviceId = serviceModel.serviceId.toString();
             controller.navigateToServiceDetails(serviceId);
@@ -99,7 +93,8 @@ class Services extends GetView<HomeControllerImp> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColor.primaryColor.withOpacity(0.1),
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -108,7 +103,7 @@ class Services extends GetView<HomeControllerImp> {
                       width: 35,
                       height: 35,
                       colorFilter: ColorFilter.mode(
-                        AppColor.primaryColor,
+                        Theme.of(context).colorScheme.primary,
                         BlendMode.srcIn,
                       ),
                     ),

@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 class CarMakeSlider extends StatelessWidget {
   final ProductByCarController controller;
 
-  const CarMakeSlider({Key? key, required this.controller}) : super(key: key);
+  const CarMakeSlider({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +96,11 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback onShowAll;
 
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     required this.showAllButton,
     required this.onShowAll,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +178,7 @@ class CarMakeItem extends StatelessWidget {
                 color: isDark ? Color(0xFF1E1E1E) : Colors.white,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: make.logo?.isEmpty ?? true
+              child: make.logo.isEmpty ?? true
                   ? MakeName(name: make.name)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(8),
@@ -203,12 +203,12 @@ class CarModelItem extends StatelessWidget {
   final String lang;
 
   const CarModelItem({
-    Key? key,
+    super.key,
     required this.model,
     required this.isSelected,
     required this.onTap,
     required this.lang,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +256,7 @@ class CarModelItem extends StatelessWidget {
 class MakeName extends StatelessWidget {
   final Map<String, String> name;
 
-  const MakeName({Key? key, required this.name}) : super(key: key);
+  const MakeName({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {

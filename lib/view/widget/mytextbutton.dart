@@ -7,6 +7,7 @@ class MyTextButton extends StatelessWidget {
   final double paddinghorizontal;
   final double paddingvertical;
   final TextStyle? textStyle;
+
   const MyTextButton(
       {super.key,
       required this.text,

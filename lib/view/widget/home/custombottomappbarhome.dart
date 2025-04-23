@@ -1,11 +1,10 @@
 import 'package:ecom_modwir/controller/homescreen_controller.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/view/widget/home/custombuttonappbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomBottomAppBarHome extends StatelessWidget {
-  const CustomBottomAppBarHome({Key? key}) : super(key: key);
+  const CustomBottomAppBarHome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +12,12 @@ class CustomBottomAppBarHome extends StatelessWidget {
       builder: (controller) => Container(
         height: 110,
         decoration: BoxDecoration(
-          color: AppColor.colorTransport,
+          color: Colors.transparent,
           boxShadow: [
             BoxShadow(
-              color: AppColor.blackColor,
-              blurRadius: 15,
-              spreadRadius: 2,
+              color: Theme.of(context).shadowColor,
+              blurRadius: 10,
+              spreadRadius: 1,
             ),
           ],
           borderRadius: const BorderRadius.only(
@@ -32,7 +31,7 @@ class CustomBottomAppBarHome extends StatelessWidget {
             topRight: Radius.circular(20),
           ),
           child: BottomAppBar(
-            color: AppColor.white,
+            color: Theme.of(context).colorScheme.surface,
             shape: const CircularNotchedRectangle(),
             notchMargin: 8,
             child: Row(

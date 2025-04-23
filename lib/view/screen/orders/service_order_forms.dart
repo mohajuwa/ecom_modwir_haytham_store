@@ -79,9 +79,30 @@ class ServiceOrderForm extends StatelessWidget {
     if (isLoggedIn) {
       _showOrderDetailsSheet(context, controller);
     } else {
-      // Show auth dialog and proceed with order after successful auth
+      // Get or create an AuthService instance safely
+      AuthService authService;
+      try {
+        authService = Get.find<AuthService>();
+      } catch (e) {
+        authService = Get.put(AuthService());
+      }
+
+      // Show auth dialog and proceed after successful auth
       authService.showAuthDialog(context, onSuccess: () {
-        _showOrderDetailsSheet(context, controller);
+        // Add a small delay to ensure SharedPreferences has time to persist
+        Future.delayed(Duration(milliseconds: 300), () {
+          // First try to load user vehicles - this must be called first
+          controller.loadUserVehicles().then((_) {
+            // Then load car makes regardless of whether vehicles were found
+            controller.loadCarMakes();
+
+            // Force update to refresh UI
+            controller.update();
+
+            // Force GetX to update the UI in case it missed the controller.update()
+            Get.forceAppUpdate();
+          });
+        });
       });
     }
   }
@@ -242,7 +263,7 @@ class _AttachmentSection extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
         if (controller.attachments.length > 3)
           Padding(
             padding: const EdgeInsets.only(top: 4),

@@ -14,7 +14,7 @@ class SignupData {
 
   getVerfiyCode(String vCode, String phone) async {
     var response = await crud.postData(AppLink.verfiyCodeSignUp, {
-      "verifycode": vCode,
+      "vCode": vCode,
       "phone": phone,
       "isLogin": "0",
     });
@@ -23,7 +23,7 @@ class SignupData {
 
   loginWithOtp(String vCode, String phone) async {
     var response = await crud.postData(AppLink.verfiyCodeSignUp, {
-      "verifycode": vCode,
+      "vCode": vCode,
       "phone": phone,
       "isLogin": "1",
     });

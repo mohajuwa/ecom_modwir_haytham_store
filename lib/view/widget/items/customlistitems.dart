@@ -13,10 +13,10 @@ class CustomListItems extends GetView<ProductByCarController> {
   final ItemsModel itemsModel;
   // final bool active;
   const CustomListItems({
-    Key? key,
+    super.key,
     required this.itemsModel,
     // required this.active,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +36,7 @@ class CustomListItems extends GetView<ProductByCarController> {
                   Hero(
                     tag: "${itemsModel.itemsId}",
                     child: CachedNetworkImage(
-                      imageUrl: AppLink.vehiclesImgLink +
-                          "/" +
-                          itemsModel.itemsImage!,
+                      imageUrl: "${AppLink.vehiclesImgLink}/${itemsModel.itemsImage!}",
                       height: 90,
                       fit: BoxFit.fill,
                     ),
@@ -64,7 +62,7 @@ class CustomListItems extends GetView<ProductByCarController> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        "${controller} Menute/s",
+                        "$controller Menute/s",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: "sans",
@@ -72,7 +70,7 @@ class CustomListItems extends GetView<ProductByCarController> {
                       ),
                     ],
                   ),
-                  Container(
+                  SizedBox(
                     height: 27,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

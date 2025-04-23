@@ -74,8 +74,8 @@ class ProductByCarController extends GetxController {
 
     try {
       await initializeData();
-      await _loadUserVehicles();
-      await _loadCarMakes();
+      await loadUserVehicles();
+      await loadCarMakes();
       _setDefaultSelections();
       _initScrollController();
 
@@ -99,12 +99,6 @@ class ProductByCarController extends GetxController {
       scrollController!.dispose();
     }
     super.onClose();
-  }
-
-  // Toggle theme
-  void toggleTheme() {
-    isDarkMode.value = !isDarkMode.value;
-    update();
   }
 
   // Initialize data and services
@@ -135,7 +129,7 @@ class ProductByCarController extends GetxController {
     scrollController = FixedExtentScrollController(initialItem: safeIndex);
   }
 
-  Future<void> _loadUserVehicles() async {
+  Future<void> loadUserVehicles() async {
     try {
       final userId = myServices.sharedPreferences.getString("userId");
       if (userId == null || userId.isEmpty) return;
@@ -172,7 +166,7 @@ class ProductByCarController extends GetxController {
     }
   }
 
-  Future<void> _loadCarMakes() async {
+  Future<void> loadCarMakes() async {
     try {
       final result = await serviceItemsData.getCarMakes(lang);
 
@@ -318,7 +312,7 @@ class ProductByCarController extends GetxController {
     try {
       if (carMakes.isNotEmpty) {
         selectedMakeIndex.value = 0;
-        if (carMakes[0].models?.isNotEmpty ?? false) {
+        if (carMakes[0].models.isNotEmpty ?? false) {
           selectedModelIndex.value = 0;
         }
       } else {
@@ -346,7 +340,7 @@ class ProductByCarController extends GetxController {
       // Reset make/model selections
       if (carMakes.isNotEmpty) {
         selectedMakeIndex.value = 0;
-        if (carMakes[0].models != null && carMakes[0].models!.isNotEmpty) {
+        if (carMakes[0].models.isNotEmpty) {
           selectedModelIndex.value = 0;
         } else {
           selectedModelIndex.value = -1;
@@ -379,7 +373,7 @@ class ProductByCarController extends GetxController {
       showAddCarForm.value = true;
 
       // Load make and model
-      _setVehicleMakeAndModel(vehicle.makeId!, vehicle.modelId!);
+      _setVehicleMakeAndModel(vehicle.makeId, vehicle.modelId);
 
       // Set year
       selectedYear = vehicle.year;
@@ -482,7 +476,7 @@ class ProductByCarController extends GetxController {
     if (index >= 0 && index < carMakes.length) {
       selectedMakeIndex.value = index;
       selectedModelIndex.value =
-          carMakes[index].models?.isNotEmpty == true ? 0 : -1;
+          carMakes[index].models.isNotEmpty == true ? 0 : -1;
 
       // Reload product_by_car data when car make changes
       _loadProductByCar();
@@ -577,9 +571,7 @@ class ProductByCarController extends GetxController {
   // Vehicle CRUD operations
   Future<void> saveVehicle() async {
     try {
-      if (selectedMakeIndex.value < 0 ||
-          selectedModelIndex.value < 0 ||
-          selectedYear == null) {
+      if (selectedMakeIndex.value < 0 || selectedModelIndex.value < 0) {
         showErrorSnackbar('error'.tr, 'please_complete_all_fields'.tr);
         return;
       }
@@ -852,11 +844,6 @@ class ProductByCarController extends GetxController {
       return false;
     }
 
-    if (selectedYear == null) {
-      showErrorSnackbar('error'.tr, 'please_select_car_year'.tr);
-      return false;
-    }
-
     return true;
   }
 
@@ -881,6 +868,6 @@ class ProductByCarController extends GetxController {
   void retryLoading() {
     statusRequest = StatusRequest.loading;
     update();
-    _loadCarMakes().then((_) => _setDefaultSelections());
+    loadCarMakes().then((_) => _setDefaultSelections());
   }
 }

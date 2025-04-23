@@ -13,10 +13,10 @@ class CustomListItemsOffer extends GetView<OfferController> {
   final ItemsModel itemsModel;
   // final bool active;
   const CustomListItemsOffer({
-    Key? key,
+    super.key,
     required this.itemsModel,
     // required this.active,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,7 @@ class CustomListItemsOffer extends GetView<OfferController> {
                   Hero(
                     tag: "${itemsModel.itemsId}",
                     child: CachedNetworkImage(
-                      imageUrl: AppLink.vehiclesImgLink +
-                          "/" +
-                          itemsModel.itemsImage!,
+                      imageUrl: "${AppLink.vehiclesImgLink}/${itemsModel.itemsImage!}",
                       height: 100,
                       fit: BoxFit.fill,
                     ),
@@ -50,7 +48,7 @@ class CustomListItemsOffer extends GetView<OfferController> {
                           color: AppColor.blackColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold)),
-                  Container(
+                  SizedBox(
                     height: 27,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

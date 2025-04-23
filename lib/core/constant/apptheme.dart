@@ -17,7 +17,6 @@ class AppTheme {
         primary: AppColor.primaryColor,
         secondary: AppColor.secondaryColor,
         surface: Colors.white,
-        background: AppColor.backgroundColor,
         error: AppColor.deleteColor,
       ),
       
@@ -113,7 +112,6 @@ class AppTheme {
         primary: AppColor.primaryColor,
         secondary: AppColor.secondaryColor,
         surface: Color(0xFF1E1E1E),
-        background: Color(0xFF121212),
         error: AppColor.deleteColor,
       ),
       

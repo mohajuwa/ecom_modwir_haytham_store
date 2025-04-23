@@ -54,23 +54,23 @@ class MyFavoriteModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['favorite_id'] = this.favoriteId;
-    data['favorite_usersid'] = this.favoriteUsersid;
-    data['favorite_itemsid'] = this.favoriteItemsid;
-    data['items_id'] = this.itemsId;
-    data['items_cat'] = this.itemsCat;
-    data['items_name'] = this.itemsName;
-    data['items_name_ar'] = this.itemsNameAr;
-    data['items_desc'] = this.itemsDesc;
-    data['items_desc_ar'] = this.itemsDescAr;
-    data['items_image'] = this.itemsImage;
-    data['items_count'] = this.itemsCount;
-    data['items_active'] = this.itemsActive;
-    data['items_price'] = this.itemsPrice;
-    data['items_discount'] = this.itemsDiscount;
-    data['items_date'] = this.itemsDate;
-    data['users_id'] = this.usersId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['favorite_id'] = favoriteId;
+    data['favorite_usersid'] = favoriteUsersid;
+    data['favorite_itemsid'] = favoriteItemsid;
+    data['items_id'] = itemsId;
+    data['items_cat'] = itemsCat;
+    data['items_name'] = itemsName;
+    data['items_name_ar'] = itemsNameAr;
+    data['items_desc'] = itemsDesc;
+    data['items_desc_ar'] = itemsDescAr;
+    data['items_image'] = itemsImage;
+    data['items_count'] = itemsCount;
+    data['items_active'] = itemsActive;
+    data['items_price'] = itemsPrice;
+    data['items_discount'] = itemsDiscount;
+    data['items_date'] = itemsDate;
+    data['users_id'] = usersId;
     return data;
   }
 }

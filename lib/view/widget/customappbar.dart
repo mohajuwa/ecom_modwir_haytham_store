@@ -1,4 +1,3 @@
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -11,13 +10,13 @@ class CustomAppBar extends StatelessWidget {
   final TextEditingController mycontroller;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.titleappbar,
     this.onPressedSearch,
     required this.oeTapIconVehicle,
     this.onChanged,
     required this.mycontroller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +24,16 @@ class CustomAppBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -35,19 +42,29 @@ class CustomAppBar extends StatelessWidget {
             child: Row(
               children: [
                 const SizedBox(width: 5),
-                const FaIcon(
+                FaIcon(
                   FontAwesomeIcons.magnifyingGlassLocation,
                   size: 35,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: SizedBox(
                     width: 250, // Adjust width as needed
                     child: TextFormField(
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                       onChanged: onChanged,
                       controller: mycontroller,
                       decoration: InputDecoration(
                         hintText: "search_here".tr,
+                        hintStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.6),
+                        ),
                         border: InputBorder.none,
                       ),
                     ),
@@ -62,17 +79,13 @@ class CustomAppBar extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(40),
               ),
-              child: Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.car,
-                    color: AppColor.primaryColor,
-                    size: 25,
-                  ),
-                ],
+              child: FaIcon(
+                FontAwesomeIcons.car,
+                color: Theme.of(context).colorScheme.primary,
+                size: 25,
               ),
             ),
           ),

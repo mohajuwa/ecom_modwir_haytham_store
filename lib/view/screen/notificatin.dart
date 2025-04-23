@@ -45,7 +45,7 @@ class NotificatoinView extends StatelessWidget {
                               Positioned(
                                 right: 5,
                                 child: Text(
-                                  "${Jiffy.parse(controller.data[index]['notification_datetime']).fromNow()}",
+                                  Jiffy.parse(controller.data[index]['notification_datetime']).fromNow(),
                                   style:  TextStyle(
                                     color: AppColor.primaryColor,
                                     fontWeight: FontWeight.bold,

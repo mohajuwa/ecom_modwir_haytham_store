@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/controller/home_controller.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/itemsmodel.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ListItemsHome extends GetView<HomeControllerImp> {
-  const ListItemsHome({Key? key}) : super(key: key);
+  const ListItemsHome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class ListItemsHome extends GetView<HomeControllerImp> {
           if (_isValidImage(item['items_image'])) {
             return ItemsHome(itemsModel: ItemsModel.fromJson(item));
           }
-          return _buildInvalidImageWidget();
+          return _buildInvalidImageWidget(context);
         },
       ),
     );
@@ -35,17 +34,21 @@ class ListItemsHome extends GetView<HomeControllerImp> {
         url.endsWith('.jpeg');
   }
 
-  Widget _buildInvalidImageWidget() {
+  Widget _buildInvalidImageWidget(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: const Icon(Icons.error, size: 60, color: Colors.red),
+      child: Icon(
+        Icons.error,
+        size: 60,
+        color: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 }
 
 class ItemsHome extends GetView<HomeControllerImp> {
   final ItemsModel itemsModel;
-  const ItemsHome({Key? key, required this.itemsModel}) : super(key: key);
+  const ItemsHome({super.key, required this.itemsModel});
 
   @override
   Widget build(BuildContext context) {
@@ -66,21 +69,30 @@ class ItemsHome extends GetView<HomeControllerImp> {
               fit: BoxFit.fill,
               memCacheHeight: 150,
               memCacheWidth: 150,
-              placeholder: (context, url) => const CircularProgressIndicator(),
+              placeholder: (context, url) => CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
               errorWidget: (context, url, error) {
                 debugPrint("Image Error: $error");
-                return const Icon(Icons.broken_image, size: 50);
+                return Icon(
+                  Icons.broken_image,
+                  size: 50,
+                  color: Theme.of(context).colorScheme.error,
+                );
               },
               imageBuilder: (context, imageProvider) => Image(
                 image: imageProvider,
-                errorBuilder: (_, __, ___) => const Icon(Icons.error),
+                errorBuilder: (_, __, ___) => Icon(
+                  Icons.error,
+                  color: Theme.of(context).colorScheme.error,
+                ),
               ),
             ),
           ),
-          // Keep your original overlay and text
+          // Overlay with theme-aware colors
           Container(
             decoration: BoxDecoration(
-              color: AppColor.blackColor.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
               borderRadius: BorderRadius.circular(20),
             ),
             height: 120,
@@ -90,8 +102,8 @@ class ItemsHome extends GetView<HomeControllerImp> {
             left: 10,
             child: Text(
               "${itemsModel.itemsName}",
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 14,
               ),
             ),

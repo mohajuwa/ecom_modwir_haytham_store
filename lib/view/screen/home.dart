@@ -1,6 +1,5 @@
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/widget/customappbar.dart';
@@ -13,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +24,9 @@ class HomePage extends StatelessWidget {
       bool isArabic = language == "ar";
 
       return Scaffold(
-        backgroundColor: AppColor.backgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Container(
-          margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
           child: ListView(
             children: [
               CustomAppBar(
@@ -79,9 +78,7 @@ class HomePage extends StatelessWidget {
                       ),
                       ListItemsHome(),
                     ],
-                  )
-                  // : ListItemsSearch(listServicesModel: controller.listdata),
-                  ),
+                  )),
             ],
           ),
         ),
@@ -89,63 +86,3 @@ class HomePage extends StatelessWidget {
     });
   }
 }
-
-// class ListItemsSearch extends GetView<HomeControllerImp> {
-//   final List<ServicesModel> listServicesModel;
-//   final int? indexService;
-
-//   const ListItemsSearch(this.indexService,
-//       {Key? key, required this.listServicesModel})
-//       : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       itemCount: listServicesModel.length,
-//       shrinkWrap: true,
-//       physics: const NeverScrollableScrollPhysics(),
-//       itemBuilder: (context, index) {
-//         return InkWell(
-//           onTap: () {
-//             controller.goToListServices(listServicesModel[index], indexService!,
-//                 listServicesModel[index].serviceId.toString());
-//           },
-//           child: Container(
-//             margin: const EdgeInsets.symmetric(vertical: 20),
-//             child: Card(
-//               child: Container(
-//                 padding: const EdgeInsets.all(10),
-//                 child: Row(
-//                   children: [
-//                     Expanded(
-//                       child: CachedNetworkImage(
-//                         imageUrl:
-//                             "${AppLink.vehiclesImgLink}/${listServicesModel[index].serviceImg}",
-//                         placeholder: (context, url) =>
-//                             const CircularProgressIndicator(),
-//                         errorWidget: (context, url, error) =>
-//                             const Icon(Icons.broken_image),
-//                         fit: BoxFit.cover,
-//                       ),
-//                     ),
-//                     Expanded(
-//                       flex: 2,
-//                       child: ListTile(
-//                         title: Text(
-//                           listServicesModel[index].serviceName!,
-//                         ),
-//                         subtitle: Text(
-//                           listServicesModel[index].serviceName!,
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

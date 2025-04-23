@@ -266,11 +266,6 @@ class CarInfoWidget extends StatelessWidget {
       return;
     }
 
-    if (controller.selectedYear == null) {
-      Get.snackbar('error'.tr, 'please_select_year'.tr);
-      return;
-    }
-
     // Get license plate data
     final licensePlateJson =
         controller.licensePlateController.getLicensePlateJson();

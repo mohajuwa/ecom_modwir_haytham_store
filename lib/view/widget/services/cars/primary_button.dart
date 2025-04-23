@@ -18,13 +18,13 @@ class PrimaryButton extends StatelessWidget {
   final Color? textColor;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onTap,
     this.isLoading = false,
     this.backgroundColor,
     this.textColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

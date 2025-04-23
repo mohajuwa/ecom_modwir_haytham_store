@@ -34,12 +34,6 @@ class ProductByCarScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(controller.isDarkMode.value
-                ? Icons.light_mode
-                : Icons.dark_mode),
-            onPressed: controller.toggleTheme,
-          ),
-          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => controller.initializeData(),
           ),
