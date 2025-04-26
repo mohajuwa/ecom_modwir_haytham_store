@@ -11,7 +11,7 @@ class AppTheme {
       primaryColor: AppColor.primaryColor,
       scaffoldBackgroundColor: AppColor.backgroundColor,
       fontFamily: "El_Messiri",
-      
+
       // Color scheme
       colorScheme: ColorScheme.light(
         primary: AppColor.primaryColor,
@@ -19,7 +19,7 @@ class AppTheme {
         surface: Colors.white,
         error: AppColor.deleteColor,
       ),
-      
+
       // App bar theme
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
@@ -33,7 +33,7 @@ class AppTheme {
           fontFamily: "El_Messiri",
         ),
       ),
-      
+
       // Text theme
       textTheme: TextTheme(
         displayLarge: TextStyle(
@@ -55,7 +55,7 @@ class AppTheme {
           color: AppColor.grey,
         ),
       ),
-      
+
       // Button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -66,7 +66,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
@@ -85,7 +85,7 @@ class AppTheme {
         fillColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      
+
       // Card theme
       cardTheme: CardTheme(
         color: Colors.white,
@@ -106,15 +106,16 @@ class AppTheme {
       primaryColor: AppColor.primaryColor,
       scaffoldBackgroundColor: Color(0xFF121212),
       fontFamily: "El_Messiri",
-      
+
       // Color scheme
       colorScheme: ColorScheme.dark(
         primary: AppColor.primaryColor,
         secondary: AppColor.secondaryColor,
         surface: Color(0xFF1E1E1E),
+        surfaceBright: Color(0xFF443E3E),
         error: AppColor.deleteColor,
       ),
-      
+
       // App bar theme
       appBarTheme: AppBarTheme(
         backgroundColor: Color(0xFF1E1E1E),
@@ -128,7 +129,7 @@ class AppTheme {
           fontFamily: "El_Messiri",
         ),
       ),
-      
+
       // Text theme
       textTheme: TextTheme(
         displayLarge: TextStyle(
@@ -150,7 +151,7 @@ class AppTheme {
           color: Colors.grey[400],
         ),
       ),
-      
+
       // Button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -161,7 +162,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
@@ -180,7 +181,7 @@ class AppTheme {
         fillColor: Color(0xFF2A2A2A),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      
+
       // Card theme
       cardTheme: CardTheme(
         color: Color(0xFF1E1E1E),

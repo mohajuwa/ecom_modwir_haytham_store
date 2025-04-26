@@ -1,5 +1,6 @@
 import 'package:ecom_modwir/controller/address/view_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/data/model/address_model.dart';
 import 'package:flutter/material.dart';
@@ -25,19 +26,16 @@ class AddressView extends StatelessWidget {
         body: GetBuilder<AddressViewController>(
           builder: (controller) => HandlingDataView(
             statusRequest: controller.statusRequest,
-            widget: Container(
-              child: ListView.builder(
-                itemCount: controller.data.length,
-                itemBuilder: (context, i) {
-                  return CardAddress(
-                    addressModel: controller.data[i],
-                    onDelete: () {
-                      controller
-                          .deleteAddress(controller.data[i].Id.toString());
-                    },
-                  );
-                },
-              ),
+            widget: ListView.builder(
+              itemCount: controller.data.length,
+              itemBuilder: (context, i) {
+                return CardAddress(
+                  addressModel: controller.data[i],
+                  onDelete: () {
+                    controller.deleteAddress(controller.data[i].Id.toString());
+                  },
+                );
+              },
             ),
           ),
         ));
@@ -57,9 +55,23 @@ class CardAddress extends StatelessWidget {
         child: ListTile(
           title: Text(addressModel.Name.toString()),
           subtitle: Text("${addressModel.City!} ${addressModel.Street}"),
-          trailing: IconButton(
-            onPressed: onDelete,
-            icon: Icon(Icons.delete_outline),
+          trailing: GetBuilder<AddressViewController>(
+            builder: (controller) =>
+                controller.statusRequest == StatusRequest.loading
+                    ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      )
+                    : IconButton(
+                        onPressed: onDelete,
+                        icon: Icon(Icons.delete_outline),
+                      ),
           ),
         ),
       ),

@@ -21,7 +21,7 @@ class NotificationController extends GetxController {
     update();
 
     var response = await notificationData
-        .getData(myServices.sharedPreferences.getString("id")!);
+        .getData(myServices.sharedPreferences.getString("userId")!);
     print("=================== Notifacation Orders Controller $response ");
     statusRequest = handlingData(response);
     if (StatusRequest.success == statusRequest) {

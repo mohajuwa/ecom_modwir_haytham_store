@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/settings_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
@@ -55,17 +56,43 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 height: 150,
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceBright,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                               ),
-                              // Logo overlay
+                              // 2. طبقة اللون الأساسي (لـ AMPER)
                               ColorFiltered(
                                 colorFilter: ColorFilter.mode(
-                                  Theme.of(context).colorScheme.primary,
-                                  BlendMode.srcIn,
+                                  AppColor.accentColor,
+                                  BlendMode
+                                      .srcIn, // يطبق اللون على المناطق البيضاء فقط
+                                ),
+                                child: Image.asset(
+                                  "assets/images/logo.png",
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+
+                              // 3. طبقة الرموز السوداء (+/-)
+                              ColorFiltered(
+                                colorFilter: ColorFilter.mode(
+                                  AppColor.accentColor,
+                                  BlendMode.dstIn, // يدمج مع الطبقة السابقة
+                                ),
+                                child: Image.asset(
+                                  "assets/images/logo.png",
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+
+                              // 4. طبقة النص الأبيض (For Car Batteries)
+                              ColorFiltered(
+                                colorFilter: ColorFilter.mode(
+                                  AppColor.accentColor,
+                                  BlendMode.dstIn, // يضيء المناطق الداكنة
                                 ),
                                 child: Image.asset(
                                   "assets/images/logo.png",

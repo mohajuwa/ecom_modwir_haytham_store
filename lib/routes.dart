@@ -6,11 +6,14 @@ import 'package:ecom_modwir/view/address/edit.dart';
 import 'package:ecom_modwir/view/address/view.dart';
 
 import 'package:ecom_modwir/view/screen/checkout.dart';
+import 'package:ecom_modwir/view/screen/help/help_support_page.dart';
 import 'package:ecom_modwir/view/screen/homescreen.dart';
 import 'package:ecom_modwir/view/screen/onboarding.dart';
+import 'package:ecom_modwir/view/screen/orders/all_orders.dart';
 import 'package:ecom_modwir/view/screen/orders/archive.dart';
 import 'package:ecom_modwir/view/screen/orders/details.dart';
 import 'package:ecom_modwir/view/screen/orders/pending.dart';
+import 'package:ecom_modwir/view/screen/profile/profile_page.dart';
 import 'package:ecom_modwir/view/screen/services_details.dart';
 import 'package:ecom_modwir/view/widget/orders/order_tracking.dart';
 import 'package:get/get.dart';
@@ -45,6 +48,10 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.archiveOrders, page: () => const OrdersArchiveView()),
   GetPage(name: AppRoute.trackingOrders, page: () => const OrdersTracking()),
   GetPage(name: AppRoute.detailsOrders, page: () => const OrdersDetails()),
+
+  GetPage(name: '/profile', page: () => const ProfilePage()),
+  GetPage(name: '/help', page: () => const HelpSupportPage()),
+  GetPage(name: AppRoute.allOrders, page: () => const AllOrdersView()),
 
   // Home
   GetPage(name: AppRoute.addressview, page: () => const AddressView()),

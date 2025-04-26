@@ -37,7 +37,7 @@ class AddAddressDetailsController extends GetxController {
     update();
 
     var response = await addressData.addData(
-        myServices.sharedPreferences.getString("id")!,
+        myServices.sharedPreferences.getString("userId")!,
         name!.text,
         city!.text,
         street!.text,

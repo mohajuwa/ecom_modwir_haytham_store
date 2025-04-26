@@ -1,5 +1,6 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
+import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
 import 'package:ecom_modwir/data/model/address_model.dart';
@@ -14,17 +15,43 @@ class AddressViewController extends GetxController {
 
   MyServices myServices = Get.find();
 
-  deleteAddress(String addressId) {
-    addressData.deleteData(addressId);
-    data.removeWhere((element) => element.Id == addressId);
-    update();
+  Future<void> deleteAddress(String addressId) async {
+    try {
+      // Show loading indicator while waiting for API response
+      statusRequest = StatusRequest.loading;
+      update();
+
+      // Call API to delete address
+      var response = await addressData.deleteData(addressId);
+
+      if (response['status'] == "success") {
+        // Remove the address from the local list
+        data.removeWhere((element) => element.Id.toString() == addressId);
+
+        // Check if data is empty after deletion
+        if (data.isEmpty) {
+          statusRequest = StatusRequest.failure;
+        } else {
+          statusRequest = StatusRequest.success;
+        }
+      } else {
+        // Show error message
+        showErrorSnackbar('error'.tr, 'failed_to_delete_address'.tr);
+        statusRequest = StatusRequest.failure;
+      }
+    } catch (e) {
+      print("Error deleting address: $e");
+      statusRequest = StatusRequest.serverFailure;
+    } finally {
+      update();
+    }
   }
 
   getData() async {
     statusRequest = StatusRequest.loading;
 
     var response = await addressData
-        .getData(myServices.sharedPreferences.getString("id")!);
+        .getData(myServices.sharedPreferences.getString("userId")!);
 
     print("=====================View Address Controller $response ");
 

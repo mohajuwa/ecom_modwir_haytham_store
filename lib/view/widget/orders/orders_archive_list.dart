@@ -20,7 +20,7 @@ class CardOrderListArchive extends GetView<OrdersArchiveController> {
           Row(
             children: [
               Text(
-                "Order Number : #${listData.ordersId}",
+                "Order Number : #${listData.orderId}",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -28,7 +28,7 @@ class CardOrderListArchive extends GetView<OrdersArchiveController> {
               ),
               Spacer(),
               Text(
-                Jiffy.parse(listData.ordersDatetime!).fromNow(),
+                Jiffy.parse(listData.orderDate!).fromNow(),
                 style: TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
@@ -38,18 +38,18 @@ class CardOrderListArchive extends GetView<OrdersArchiveController> {
           ),
           Divider(),
           Text(
-              "Order Type : ${controller.printOrderType(listData.ordersType.toString())}"),
-          Text("Order Price : ${listData.ordersPrice} \$"),
+              "Order Type : ${controller.printOrderType(listData.orderType.toString())}"),
+          Text("Order Price : ${listData.totalAmount} \$"),
           Text("Delivery Price : ${listData.ordersPricedelivery} \$"),
           Text(
               "Payment Method : ${controller.printPaymentMethod(listData.ordersPaymentmethod.toString())}"),
           Text(
-              "Order Status : ${controller.printOrderStatus(listData.ordersStatus.toString())}"),
+              "Order Status : ${controller.printOrderStatus(listData.orderStatus.toString())}"),
           Divider(),
           Row(
             children: [
               Text(
-                "Total Price : ${listData.ordersTotalprice} \$ ",
+                "Total Price : ${listData.totalAmount} \$ ",
                 style: TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
@@ -70,10 +70,10 @@ class CardOrderListArchive extends GetView<OrdersArchiveController> {
                 textColor: AppColor.secondaryColor,
                 child: const Text("Details"),
               ),
-              if (listData.ordersRating == 0)
+              if (listData.orderStatus == 0)
                 MaterialButton(
                   onPressed: () {
-                    showDialogRating(context, listData.ordersId.toString());
+                    showDialogRating(context, listData.orderId.toString());
                   },
                   color: AppColor.thirdColor,
                   textColor: AppColor.secondaryColor,

@@ -1,92 +1,116 @@
 class OrdersModel {
-  int? ordersId;
-  int? ordersUsersid;
+  int? orderId;
+  int? orderNumber;
+  int? userId;
   int? ordersAddress;
-  int? ordersType;
-  int? ordersPricedelivery;
+  int? vendorId;
+  int? vehicleId;
+  int? serviceId;
+  String? faultType;
+  String? orderStatus;
+  int? orderType;
   int? ordersPaymentmethod;
-  int? ordersPrice;
-  int? ordersCoupon;
-  int? ordersRating;
-  String? ordersNoterating;
-  int? ordersTotalprice;
-  int? ordersStatus;
-  String? ordersDatetime;
+  int? ordersPricedelivery;
+  String? orderDate;
+  String? totalAmount;
+  String? workshopAmount;
+  String? appCommission;
+  String? paymentStatus;
+  Null? notes;
   int? addressId;
-  int? addressUsersid;
+  int? addressUserId;
   String? addressName;
-  String? addressCity;
   String? addressStreet;
-  double? addressLat;
-  double? addressLong;
+  String? addressCity;
+  double? addressLatitude;
+  double? addressLongitude;
+  int? addressStatus;
 
   OrdersModel(
-      {this.ordersId,
-      this.ordersUsersid,
+      {this.orderId,
+      this.orderNumber,
+      this.userId,
       this.ordersAddress,
-      this.ordersType,
-      this.ordersPricedelivery,
+      this.vendorId,
+      this.vehicleId,
+      this.serviceId,
+      this.faultType,
+      this.orderStatus,
+      this.orderType,
       this.ordersPaymentmethod,
-      this.ordersPrice,
-      this.ordersCoupon,
-      this.ordersRating,
-      this.ordersNoterating,
-      this.ordersTotalprice,
-      this.ordersStatus,
-      this.ordersDatetime,
+      this.ordersPricedelivery,
+      this.orderDate,
+      this.totalAmount,
+      this.workshopAmount,
+      this.appCommission,
+      this.paymentStatus,
+      this.notes,
       this.addressId,
-      this.addressUsersid,
+      this.addressUserId,
       this.addressName,
-      this.addressCity,
       this.addressStreet,
-      this.addressLat,
-      this.addressLong});
+      this.addressCity,
+      this.addressLatitude,
+      this.addressLongitude,
+      this.addressStatus});
 
   OrdersModel.fromJson(Map<String, dynamic> json) {
-    ordersId = json['orders_id'];
-    ordersUsersid = json['orders_usersid'];
+    orderId = json['order_id'];
+    orderNumber = json['order_number'];
+    userId = json['user_id'];
     ordersAddress = json['orders_address'];
-    ordersType = json['orders_type'];
-    ordersPricedelivery = json['orders_pricedelivery'];
+    vendorId = json['vendor_id'];
+    vehicleId = json['vehicle_id'];
+    serviceId = json['service_id'];
+    faultType = json['fault_type'];
+    orderStatus = json['order_status'];
+    orderType = json['order_type'];
     ordersPaymentmethod = json['orders_paymentmethod'];
-    ordersPrice = json['orders_price'];
-    ordersCoupon = json['orders_coupon'];
-    ordersRating = json['orders_rating'];
-    ordersNoterating = json['orders_noterating'];
-    ordersTotalprice = json['orders_totalprice'];
-    ordersStatus = json['orders_status'];
-    ordersDatetime = json['orders_datetime'];
+    ordersPricedelivery = json['orders_pricedelivery'];
+    orderDate = json['order_date'];
+    totalAmount = json['total_amount'];
+    workshopAmount = json['workshop_amount'];
+    appCommission = json['app_commission'];
+    paymentStatus = json['payment_status'];
+    notes = json['notes'];
     addressId = json['address_id'];
-    addressUsersid = json['address_usersid'];
+    addressUserId = json['address_user_id'];
     addressName = json['address_name'];
-    addressCity = json['address_city'];
     addressStreet = json['address_street'];
-    addressLat = json['address_lat'];
-    addressLong = json['address_long'];
+    addressCity = json['address_city'];
+    addressLatitude = json['address_latitude'];
+    addressLongitude = json['address_longitude'];
+    addressStatus = json['address_status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['orders_id'] = ordersId;
-    data['orders_usersid'] = ordersUsersid;
+    data['order_id'] = orderId;
+    data['order_number'] = orderNumber;
+    data['user_id'] = userId;
     data['orders_address'] = ordersAddress;
-    data['orders_type'] = ordersType;
-    data['orders_pricedelivery'] = ordersPricedelivery;
+    data['vendor_id'] = vendorId;
+    data['vehicle_id'] = vehicleId;
+    data['service_id'] = serviceId;
+    data['fault_type'] = faultType;
+    data['order_status'] = orderStatus;
+    data['order_type'] = orderType;
     data['orders_paymentmethod'] = ordersPaymentmethod;
-    data['orders_price'] = ordersPrice;
-    data['orders_coupon'] = ordersCoupon;
-    data['orders_rating'] = ordersRating;
-    data['orders_noterating'] = ordersNoterating;
-    data['orders_totalprice'] = ordersTotalprice;
-    data['orders_status'] = ordersStatus;
-    data['orders_datetime'] = ordersDatetime;
+    data['orders_pricedelivery'] = ordersPricedelivery;
+    data['order_date'] = orderDate;
+    data['total_amount'] = totalAmount;
+    data['workshop_amount'] = workshopAmount;
+    data['app_commission'] = appCommission;
+    data['payment_status'] = paymentStatus;
+    data['notes'] = notes;
     data['address_id'] = addressId;
-    data['address_usersid'] = addressUsersid;
+    data['address_user_id'] = addressUserId;
     data['address_name'] = addressName;
-    data['address_city'] = addressCity;
     data['address_street'] = addressStreet;
-    data['address_lat'] = addressLat;
-    data['address_long'] = addressLong;
+    data['address_city'] = addressCity;
+    data['address_latitude'] = addressLatitude;
+    data['address_longitude'] = addressLongitude;
+    data['address_status'] = addressStatus;
     return data;
   }
 }

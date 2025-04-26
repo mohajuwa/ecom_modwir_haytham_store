@@ -53,7 +53,7 @@ class CheckoutController extends GetxController {
     statusRequest = StatusRequest.loading;
 
     var response = await addressData
-        .getData(myServices.sharedPreferences.getString("id")!);
+        .getData(myServices.sharedPreferences.getString("userId")!);
 
     print("=====================ChView Address Controller $response ");
 

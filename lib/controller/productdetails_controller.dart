@@ -34,7 +34,7 @@ class ProductDetailsControllerImp extends ProductDetailsController {
     statusRequest = StatusRequest.loading;
 
     var response = await cartData.getCountItems(
-        myServices.sharedPreferences.getString("id")!, itemsid);
+        myServices.sharedPreferences.getString("userId")!, itemsid);
     print("=============================== Controller $response ");
     statusRequest = handlingData(response);
     if (StatusRequest.success == statusRequest) {
@@ -56,7 +56,7 @@ class ProductDetailsControllerImp extends ProductDetailsController {
     statusRequest = StatusRequest.loading;
     update();
     var response = await cartData.addCart(
-        myServices.sharedPreferences.getString("id")!, itemsid);
+        myServices.sharedPreferences.getString("userId")!, itemsid);
     print("=============================== ControllerProdDet $response ");
     statusRequest = handlingData(response);
     if (StatusRequest.success == statusRequest) {
@@ -79,7 +79,7 @@ class ProductDetailsControllerImp extends ProductDetailsController {
     update();
 
     var response = await cartData.deleteCart(
-        myServices.sharedPreferences.getString("id")!, itemsid);
+        myServices.sharedPreferences.getString("userId")!, itemsid);
     print("=============================== ControllerDetails $response ");
     statusRequest = handlingData(response);
     if (StatusRequest.success == statusRequest) {

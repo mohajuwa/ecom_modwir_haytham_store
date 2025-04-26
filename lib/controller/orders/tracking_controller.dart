@@ -34,20 +34,23 @@ class TrackingController extends GetxController {
 
   // Function to start getting the current location and updating markers
   void initailData() {
-    if (ordersModel.addressLat == null || ordersModel.addressLong == null) {
+    if (ordersModel.addressLatitude == null ||
+        ordersModel.addressLongitude == null) {
       print("Destination coordinates are not set.");
       return;
     }
 
     cameraPosition = CameraPosition(
-      target: LatLng(ordersModel.addressLat!, ordersModel.addressLong!),
+      target:
+          LatLng(ordersModel.addressLatitude!, ordersModel.addressLongitude!),
       zoom: 14.4746,
     );
 
     markers.add(
       Marker(
         markerId: MarkerId("current"),
-        position: LatLng(ordersModel.addressLat!, ordersModel.addressLong!),
+        position:
+            LatLng(ordersModel.addressLatitude!, ordersModel.addressLongitude!),
       ),
     );
 
@@ -62,13 +65,14 @@ class TrackingController extends GetxController {
 
   // Function to initialize polyline on the map
   Future<void> initPolyline() async {
-    if (ordersModel.addressLat == null || ordersModel.addressLong == null) {
+    if (ordersModel.addressLatitude == null ||
+        ordersModel.addressLongitude == null) {
       print("Destination coordinates are not set.");
       return;
     }
 
-    destLat = ordersModel.addressLat!;
-    destLong = ordersModel.addressLong!;
+    destLat = ordersModel.addressLatitude!;
+    destLong = ordersModel.addressLongitude!;
     await Future.delayed(Duration(seconds: 1));
 
     polylineSet = await getPolyline(currentLat, currentLong, destLat, destLong);
@@ -78,7 +82,7 @@ class TrackingController extends GetxController {
   getLocationDelivery() {
     FirebaseFirestore.instance
         .collection("delivery")
-        .doc("${ordersModel.ordersId}")
+        .doc("${ordersModel.orderId}")
         .snapshots()
         .listen((event) {
       if (event.exists) {

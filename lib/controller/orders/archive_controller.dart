@@ -52,7 +52,7 @@ class OrdersArchiveController extends GetxController {
     update();
 
     var response = await archiveData
-        .getData(myServices.sharedPreferences.getString("id")!);
+        .getData(myServices.sharedPreferences.getString("userId")!);
     print("============= Archive Orders Controller $response ");
     statusRequest = handlingData(response);
     if (StatusRequest.success == statusRequest) {

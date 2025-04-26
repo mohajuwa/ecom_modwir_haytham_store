@@ -35,6 +35,12 @@ class AppRoute {
   static const String deleteOrder = "/orders_delete";
   static const String detailsOrders = "/orders_details";
 
+  static const String profile = "/profile";
+  static const String help = "/help";
+  static const String about = "/about";
+  static const String editProfile = "/edit_profile";
+  static const String changePassword = "/change_password";
+
   // Address
   static const String addressview = "/addressview";
   static const String addressadd = "/addressadd";

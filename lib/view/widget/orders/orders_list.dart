@@ -19,7 +19,7 @@ class CardOrderList extends GetView<OrdersPendingController> {
           Row(
             children: [
               Text(
-                "Order Number : #${listData.ordersId}",
+                "Order Number : #${listData.orderId}",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -27,7 +27,7 @@ class CardOrderList extends GetView<OrdersPendingController> {
               ),
               Spacer(),
               Text(
-                Jiffy.parse(listData.ordersDatetime!).fromNow(),
+                Jiffy.parse(listData.orderDate!).fromNow(),
                 style: TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
@@ -37,18 +37,17 @@ class CardOrderList extends GetView<OrdersPendingController> {
           ),
           Divider(),
           Text(
-              "Order Type : ${controller.printOrderType(listData.ordersType.toString())}"),
-          Text("Order Price : ${listData.ordersPrice} \$"),
+              "Order Type : ${controller.printOrderType(listData.orderType.toString())}"),
           Text("Delivery Price : ${listData.ordersPricedelivery} \$"),
           Text(
               "Payment Method : ${controller.printPaymentMethod(listData.ordersPaymentmethod.toString())}"),
           Text(
-              "Order Status : ${controller.printOrderStatus(listData.ordersStatus.toString())}"),
+              "Order Status : ${controller.printOrderStatus(listData.orderStatus.toString())}"),
           Divider(),
           Row(
             children: [
               Text(
-                "Total Price : ${listData.ordersTotalprice} \$ ",
+                "Total Price : ${listData.totalAmount} \$ ",
                 style: TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
@@ -65,16 +64,16 @@ class CardOrderList extends GetView<OrdersPendingController> {
                 child: const Text("Details"),
               ),
               SizedBox(width: 10),
-              if (listData.ordersStatus == 0)
+              if (listData.orderStatus == 0)
                 MaterialButton(
                   onPressed: () {
-                    controller.deleteOrder("${listData.ordersId}");
+                    controller.deleteOrder("${listData.orderId}");
                   },
                   color: AppColor.deleteColor,
                   textColor: Colors.white,
                   child: const Text("Delete"),
                 ),
-              if (listData.ordersStatus == 3)
+              if (listData.orderStatus == 3)
                 MaterialButton(
                   onPressed: () {
                     controller.goToPageTrackingOrder(listData);

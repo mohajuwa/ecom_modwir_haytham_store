@@ -78,7 +78,7 @@ class OrdersDetails extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
-                              "\$ ${controller.ordersModel.ordersTotalprice} ",
+                              "\$ ${controller.ordersModel.totalAmount} ",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: AppColor.primaryColor,
@@ -90,7 +90,7 @@ class OrdersDetails extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (controller.ordersModel.ordersType == 0)
+                  if (controller.ordersModel.orderType == 0)
                     Card(
                       child: Container(
                         child: ListTile(
@@ -106,7 +106,7 @@ class OrdersDetails extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if (controller.ordersModel.ordersType == 0)
+                  if (controller.ordersModel.orderType == 0)
                     Card(
                       child: Container(
                         padding:

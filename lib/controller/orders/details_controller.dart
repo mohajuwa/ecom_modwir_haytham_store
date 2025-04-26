@@ -27,14 +27,16 @@ class OrdersDetailsController extends GetxController {
   double? long;
 
   intailData() {
-    if (ordersModel.ordersType == 0) {
+    if (ordersModel.orderType == 0) {
       cameraPosition = CameraPosition(
-        target: LatLng(ordersModel.addressLat!, ordersModel.addressLong!),
+        target:
+            LatLng(ordersModel.addressLatitude!, ordersModel.addressLongitude!),
         zoom: 14.4746,
       );
       markers.add(Marker(
           markerId: MarkerId("1"),
-          position: LatLng(ordersModel.addressLat!, ordersModel.addressLong!)));
+          position: LatLng(
+              ordersModel.addressLatitude!, ordersModel.addressLongitude!)));
     }
   }
 
@@ -43,7 +45,7 @@ class OrdersDetailsController extends GetxController {
     update();
 
     var response =
-        await ordersDetailsData.getData(ordersModel.ordersId.toString());
+        await ordersDetailsData.getData(ordersModel.orderId.toString());
 
     print("======================OrderDetails Controller $response ");
 
