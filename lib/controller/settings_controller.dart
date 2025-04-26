@@ -215,18 +215,18 @@ class SettingsController extends GetxController {
     // Navigate to appropriate order screen based on status
     switch (status) {
       case 'pending':
-        Get.toNamed(AppRoute.ordersPending);
+        Get.toNamed(AppRoute.pendingOrders);
         break;
       case 'archived':
-        Get.toNamed(AppRoute.ordersArchive);
+        Get.toNamed(AppRoute.archiveOrders);
         break;
       case 'canceled':
         // Navigate to canceled orders
-        Get.toNamed('/orders/canceled');
+        Get.toNamed(AppRoute.canceledOrders);
         break;
       default:
         // Navigate to all orders
-        Get.toNamed('/orders');
+        Get.toNamed(AppRoute.allOrders);
     }
   }
 

@@ -1,6 +1,5 @@
 // loading_utils.dart
 import 'dart:async';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

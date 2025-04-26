@@ -41,10 +41,10 @@ List<GetPage<dynamic>>? routes = [
 
   // Orders
   GetPage(name: AppRoute.checkout, page: () => const Checkout()),
-  GetPage(name: AppRoute.ordersPending, page: () => const OrdersPending()),
-  GetPage(name: AppRoute.ordersArchive, page: () => const OrdersArchiveView()),
-  GetPage(name: AppRoute.ordersTracking, page: () => const OrdersTracking()),
-  GetPage(name: AppRoute.ordersDetails, page: () => const OrdersDetails()),
+  GetPage(name: AppRoute.pendingOrders, page: () => const OrdersPending()),
+  GetPage(name: AppRoute.archiveOrders, page: () => const OrdersArchiveView()),
+  GetPage(name: AppRoute.trackingOrders, page: () => const OrdersTracking()),
+  GetPage(name: AppRoute.detailsOrders, page: () => const OrdersDetails()),
 
   // Home
   GetPage(name: AppRoute.addressview, page: () => const AddressView()),

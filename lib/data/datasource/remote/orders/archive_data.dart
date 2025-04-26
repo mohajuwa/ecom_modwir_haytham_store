@@ -5,7 +5,7 @@ class OrdersArchiveData {
   Crud crud;
   OrdersArchiveData(this.crud);
   getData(String userId) async {
-    var response = await crud.postData(AppLink.ordersArchive, {"id": userId});
+    var response = await crud.postData(AppLink.archiveOrders, {"id": userId});
     return response.fold((l) => l, (r) => r);
   }
 

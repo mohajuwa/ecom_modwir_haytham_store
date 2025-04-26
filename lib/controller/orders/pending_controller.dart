@@ -17,7 +17,7 @@ class OrdersPendingController extends GetxController {
 
   goToPageTrackingOrder(OrdersModel ordersModel) {
     Get.toNamed(
-      AppRoute.ordersTracking,
+      AppRoute.trackingOrders,
       arguments: {
         "ordersmodel": ordersModel,
       },

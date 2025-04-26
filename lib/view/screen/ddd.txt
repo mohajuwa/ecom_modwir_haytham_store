@@ -1,0 +1,3 @@
+add missed  translateins to translateins ,
+and in settings  I want you to make the pages that missed ,
+ like accounts pages and orders pages , and others if is there any page missed 

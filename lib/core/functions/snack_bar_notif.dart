@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

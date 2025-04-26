@@ -76,10 +76,10 @@ class AppLink {
   // ============================ Orders  Links ============================//
   static const String ordersLink = "$server/orders";
   static const String checkout = "$ordersLink/checkout.php";
-  static const String ordersPending = "$ordersLink/pending.php";
-  static const String ordersArchive = "$ordersLink/archive.php";
-  static const String ordersDetails = "$ordersLink/details.php";
-  static const String ordersDelete = "$ordersLink/delete.php";
+  static const String pendingOrders = "$ordersLink/pending.php";
+  static const String archiveOrders = "$ordersLink/archive.php";
+  static const String detailsOrders = "$ordersLink/details.php";
+  static const String deleteOrder = "$ordersLink/delete.php";
 
   // ============================ Orders Rating Links ============================//
   static const String ratingLink = server;

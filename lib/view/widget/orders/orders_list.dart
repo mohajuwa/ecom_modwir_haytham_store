@@ -57,7 +57,7 @@ class CardOrderList extends GetView<OrdersPendingController> {
               Spacer(),
               MaterialButton(
                 onPressed: () {
-                  Get.toNamed(AppRoute.ordersDetails,
+                  Get.toNamed(AppRoute.detailsOrders,
                       arguments: {"ordersmodel": listData});
                 },
                 color: AppColor.thirdColor,

@@ -5,12 +5,12 @@ class OrdersPendingData {
   Crud crud;
   OrdersPendingData(this.crud);
   getData(String userid) async {
-    var response = await crud.postData(AppLink.ordersPending, {"id": userid});
+    var response = await crud.postData(AppLink.pendingOrders, {"id": userid});
     return response.fold((l) => l, (r) => r);
   }
 
   deleteData(String orderId) async {
-    var response = await crud.postData(AppLink.ordersDelete, {"id": orderId});
+    var response = await crud.postData(AppLink.deleteOrder, {"id": orderId});
     return response.fold((l) => l, (r) => r);
   }
 }

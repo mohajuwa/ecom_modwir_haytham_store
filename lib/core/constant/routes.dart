@@ -27,11 +27,13 @@ class AppRoute {
 
   // Orders
   static const String checkout = "/checkout";
-  static const String ordersPending = "/orders_pending";
-  static const String ordersArchive = "/orders_archive";
-  static const String ordersTracking = "/orders_tracking";
-  static const String ordersDelete = "/orders_delete";
-  static const String ordersDetails = "/orders_details";
+  static const String allOrders = "/orders_all";
+  static const String pendingOrders = "/orders_pending";
+  static const String archiveOrders = "/orders_archive";
+  static const String canceledOrders = "/orders_canceld";
+  static const String trackingOrders = "/orders_tracking";
+  static const String deleteOrder = "/orders_delete";
+  static const String detailsOrders = "/orders_details";
 
   // Address
   static const String addressview = "/addressview";
