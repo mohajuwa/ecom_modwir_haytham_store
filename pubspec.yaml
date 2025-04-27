@@ -141,14 +141,12 @@ flutter:
     - family: Cairo
       fonts:
         - asset: assets/fonts/Cairo/Cairo-Regular.ttf
-        - asset: assets/fonts/Cairo/Cairo-Bold.ttf
           weight: 700
 
 
     - family: El_Messiri
       fonts:
         - asset: assets/fonts/El_Messiri/static/ElMessiri-Regular.ttf
-        - asset: assets/fonts/El_Messiri/static/ElMessiri-Bold.ttf
           weight: 700
 
 

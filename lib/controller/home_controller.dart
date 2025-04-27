@@ -1,3 +1,5 @@
+// ignore_for_file: annotate_overrides, overridden_fields
+
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
@@ -16,6 +18,8 @@ abstract class HomeController extends SearchMixController {
 class HomeControllerImp extends HomeController {
   MyServices myServices = Get.find();
 
+  HomeData homedata = HomeData(Get.find());
+  late StatusRequest statusRequest;
   // Change from single SettingsModel to a list of them.
   List<SettingsModel> settingsModel = [];
 
@@ -28,29 +32,15 @@ class HomeControllerImp extends HomeController {
 
   String delivetTime = "";
 
-  @override
-  HomeData homedata = HomeData(Get.find());
-
   List services = [];
-  List items = [];
+  List offers = [];
   bool showAllCategories = false;
-
-  @override
-  late StatusRequest statusRequest;
 
   @override
   initialData() async {
     lang = myServices.sharedPreferences.getString("lang");
     username = myServices.sharedPreferences.getString("username");
     id = myServices.sharedPreferences.getString("id");
-  }
-
-  @override
-  void onInit() {
-    search = TextEditingController();
-    getdata();
-    initialData();
-    super.onInit();
   }
 
   @override
@@ -96,11 +86,6 @@ class HomeControllerImp extends HomeController {
     update(); // Refresh UI
   }
 
-  bool _isValidRasterImage(String filename) {
-    final validExtensions = ['.png', '.jpg', '.jpeg'];
-    return validExtensions.any((ext) => filename.toLowerCase().endsWith(ext));
-  }
-
 // From previous screen
   void navigateToServiceDetails(String serviceId) {
     if (serviceId.isEmpty) {
@@ -112,6 +97,14 @@ class HomeControllerImp extends HomeController {
       AppRoute.servicesDisplay,
       arguments: {'service_id': serviceId},
     );
+  }
+
+  @override
+  void onInit() {
+    search = TextEditingController();
+    getdata();
+    initialData();
+    super.onInit();
   }
 }
 

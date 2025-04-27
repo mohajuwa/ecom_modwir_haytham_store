@@ -1,4 +1,15 @@
-add missed  translateins to translateins ,
-and in settings  I want you to make the pages that missed ,
- like accounts pages and orders pages , and others if is there any page missed 
- and clean the project , if is there any dep or anything we do not need , remove it
+see the project and do what I tell you :
+I want you to make OrdersView as page that has slidng filter that display orders by ,
+first thing (recent orders ) as notifications and display thim as default , and tihn all orders , and pending orders thin archived orders and canceled orders ,
+when I click in one of thim make it display orders as filtring ..
+
+and design card for listing the orders as a widget in widgets folder ,
+and when I tap or press on order details , I want to make it show and display the order info,
+you can make it as a separated page or as bottom navigation bar , or pop up form , see what is better ..
+
+and I want to get notification when order archived or complated,
+and make the user go to the order details that has the notification and tap on it,
+or you can build notification page in the app bar in home page that has search bar and other stuff , see witch is better and do it.
+
+
+notes : always use StatelessWidget , just do the best at any thing..

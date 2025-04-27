@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String titleappbar;
-  final void Function() oeTapIconVehicle;
+  final void Function() oeTapIconNotification;
   final void Function()? onPressedSearch;
   final void Function(String)? onChanged;
   final TextEditingController mycontroller;
@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget {
     super.key,
     required this.titleappbar,
     this.onPressedSearch,
-    required this.oeTapIconVehicle,
+    required this.oeTapIconNotification,
     this.onChanged,
     required this.mycontroller,
   });
@@ -75,7 +75,7 @@ class CustomAppBar extends StatelessWidget {
           ),
           const Spacer(),
           InkWell(
-            onTap: oeTapIconVehicle,
+            onTap: oeTapIconNotification,
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -83,7 +83,7 @@ class CustomAppBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40),
               ),
               child: FaIcon(
-                FontAwesomeIcons.car,
+                FontAwesomeIcons.ring,
                 color: Theme.of(context).colorScheme.primary,
                 size: 25,
               ),

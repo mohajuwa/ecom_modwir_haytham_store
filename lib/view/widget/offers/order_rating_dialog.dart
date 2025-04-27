@@ -1,6 +1,7 @@
 import 'package:ecom_modwir/controller/orders/archive_controller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rating_dialog/rating_dialog.dart';
@@ -38,10 +39,14 @@ void showDialogRating(BuildContext context, String orderId) {
         fontWeight: FontWeight.bold,
       ),
       commentHint: 'comment',
+      // ignore: avoid_print
       onCancelled: () => print('cancelled'),
       onSubmitted: (response) {
         OrdersArchiveController controller = Get.find();
-        print('=====rating: ${response.rating}, comment: ${response.comment}');
+        if (kDebugMode) {
+          print(
+              '=====rating: ${response.rating}, comment: ${response.comment}');
+        }
         controller.submitRating(orderId, response.rating, response.comment);
       },
     ),

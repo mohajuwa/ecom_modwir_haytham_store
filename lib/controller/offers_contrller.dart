@@ -1,17 +1,15 @@
-import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/data/datasource/remote/offers_data.dart';
-import 'package:ecom_modwir/data/model/itemsmodel.dart';
+import 'package:ecom_modwir/data/model/offers_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-class OfferController extends SearchMixController {
+class OfferController extends GetxController {
   OffersData offersData = OffersData(Get.find());
 
-  List<ItemsModel> data = [];
+  List<OffersModel> data = [];
 
-  @override
   late StatusRequest statusRequest;
 
   getData() async {
@@ -28,7 +26,7 @@ class OfferController extends SearchMixController {
       if (response['status'] == "success") {
         List listData = response['data'];
 
-        data.addAll(listData.map((e) => ItemsModel.fromJson(e)));
+        data.addAll(listData.map((e) => OffersModel.fromJson(e)));
       } else {
         statusRequest = StatusRequest.failure;
       }
@@ -39,7 +37,6 @@ class OfferController extends SearchMixController {
 
   @override
   void onInit() {
-    search = TextEditingController();
     getData();
     super.onInit();
   }

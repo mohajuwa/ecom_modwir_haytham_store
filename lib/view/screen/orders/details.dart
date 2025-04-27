@@ -64,7 +64,7 @@ class OrdersDetails extends StatelessWidget {
                               ...List.generate(
                                 controller.data.length,
                                 (index) => TableRow(children: [
-                                  Text("${controller.data[index].itemsName}",
+                                  Text("${controller.data[index].offerTitle}",
                                       textAlign: TextAlign.center),
                                   Text("${controller.data[index].countitems}",
                                       textAlign: TextAlign.center),

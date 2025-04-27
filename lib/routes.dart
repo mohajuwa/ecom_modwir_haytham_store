@@ -2,9 +2,7 @@ import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/middleware/mymiddleware.dart';
 import 'package:ecom_modwir/view/address/add.dart';
-import 'package:ecom_modwir/view/address/edit.dart';
 import 'package:ecom_modwir/view/address/view.dart';
-
 import 'package:ecom_modwir/view/screen/checkout.dart';
 import 'package:ecom_modwir/view/screen/help/help_support_page.dart';
 import 'package:ecom_modwir/view/screen/homescreen.dart';
@@ -56,5 +54,4 @@ List<GetPage<dynamic>>? routes = [
   // Home
   GetPage(name: AppRoute.addressview, page: () => const AddressView()),
   GetPage(name: AppRoute.addressadd, page: () => const AddressAdd()),
-  GetPage(name: AppRoute.addressedit, page: () => const AddressEdit()),
 ];

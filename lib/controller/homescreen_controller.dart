@@ -1,5 +1,5 @@
 import 'package:ecom_modwir/view/screen/home.dart';
-import 'package:ecom_modwir/view/screen/notificatin.dart';
+import 'package:ecom_modwir/view/screen/orders_view.dart';
 import 'package:ecom_modwir/view/screen/offers.dart';
 import 'package:ecom_modwir/view/screen/settings.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class HomeScreenControllerImp extends HomeScreenController {
 
     // Notifications
 
-    const NotificatoinView(),
+    const OrdersView(),
 
     const OffersView(),
 

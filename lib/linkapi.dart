@@ -9,6 +9,7 @@ class AppLink {
   static const String imageStatic = "$server/upload";
   static const String imageCategories = "$imageStatic/categories";
   static const String vehiclesImgLink = "$imageStatic/vehicles";
+  static const String offerImgLink = "$imageStatic/offers";
   static const String carMakeLogo = "$imageStatic/cars";
 
 // ============================ Auth  Links ============================//

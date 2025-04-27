@@ -4,11 +4,11 @@ class MyFavoriteModel {
   int? favoriteItemsid;
   int? itemsId;
   int? itemsCat;
-  String? itemsName;
+  String? offerTitle;
   String? itemsNameAr;
   String? itemsDesc;
   String? itemsDescAr;
-  String? itemsImage;
+  String? offerImg;
   int? itemsCount;
   int? itemsActive;
   int? itemsPrice;
@@ -22,11 +22,11 @@ class MyFavoriteModel {
       this.favoriteItemsid,
       this.itemsId,
       this.itemsCat,
-      this.itemsName,
+      this.offerTitle,
       this.itemsNameAr,
       this.itemsDesc,
       this.itemsDescAr,
-      this.itemsImage,
+      this.offerImg,
       this.itemsCount,
       this.itemsActive,
       this.itemsPrice,
@@ -40,11 +40,11 @@ class MyFavoriteModel {
     favoriteItemsid = json['favorite_itemsid'];
     itemsId = json['items_id'];
     itemsCat = json['items_cat'];
-    itemsName = json['items_name'];
+    offerTitle = json['items_name'];
     itemsNameAr = json['items_name_ar'];
     itemsDesc = json['items_desc'];
     itemsDescAr = json['items_desc_ar'];
-    itemsImage = json['items_image'];
+    offerImg = json['items_image'];
     itemsCount = json['items_count'];
     itemsActive = json['items_active'];
     itemsPrice = json['items_price'];
@@ -60,11 +60,11 @@ class MyFavoriteModel {
     data['favorite_itemsid'] = favoriteItemsid;
     data['items_id'] = itemsId;
     data['items_cat'] = itemsCat;
-    data['items_name'] = itemsName;
+    data['items_name'] = offerTitle;
     data['items_name_ar'] = itemsNameAr;
     data['items_desc'] = itemsDesc;
     data['items_desc_ar'] = itemsDescAr;
-    data['items_image'] = itemsImage;
+    data['items_image'] = offerImg;
     data['items_count'] = itemsCount;
     data['items_active'] = itemsActive;
     data['items_price'] = itemsPrice;

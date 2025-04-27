@@ -6,7 +6,7 @@ import 'package:ecom_modwir/view/widget/customappbar.dart';
 import 'package:ecom_modwir/view/widget/home/customcardhome.dart';
 // import the slider widget
 import 'package:ecom_modwir/view/widget/home/services_list.dart';
-import 'package:ecom_modwir/view/widget/home/listitemshome.dart';
+import 'package:ecom_modwir/view/widget/home/list_offers_items_home.dart';
 import 'package:ecom_modwir/view/widget/mytextbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,8 +38,8 @@ class HomePage extends StatelessWidget {
                 onChanged: (val) {
                   controller.cheackSeach(val);
                 },
-                oeTapIconVehicle: () {
-                  Get.toNamed(AppRoute.myfavorite);
+                oeTapIconNotification: () {
+                  //
                 },
               ),
               HandlingDataView(
@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
                         'services_text'.tr,
                         style: MyTextStyle.meduimBold(context),
                       ),
-                      ListItemsHome(),
+                      ListOffersItemsHome(),
                     ],
                   )),
             ],

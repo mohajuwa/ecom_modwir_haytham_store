@@ -1,25 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/controller/home_controller.dart';
-import 'package:ecom_modwir/data/model/itemsmodel.dart';
+import 'package:ecom_modwir/data/model/offers_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ListItemsHome extends GetView<HomeControllerImp> {
-  const ListItemsHome({super.key});
+class ListOffersItemsHome extends GetView<HomeControllerImp> {
+  const ListOffersItemsHome({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 140,
       child: ListView.builder(
-        itemCount: controller.items.length,
+        itemCount: controller.offers.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
-          final item = controller.items[i];
+          final item = controller.offers[i];
           // Validate image type before rendering
           if (_isValidImage(item['items_image'])) {
-            return ItemsHome(itemsModel: ItemsModel.fromJson(item));
+            return OffersHome(offersModel: OffersModel.fromJson(item));
           }
           return _buildInvalidImageWidget(context);
         },
@@ -46,13 +46,13 @@ class ListItemsHome extends GetView<HomeControllerImp> {
   }
 }
 
-class ItemsHome extends GetView<HomeControllerImp> {
-  final ItemsModel itemsModel;
-  const ItemsHome({super.key, required this.itemsModel});
+class OffersHome extends GetView<HomeControllerImp> {
+  final OffersModel offersModel;
+  const OffersHome({super.key, required this.offersModel});
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = "${AppLink.vehiclesImgLink}/${itemsModel.itemsImage}";
+    final imageUrl = "${AppLink.offerImgLink}/${offersModel.offerImg}";
     debugPrint("Loading image: $imageUrl");
 
     return InkWell(
@@ -101,7 +101,7 @@ class ItemsHome extends GetView<HomeControllerImp> {
           Positioned(
             left: 10,
             child: Text(
-              "${itemsModel.itemsName}",
+              "${offersModel.offerTitle}",
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 14,
