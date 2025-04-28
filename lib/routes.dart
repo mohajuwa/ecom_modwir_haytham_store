@@ -1,3 +1,5 @@
+import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
+import 'package:ecom_modwir/controller/orders/notification_controller.dart';
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/middleware/mymiddleware.dart';
@@ -6,10 +8,12 @@ import 'package:ecom_modwir/view/address/view.dart';
 import 'package:ecom_modwir/view/screen/checkout.dart';
 import 'package:ecom_modwir/view/screen/help/help_support_page.dart';
 import 'package:ecom_modwir/view/screen/homescreen.dart';
+import 'package:ecom_modwir/view/screen/notifications_view.dart';
 import 'package:ecom_modwir/view/screen/onboarding.dart';
 import 'package:ecom_modwir/view/screen/orders/all_orders.dart';
 import 'package:ecom_modwir/view/screen/orders/archive.dart';
 import 'package:ecom_modwir/view/screen/orders/details.dart';
+import 'package:ecom_modwir/view/screen/orders/filtered_orders_view.dart';
 import 'package:ecom_modwir/view/screen/orders/pending.dart';
 import 'package:ecom_modwir/view/screen/profile/profile_page.dart';
 import 'package:ecom_modwir/view/screen/services_details.dart';
@@ -34,11 +38,22 @@ List<GetPage<dynamic>>? routes = [
   // Home
 
   GetPage(name: AppRoute.homepage, page: () => const HomeScreen()),
-  // GetPage(name: AppRoute.offers, page: () => const OffersView()),
-  // GetPage(name: AppRoute.items, page: () => const Items()),
 
-  // My Favorite
-  // GetPage(name: AppRoute.myfavorite, page: () => const MyVehicles()),
+  GetPage(
+    name: '/filtered_orders',
+    page: () => const FilteredOrdersView(),
+    binding: BindingsBuilder(() {
+      Get.put(FilteredOrdersController());
+    }),
+  ),
+
+  GetPage(
+    name: '/notifications',
+    page: () => const NotificationsView(),
+    binding: BindingsBuilder(() {
+      Get.put(NotificationController());
+    }),
+  ),
 
   // Orders
   GetPage(name: AppRoute.checkout, page: () => const Checkout()),

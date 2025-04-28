@@ -146,7 +146,7 @@ flutter:
 
     - family: El_Messiri
       fonts:
-        - asset: assets/fonts/El_Messiri/static/ElMessiri-Regular.ttf
+        - asset: assets/fonts/El_Messiri/ElMessiri-Regular.ttf
           weight: 700
 
 

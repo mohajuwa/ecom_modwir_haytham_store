@@ -1,32 +1,31 @@
+// lib/controller/orders/details_controller.dart
 import 'dart:async';
-
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
+import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/details_data.dart';
-import 'package:ecom_modwir/data/model/cartmodel.dart';
+import 'package:ecom_modwir/data/model/order_details_model.dart';
 import 'package:ecom_modwir/data/model/orders_model.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OrdersDetailsController extends GetxController {
   OrdersDetailsData ordersDetailsData = OrdersDetailsData(Get.find());
+  final MyServices myServices = Get.find();
 
-  List<CartModel> data = [];
+  String lang = "ar";
 
+  EnhancedOrderModel? enhancedOrder;
   late OrdersModel ordersModel;
-
   late StatusRequest statusRequest;
 
   Completer<GoogleMapController>? completercontroller;
-
   List<Marker> markers = [];
-
   CameraPosition? cameraPosition;
 
-  double? lat;
-  double? long;
-
   intailData() {
+    lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
     if (ordersModel.orderType == 0) {
       cameraPosition = CameraPosition(
         target:
@@ -34,33 +33,48 @@ class OrdersDetailsController extends GetxController {
         zoom: 14.4746,
       );
       markers.add(Marker(
-          markerId: MarkerId("1"),
-          position: LatLng(
-              ordersModel.addressLatitude!, ordersModel.addressLongitude!)));
+        markerId: MarkerId("1"),
+        position:
+            LatLng(ordersModel.addressLatitude!, ordersModel.addressLongitude!),
+      ));
     }
   }
 
-  getData() async {
+  getEnhancedOrderDetails() async {
     statusRequest = StatusRequest.loading;
     update();
 
-    var response =
-        await ordersDetailsData.getData(ordersModel.orderId.toString());
+    var response = await ordersDetailsData.getOrderDetails(
+        ordersModel.orderId.toString(), lang);
 
-    print("======================OrderDetails Controller $response ");
+    print("======================EnhancedOrderDetails Controller $response ");
 
     statusRequest = handlingData(response);
 
     if (StatusRequest.success == statusRequest) {
-      // Start backend
-      if (response['status'] == "success") {
-        List listData = response['data'];
+      if (response['status'] == "success" && response['data'] != null) {
+        if (response['data'] is List && response['data'].isNotEmpty) {
+          enhancedOrder = EnhancedOrderModel.fromJson(response['data'][0]);
 
-        data.addAll(listData.map((e) => CartModel.fromJson(e)));
+          // Update map if we have coordinates
+          if (enhancedOrder?.addressLatitude != null &&
+              enhancedOrder?.addressLongitude != null) {
+            cameraPosition = CameraPosition(
+              target: LatLng(enhancedOrder!.addressLatitude!,
+                  enhancedOrder!.addressLongitude!),
+              zoom: 14.4746,
+            );
+            markers.clear();
+            markers.add(Marker(
+              markerId: MarkerId("1"),
+              position: LatLng(enhancedOrder!.addressLatitude!,
+                  enhancedOrder!.addressLongitude!),
+            ));
+          }
+        }
       } else {
         statusRequest = StatusRequest.failure;
       }
-      // End
     }
     update();
   }
@@ -69,9 +83,8 @@ class OrdersDetailsController extends GetxController {
   void onInit() {
     ordersModel = Get.arguments['ordersmodel'];
     intailData();
-    getData();
+    getEnhancedOrderDetails();
     completercontroller = Completer<GoogleMapController>();
-
     super.onInit();
   }
 }

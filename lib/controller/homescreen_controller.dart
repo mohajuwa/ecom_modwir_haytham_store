@@ -1,6 +1,6 @@
 import 'package:ecom_modwir/view/screen/home.dart';
-import 'package:ecom_modwir/view/screen/orders_view.dart';
 import 'package:ecom_modwir/view/screen/offers.dart';
+import 'package:ecom_modwir/view/screen/orders/filtered_orders_view.dart';
 import 'package:ecom_modwir/view/screen/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,18 +13,15 @@ class HomeScreenControllerImp extends HomeScreenController {
   int currentpage = 0;
 
   List<Widget> listPage = [
-    //Home
-
+    // Home
     const HomePage(),
 
-    // Notifications
-
-    const OrdersView(),
+    // Orders (now using our new filtered view)
+    const FilteredOrdersView(),
 
     const OffersView(),
 
     // Settings
-
     const SettingsPage()
   ];
 
@@ -38,7 +35,6 @@ class HomeScreenControllerImp extends HomeScreenController {
   @override
   changePage(int i) {
     currentpage = i;
-
     update();
   }
 }

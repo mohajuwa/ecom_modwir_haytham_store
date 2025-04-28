@@ -7,7 +7,7 @@ class OrdersModel {
   int? vehicleId;
   int? serviceId;
   String? faultType;
-  String? orderStatus;
+  int? orderStatus;
   int? orderType;
   int? ordersPaymentmethod;
   int? ordersPricedelivery;

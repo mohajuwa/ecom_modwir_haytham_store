@@ -80,6 +80,7 @@ class AppLink {
   static const String pendingOrders = "$ordersLink/pending.php";
   static const String archiveOrders = "$ordersLink/archive.php";
   static const String detailsOrders = "$ordersLink/details.php";
+  static const String orderDetailsView = "$ordersLink/details.php";
   static const String deleteOrder = "$ordersLink/delete.php";
 
   // ============================ Orders Rating Links ============================//
@@ -87,6 +88,8 @@ class AppLink {
   static const String rating = "$ratingLink/rating.php";
 
   // ============================ Notification  Links ============================//
-  static const String notificationLink = server;
+  static const String notificationLink = "$server/notifications";
   static const String notificatoin = "$notificationLink/notification.php";
+  static const String markNotiRead = "$notificationLink/mark_read.php";
+  static const String markAllNotiRead = "$notificationLink/mark_all_read.php";
 }

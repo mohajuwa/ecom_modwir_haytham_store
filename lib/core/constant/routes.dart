@@ -34,6 +34,9 @@ class AppRoute {
   static const String trackingOrders = "/orders_tracking";
   static const String deleteOrder = "/orders_delete";
   static const String detailsOrders = "/orders_details";
+// Add these constants to the AppRoute class
+  static const String filteredOrders = "/filtered_orders";
+  static const String notifications = "/notifications";
 
   static const String profile = "/profile";
   static const String help = "/help";

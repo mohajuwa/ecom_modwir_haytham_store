@@ -4,8 +4,23 @@ import 'package:ecom_modwir/linkapi.dart';
 class NotificationData {
   Crud crud;
   NotificationData(this.crud);
-  getData(String id) async {
-    var response = await crud.postData(AppLink.notificatoin, {"id": id});
+  getData(String notificationId) async {
+    var response = await crud
+        .postData(AppLink.notificatoin, {"notification_id": notificationId});
+    return response.fold((l) => l, (r) => r);
+  }
+
+  markAsRead(String notificationId) async {
+    var response = await crud
+        .postData(AppLink.markNotiRead, {"notification_id": notificationId});
+    return response.fold((l) => l, (r) => r);
+  }
+
+// markNotificationRead
+//
+  markAllAsRead(String notificationId) async {
+    var response = await crud
+        .postData(AppLink.markAllNotiRead, {"notification_id": notificationId});
     return response.fold((l) => l, (r) => r);
   }
 }

@@ -1,10 +1,12 @@
+import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/view/widget/notification_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String titleappbar;
-  final void Function() oeTapIconNotification;
+  final void Function()? oeTapIconNotification;
   final void Function()? onPressedSearch;
   final void Function(String)? onChanged;
   final TextEditingController mycontroller;
@@ -13,7 +15,7 @@ class CustomAppBar extends StatelessWidget {
     super.key,
     required this.titleappbar,
     this.onPressedSearch,
-    required this.oeTapIconNotification,
+    this.oeTapIconNotification,
     this.onChanged,
     required this.mycontroller,
   });
@@ -74,8 +76,8 @@ class CustomAppBar extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          InkWell(
-            onTap: oeTapIconNotification,
+          NotificationBadge(
+            onPressed: () => Get.toNamed(AppRoute.notifications),
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -83,7 +85,7 @@ class CustomAppBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40),
               ),
               child: FaIcon(
-                FontAwesomeIcons.ring,
+                FontAwesomeIcons.bell,
                 color: Theme.of(context).colorScheme.primary,
                 size: 25,
               ),
