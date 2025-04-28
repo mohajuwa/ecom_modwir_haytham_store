@@ -1,4 +1,5 @@
 // lib/view/screen/orders/details.dart
+import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/order_details_model.dart';
 import 'package:ecom_modwir/view/widget/offers/order_rating_dialog.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +20,14 @@ class OrdersDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Order Details"),
+        title: Text("order_details".tr),
         centerTitle: true,
       ),
       body: GetBuilder<OrdersDetailsController>(
         builder: (controller) => HandlingDataView(
           statusRequest: controller.statusRequest,
           widget: controller.enhancedOrder == null
-              ? Center(child: Text("No details found"))
+              ? Center(child: Text("no_details_found".tr))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -39,33 +40,33 @@ class OrdersDetails extends StatelessWidget {
 
                       // Vehicle information
                       if (controller.enhancedOrder?.vehicleId != null) ...[
-                        _buildSectionTitle(context, 'Vehicle Information'),
+                        _buildSectionTitle(context, 'vehicle_information'.tr),
                         _buildVehicleInfo(context, controller),
                         const SizedBox(height: 24),
                       ],
 
                       // Services
-                      _buildSectionTitle(context, 'Services'),
+                      _buildSectionTitle(context, 'services_text'.tr),
                       _buildServicesInfo(context, controller),
 
                       const SizedBox(height: 24),
 
                       // Delivery information (if delivery order)
                       if (controller.enhancedOrder?.orderType == 0) ...[
-                        _buildSectionTitle(context, 'Delivery Information'),
+                        _buildSectionTitle(context, 'delivery_information'.tr),
                         _buildDeliveryInfo(context, controller),
                         const SizedBox(height: 24),
                       ],
 
                       // Vendor information
                       if (controller.enhancedOrder?.vendorId != null) ...[
-                        _buildSectionTitle(context, 'Service Provider'),
+                        _buildSectionTitle(context, 'service_provider'.tr),
                         _buildVendorInfo(context, controller),
                         const SizedBox(height: 24),
                       ],
 
                       // Payment information
-                      _buildSectionTitle(context, 'Payment Information'),
+                      _buildSectionTitle(context, 'payment_details'.tr),
                       _buildPaymentInfo(context, controller),
 
                       const SizedBox(height: 32),
@@ -92,10 +93,7 @@ class OrdersDetails extends StatelessWidget {
     if (enhancedOrder.orderDate != null) {
       try {
         final datetime = DateTime.parse(enhancedOrder.orderDate!);
-        // Using fromNow instead of the constructor
         formattedDate = Jiffy.parseFromDateTime(datetime).fromNow();
-        // Alternative approach using format
-        // formattedDate = Jiffy.parseFromDateTime(datetime).format("dd MMM yyyy, h:mm a");
       } catch (e) {
         formattedDate = enhancedOrder.orderDate ?? '';
       }
@@ -112,7 +110,7 @@ class OrdersDetails extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Order #${enhancedOrder.orderNumber}',
+                  '${'order_number'.tr}#${enhancedOrder.orderNumber}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -127,7 +125,7 @@ class OrdersDetails extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Text(
-                    orderStatus,
+                    orderStatus.tr,
                     style: TextStyle(
                       color: statusColor,
                       fontWeight: FontWeight.bold,
@@ -234,11 +232,10 @@ class OrdersDetails extends StatelessWidget {
                 Expanded(
                   child: _buildInfoItem(
                     context,
-                    'Year',
+                    'year'.tr,
                     '${enhancedOrder.year ?? 'N/A'}',
                   ),
                 ),
-                // Updated license plate section
                 Expanded(
                   child: _buildLicensePlateInfo(context, enhancedOrder),
                 ),
@@ -249,7 +246,7 @@ class OrdersDetails extends StatelessWidget {
               const Divider(height: 24),
               _buildInfoItem(
                 context,
-                'Fault Type',
+                'fault_type'.tr,
                 enhancedOrder.faultType!,
                 icon: Icons.error_outline,
               ),
@@ -266,7 +263,7 @@ class OrdersDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'License Plate',
+          'license_plate'.tr,
           style: TextStyle(
             fontSize: 12,
             color:
@@ -282,7 +279,6 @@ class OrdersDetails extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // English License Plate
               if (order.licensePlateEn != null)
                 Row(
                   children: [
@@ -299,12 +295,8 @@ class OrdersDetails extends StatelessWidget {
                     ),
                   ],
                 ),
-
-              // Add a small divider between the two license plates
               if (order.licensePlateEn != null && order.licensePlateAr != null)
                 Divider(height: 12, thickness: 1, color: Colors.grey.shade200),
-
-              // Arabic License Plate
               if (order.licensePlateAr != null)
                 Row(
                   children: [
@@ -313,7 +305,6 @@ class OrdersDetails extends StatelessWidget {
                         order.licensePlateAr!,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Cairo',
                           letterSpacing: 1.0,
                         ),
                         textAlign: TextAlign.center,
@@ -340,7 +331,6 @@ class OrdersDetails extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Main service name if available
             if (enhancedOrder.serviceName != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -364,10 +354,7 @@ class OrdersDetails extends StatelessWidget {
                   ],
                 ),
               ),
-
             const Divider(height: 16),
-
-            // Sub-services
             ...serviceNames.asMap().entries.map((entry) {
               final index = entry.key;
               final serviceName = entry.value;
@@ -396,20 +383,18 @@ class OrdersDetails extends StatelessWidget {
                 ],
               );
             }).toList(),
-
             const Divider(height: 24),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Services Total',
+                  'services_total'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '\$${enhancedOrder.servicesTotalPrice ?? '0.00'}',
+                  '${'currency'.tr}  ${enhancedOrder.servicesTotalPrice ?? '0.00'}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColor.primaryColor,
@@ -417,7 +402,6 @@ class OrdersDetails extends StatelessWidget {
                 ),
               ],
             ),
-
             if (enhancedOrder.notes != null &&
                 enhancedOrder.notes!.isNotEmpty) ...[
               const Divider(height: 24),
@@ -435,7 +419,7 @@ class OrdersDetails extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Notes',
+                          'notes'.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
@@ -539,7 +523,7 @@ class OrdersDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    enhancedOrder.vendorName ?? 'Unknown Vendor',
+                    enhancedOrder.vendorName ?? 'unknown_vendor'.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -569,24 +553,18 @@ class OrdersDetails extends StatelessWidget {
       BuildContext context, OrdersDetailsController controller) {
     final enhancedOrder = controller.enhancedOrder!;
 
-    // Convert totalAmount to double for calculations
     double totalAmount = 0.0;
     if (enhancedOrder.totalAmount != null) {
       totalAmount = double.tryParse(enhancedOrder.totalAmount!) ?? 0.0;
     }
 
-    // Convert servicesTotalPrice to double
     double servicesTotalPrice = 0.0;
     if (enhancedOrder.servicesTotalPrice != null) {
-      // Check if servicesTotalPrice is already a double
-      if (enhancedOrder.servicesTotalPrice is double) {
-        servicesTotalPrice = enhancedOrder.servicesTotalPrice as double;
-      } else if (enhancedOrder.servicesTotalPrice is String) {
-        // Parse from String
-        servicesTotalPrice =
-            double.tryParse(enhancedOrder.servicesTotalPrice.toString()) ?? 0.0;
-      }
+      servicesTotalPrice =
+          double.tryParse(enhancedOrder.servicesTotalPrice.toString()) ?? 0.0;
     }
+
+    // Format numbers with proper currency symbol
 
     return Card(
       margin: EdgeInsets.zero,
@@ -595,25 +573,27 @@ class OrdersDetails extends StatelessWidget {
         child: Column(
           children: [
             _buildInfoRow(
-              'Payment Method',
+              'payment_method'.tr,
               enhancedOrder.ordersPaymentmethod == 0
-                  ? 'Cash on Delivery'
-                  : 'Credit Card',
+                  ? 'cash_on_delivery'.tr
+                  : 'credit_card'.tr,
             ),
             const Divider(height: 16),
             _buildInfoRow(
-              'Services Total',
-              '\$${servicesTotalPrice.toStringAsFixed(2)}',
+              'services_total'.tr,
+              formatCurrency(servicesTotalPrice),
             ),
             const Divider(height: 16),
             _buildInfoRow(
-              'Delivery Fee',
-              '\$${enhancedOrder.ordersPricedelivery ?? '0'}',
+              'delivery_fee'.tr,
+              formatCurrency(double.tryParse(
+                      enhancedOrder.ordersPricedelivery.toString() ?? '0') ??
+                  0),
             ),
             const Divider(height: 16),
             _buildInfoRow(
-              'Total Amount',
-              '\$${totalAmount.toStringAsFixed(2)}',
+              'total_amount'.tr,
+              formatCurrency(totalAmount),
               valueStyle: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -622,8 +602,8 @@ class OrdersDetails extends StatelessWidget {
             ),
             const Divider(height: 16),
             _buildInfoRow(
-              'Payment Status',
-              enhancedOrder.paymentStatus ?? 'Pending',
+              'payment_status'.tr,
+              enhancedOrder.paymentStatus ?? 'pending'.tr,
               valueColor: _getPaymentStatusColor(enhancedOrder.paymentStatus),
             ),
           ],
@@ -636,15 +616,11 @@ class OrdersDetails extends StatelessWidget {
       BuildContext context, OrdersDetailsController controller) {
     final enhancedOrder = controller.enhancedOrder!;
 
-    // Different actions based on order status
     if (enhancedOrder.orderStatus == '0') {
       return ElevatedButton.icon(
-        onPressed: () {
-          // Cancel order logic
-          Get.back(); // Go back to orders screen
-        },
+        onPressed: () => Get.back(),
         icon: Icon(Icons.cancel_outlined),
-        label: Text('Cancel Order'),
+        label: Text('cancel_order'.tr),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.redAccent,
           foregroundColor: Colors.white,
@@ -656,15 +632,12 @@ class OrdersDetails extends StatelessWidget {
       );
     } else if (enhancedOrder.orderStatus == '2') {
       return ElevatedButton.icon(
-        onPressed: () {
-          // Track order logic
-          Get.toNamed(
-            '/orders_tracking',
-            arguments: {"ordersmodel": controller.ordersModel},
-          );
-        },
+        onPressed: () => Get.toNamed(
+          '/orders_tracking',
+          arguments: {"ordersmodel": controller.ordersModel},
+        ),
         icon: Icon(Icons.map_outlined),
-        label: Text('Track Order'),
+        label: Text('track_order'.tr),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
@@ -676,12 +649,10 @@ class OrdersDetails extends StatelessWidget {
       );
     } else if (enhancedOrder.orderStatus == '3') {
       return ElevatedButton.icon(
-        onPressed: () {
-          // Rate order logic
-          showDialogRating(Get.context!, enhancedOrder.orderId.toString());
-        },
+        onPressed: () =>
+            showDialogRating(Get.context!, enhancedOrder.orderId.toString()),
         icon: Icon(Icons.star_outline),
-        label: Text('Rate Order'),
+        label: Text('rate_order'.tr),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
@@ -693,12 +664,9 @@ class OrdersDetails extends StatelessWidget {
       );
     } else {
       return ElevatedButton.icon(
-        onPressed: () {
-          // Go back to orders screen
-          Get.back();
-        },
+        onPressed: () => Get.back(),
         icon: Icon(Icons.arrow_back),
-        label: Text('Back to Orders'),
+        label: Text('back_to_orders'.tr),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
@@ -715,7 +683,7 @@ class OrdersDetails extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
-        title,
+        title.tr,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16,
@@ -734,7 +702,7 @@ class OrdersDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          label.tr,
           style: TextStyle(
             fontSize: 12,
             color:
@@ -769,7 +737,7 @@ class OrdersDetails extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label),
+        Text(label.tr),
         Text(
           value,
           style: valueStyle ??
@@ -785,19 +753,19 @@ class OrdersDetails extends StatelessWidget {
   String _getOrderStatusText(int? status) {
     switch (status) {
       case 0:
-        return 'Pending';
+        return 'order_status_pending';
       case 1:
-        return 'Preparing';
+        return 'order_status_preparing';
       case 2:
-        return 'On The Way';
+        return 'order_status_on_the_way';
       case 3:
-        return 'Delivered';
+        return 'order_status_delivered';
       case 4:
-        return 'Archived';
+        return 'order_status_archived';
       case 5:
-        return 'Canceled';
+        return 'order_status_canceled';
       default:
-        return 'Unknown';
+        return 'unknown';
     }
   }
 
@@ -822,15 +790,9 @@ class OrdersDetails extends StatelessWidget {
 
   Color _getPaymentStatusColor(String? status) {
     if (status == null) return Colors.grey;
-
-    if (status.toLowerCase().contains('paid')) {
-      return Colors.green;
-    } else if (status.toLowerCase().contains('pending')) {
-      return Colors.amber;
-    } else if (status.toLowerCase().contains('failed')) {
-      return Colors.red;
-    } else {
-      return Colors.grey;
-    }
+    if (status.toLowerCase().contains('paid')) return Colors.green;
+    if (status.toLowerCase().contains('pending')) return Colors.amber;
+    if (status.toLowerCase().contains('failed')) return Colors.red;
+    return Colors.grey;
   }
 }

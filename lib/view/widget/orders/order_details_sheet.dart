@@ -10,9 +10,9 @@ class OrderDetailsSheet extends StatelessWidget {
   final OrdersModel order;
 
   const OrderDetailsSheet({
-    Key? key,
+    super.key,
     required this.order,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class OrderDetailsSheet extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Order Details',
+                  "order_details".tr,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

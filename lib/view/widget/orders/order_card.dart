@@ -1,4 +1,5 @@
 import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/orders_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,15 +12,20 @@ class OrderCard extends StatelessWidget {
   final bool showActions;
 
   const OrderCard({
-    Key? key,
+    super.key,
     required this.orderModel,
     required this.onTap,
     this.onAction,
     this.showActions = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    double servicesTotalPrice = 0.0;
+    if (orderModel.totalAmount != null) {
+      servicesTotalPrice =
+          double.tryParse(orderModel.totalAmount.toString()) ?? 0.0;
+    }
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -44,15 +50,15 @@ class OrderCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Order #${orderModel.orderNumber}',
-                          style: TextStyle(
+                          '${'order_number'.tr}#${orderModel.orderNumber}',
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _getStatusText(),
+                          _getStatusText().tr,
                           style: TextStyle(
                             color: _getStatusColor(context),
                             fontWeight: FontWeight.bold,
@@ -84,16 +90,16 @@ class OrderCard extends StatelessWidget {
                   Expanded(
                     child: _buildDetailItem(
                       context,
-                      'Type',
-                      _getOrderType(),
+                      'order_type'.tr,
+                      _getOrderType().tr,
                       Icons.local_shipping_outlined,
                     ),
                   ),
                   Expanded(
                     child: _buildDetailItem(
                       context,
-                      'Payment',
-                      _getPaymentMethod(),
+                      'payment_method'.tr,
+                      _getPaymentMethod().tr,
                       Icons.payment_outlined,
                     ),
                   ),
@@ -107,7 +113,7 @@ class OrderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total: \$${orderModel.totalAmount ?? '0.00'}',
+                    formatCurrency(servicesTotalPrice),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -166,7 +172,7 @@ class OrderCard extends StatelessWidget {
             ),
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -177,12 +183,11 @@ class OrderCard extends StatelessWidget {
   }
 
   Widget _buildActionButton(BuildContext context) {
-    // Different actions based on order status
-    if (orderModel.orderStatus == '0') {
+    if (orderModel.orderStatus == 0) {
       return OutlinedButton.icon(
         onPressed: onAction,
-        icon: Icon(Icons.delete_outline, size: 16),
-        label: Text('Cancel'),
+        icon: const Icon(Icons.delete_outline, size: 16),
+        label: Text('cancel'.tr),
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.redAccent,
           side: const BorderSide(color: Colors.redAccent),
@@ -190,11 +195,11 @@ class OrderCard extends StatelessWidget {
           minimumSize: const Size(0, 36),
         ),
       );
-    } else if (orderModel.orderStatus == '2') {
+    } else if (orderModel.orderStatus == 2) {
       return OutlinedButton.icon(
         onPressed: onAction,
-        icon: Icon(Icons.map_outlined, size: 16),
-        label: Text('Track'),
+        icon: const Icon(Icons.map_outlined, size: 16),
+        label: Text('track'.tr),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColor.primaryColor,
           side: BorderSide(color: AppColor.primaryColor),
@@ -205,8 +210,8 @@ class OrderCard extends StatelessWidget {
     } else {
       return OutlinedButton.icon(
         onPressed: onTap,
-        icon: Icon(Icons.visibility_outlined, size: 16),
-        label: Text('Details'),
+        icon: const Icon(Icons.visibility_outlined, size: 16),
+        label: Text('details'.tr),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColor.primaryColor,
           side: BorderSide(color: AppColor.primaryColor),
@@ -220,57 +225,57 @@ class OrderCard extends StatelessWidget {
   String _getOrderType() {
     switch (orderModel.orderType) {
       case 0:
-        return 'Delivery';
+        return 'delivery'.tr;
       case 1:
-        return 'Pickup';
+        return 'pickup'.tr;
       default:
-        return 'Unknown';
+        return 'unknown'.tr;
     }
   }
 
   String _getPaymentMethod() {
     switch (orderModel.ordersPaymentmethod) {
       case 0:
-        return 'Cash';
+        return 'cash'.tr;
       case 1:
-        return 'Card';
+        return 'card'.tr;
       default:
-        return 'Unknown';
+        return 'unknown'.tr;
     }
   }
 
   String _getStatusText() {
     switch (orderModel.orderStatus) {
-      case '0':
-        return 'Pending Approval';
-      case '1':
-        return 'Preparing';
-      case '2':
-        return 'On the Way';
-      case '3':
-        return 'Delivered';
-      case '4':
-        return 'Archived';
-      case '5':
-        return 'Canceled';
+      case 0:
+        return 'order_status_pending'.tr;
+      case 1:
+        return 'order_status_preparing'.tr;
+      case 2:
+        return 'order_status_on_the_way'.tr;
+      case 3:
+        return 'order_status_delivered'.tr;
+      case 4:
+        return 'order_status_archived'.tr;
+      case 5:
+        return 'order_status_canceled'.tr;
       default:
-        return 'Unknown';
+        return 'unknown'.tr;
     }
   }
 
   Color _getStatusColor(BuildContext context) {
     switch (orderModel.orderStatus) {
-      case '0':
+      case 0:
         return Colors.amber;
-      case '1':
+      case 1:
         return Colors.blue;
-      case '2':
+      case 2:
         return Colors.purple;
-      case '3':
-        return Colors.green;
-      case '4':
+      case 3:
         return Colors.grey;
-      case '5':
+      case 4:
+        return Colors.green;
+      case 5:
         return Colors.red;
       default:
         return Colors.grey;
