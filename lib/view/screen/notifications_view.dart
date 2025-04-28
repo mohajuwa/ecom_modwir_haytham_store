@@ -199,7 +199,7 @@ class NotificationsView extends StatelessWidget {
   void _handleNotificationTap(
       BuildContext context, Map<String, dynamic> notification) {
     // Extract order ID from notification data if available
-    final orderIdStr = notification['order_id'];
+    final orderIdStr = notification['notification_order_id'];
 
     if (orderIdStr != null) {
       // Convert to int

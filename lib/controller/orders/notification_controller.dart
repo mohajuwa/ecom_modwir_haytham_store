@@ -2,18 +2,20 @@ import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/notificatoin_data.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
   MyServices myServices = Get.find();
   NotificationData notificationData = NotificationData(Get.find());
+  String lang = "ar";
 
   List data = [];
   late StatusRequest statusRequest;
   int unreadCount = 0;
 
   Future<void> getData() async {
+    lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
     data.clear();
     statusRequest = StatusRequest.loading;
     update();
@@ -26,7 +28,7 @@ class NotificationController extends GetxController {
         return;
       }
 
-      var response = await notificationData.getData(userId);
+      var response = await notificationData.getData(userId, lang);
       statusRequest = handlingData(response);
 
       if (StatusRequest.success == statusRequest) {

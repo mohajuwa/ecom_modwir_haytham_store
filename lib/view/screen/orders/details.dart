@@ -810,9 +810,9 @@ class OrdersDetails extends StatelessWidget {
       case 2:
         return Colors.purple;
       case 3:
-        return Colors.green;
-      case 4:
         return Colors.grey;
+      case 4:
+        return Colors.green;
       case 5:
         return Colors.red;
       default:

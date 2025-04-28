@@ -12,7 +12,7 @@ class OrdersArchiveData {
 
   rating(String orderId, String rating, String comment) async {
     var response = await crud.postData(AppLink.rating, {
-      "id": orderId,
+      "order_id": orderId,
       "rating": rating,
       "comment": comment,
     });

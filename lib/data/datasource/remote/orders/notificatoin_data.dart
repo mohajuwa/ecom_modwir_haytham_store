@@ -4,9 +4,11 @@ import 'package:ecom_modwir/linkapi.dart';
 class NotificationData {
   Crud crud;
   NotificationData(this.crud);
-  getData(String notificationId) async {
-    var response = await crud
-        .postData(AppLink.notificatoin, {"notification_id": notificationId});
+  getData(String userId, String lang) async {
+    var response = await crud.postData(AppLink.notificatoin, {
+      "user_id": userId,
+      "lang": lang,
+    });
     return response.fold((l) => l, (r) => r);
   }
 
