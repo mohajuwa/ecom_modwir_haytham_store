@@ -1,3 +1,4 @@
+// lib/controller/orders/filtered_orders_controller.dart
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
@@ -33,11 +34,11 @@ class FilteredOrdersController extends GetxController {
       case 'all':
         return allOrders;
       case 'pending':
-        return pendingOrders;
+        return pendingOrders.where((order) => order.orderStatus != 5).toList();
       case 'archived':
         return archivedOrders;
       case 'canceled':
-        return canceledOrders;
+        return pendingOrders.where((order) => order.orderStatus == 5).toList();
       default:
         return allOrders;
     }
@@ -52,8 +53,17 @@ class FilteredOrdersController extends GetxController {
   // Change the current filter and update view
   void changeFilter(String filter) {
     currentFilter = filter;
-    isEmpty = filteredOrders.isEmpty;
-    update();
+
+    // Reload data if it's empty for the selected filter
+    if (filter == 'pending' && pendingOrders.isEmpty ||
+        filter == 'archived' && archivedOrders.isEmpty ||
+        filter == 'canceled' && canceledOrders.isEmpty) {
+      loadOrders();
+    } else {
+      // Just update the view with existing data
+      isEmpty = filteredOrders.isEmpty;
+      update();
+    }
   }
 
   // Load all orders data
@@ -62,18 +72,25 @@ class FilteredOrdersController extends GetxController {
     update();
 
     try {
+      final userId = myServices.sharedPreferences.getString("userId");
+      if (userId == null || userId.isEmpty) {
+        statusRequest = StatusRequest.failure;
+        update();
+        return;
+      }
+
       await Future.wait([
-        loadPendingOrders(),
-        loadArchivedOrders(),
+        loadPendingOrders(userId),
+        loadArchivedOrders(userId),
       ]);
 
       // Combine all orders
-      allOrders = [...pendingOrders, ...archivedOrders, ...canceledOrders];
+      allOrders = [...pendingOrders, ...archivedOrders];
 
       // Sort by date for 'all' and 'recent' views
       allOrders.sort((a, b) {
-        final aDate = DateTime.parse(a.orderDate ?? '');
-        final bDate = DateTime.parse(b.orderDate ?? '');
+        final aDate = DateTime.parse(a.orderDate ?? DateTime.now().toString());
+        final bDate = DateTime.parse(b.orderDate ?? DateTime.now().toString());
         return bDate.compareTo(aDate); // Most recent first
       });
 
@@ -96,30 +113,37 @@ class FilteredOrdersController extends GetxController {
   }
 
   // Load pending orders
-  Future<void> loadPendingOrders() async {
-    final userId = myServices.sharedPreferences.getString("userId");
-    if (userId == null || userId.isEmpty) return;
-
+  Future<void> loadPendingOrders(String userId) async {
     final response = await pendingData.getData(userId);
     final status = handlingData(response);
 
     if (status == StatusRequest.success && response['status'] == "success") {
       final List data = response['data'] ?? [];
       pendingOrders = data.map((e) => OrdersModel.fromJson(e)).toList();
+
+      // Log pending orders count
+      print("Loaded ${pendingOrders.length} pending orders");
+
+      // Log canceled orders count (usually status 5)
+      final canceledCount =
+          pendingOrders.where((order) => order.orderStatus == 5).length;
+      print("Found $canceledCount canceled orders");
+    } else {
+      pendingOrders = [];
     }
   }
 
   // Load archived orders
-  Future<void> loadArchivedOrders() async {
-    final userId = myServices.sharedPreferences.getString("userId");
-    if (userId == null || userId.isEmpty) return;
-
+  Future<void> loadArchivedOrders(String userId) async {
     final response = await archiveData.getData(userId);
     final status = handlingData(response);
 
     if (status == StatusRequest.success && response['status'] == "success") {
       final List data = response['data'] ?? [];
       archivedOrders = data.map((e) => OrdersModel.fromJson(e)).toList();
+      print("Loaded ${archivedOrders.length} archived orders");
+    } else {
+      archivedOrders = [];
     }
   }
 

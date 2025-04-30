@@ -4,7 +4,6 @@ import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HelpSupportPage extends GetView<HelpSupportController> {
   const HelpSupportPage({super.key});

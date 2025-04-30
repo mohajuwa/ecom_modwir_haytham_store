@@ -1,9 +1,15 @@
+// lib/controller/settings_controller.dart
 import 'package:ecom_modwir/controller/auth/auth_service.dart';
 import 'package:ecom_modwir/controller/home_controller.dart';
+import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/controller/theme_controller.dart';
+import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
+import 'package:ecom_modwir/data/datasource/remote/orders/archive_data.dart';
+import 'package:ecom_modwir/data/datasource/remote/orders/pending_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +19,10 @@ class SettingsController extends GetxController {
   final MyServices _myServices = Get.find();
   final ThemeController _themeController = Get.find<ThemeController>();
   late final AuthService authService;
+
+  // Remote data sources
+  final OrdersPendingData _pendingOrdersData = OrdersPendingData(Get.find());
+  final OrdersArchiveData _archivedOrdersData = OrdersArchiveData(Get.find());
 
   // Observable state variables
   final RxString currentLang = 'en'.obs;
@@ -24,10 +34,13 @@ class SettingsController extends GetxController {
   final RxString userPhone = ''.obs;
   final RxString userEmail = ''.obs;
 
-  // Order counts
+  // Order counts with status tracking
   final RxInt pendingOrdersCount = 0.obs;
   final RxInt archivedOrdersCount = 0.obs;
   final RxInt canceledOrdersCount = 0.obs;
+
+  // API request status
+  StatusRequest statusRequest = StatusRequest.none;
 
   @override
   void onInit() {
@@ -54,7 +67,7 @@ class SettingsController extends GetxController {
       // Load user information
       _loadUserData();
 
-      // Load order counts (with a small delay to simulate API call)
+      // Load order counts from API
       await _loadOrderCounts();
     } catch (e) {
       debugPrint('Error loading settings data: $e');
@@ -94,13 +107,13 @@ class SettingsController extends GetxController {
       if (email != null && email.isNotEmpty) userEmail.value = email;
     } else {
       // Reset user information if not authenticated
-      userName.value = 'Guest';
+      userName.value = 'guest'.tr;
       userPhone.value = '';
       userEmail.value = '';
     }
   }
 
-  /// Loads order counts (simulated API call)
+  /// Loads order counts from API
   Future<void> _loadOrderCounts() async {
     // Check if user is logged in
     if (!isAuthenticated()) {
@@ -111,14 +124,40 @@ class SettingsController extends GetxController {
       return;
     }
 
-    // Simulate API delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final userId = _myServices.sharedPreferences.getString("userId")!;
 
-    // For demo purposes, set some values
-    // In a real app, these would come from an API call
-    pendingOrdersCount.value = 3;
-    archivedOrdersCount.value = 12;
-    canceledOrdersCount.value = 1;
+      // Load pending orders
+      var pendingResponse = await _pendingOrdersData.getData(userId);
+      var pendingStatus = handlingData(pendingResponse);
+
+      if (pendingStatus == StatusRequest.success &&
+          pendingResponse['status'] == "success") {
+        List pendingData = pendingResponse['data'] ?? [];
+        pendingOrdersCount.value = pendingData.length;
+
+        // Count canceled orders (usually status 5)
+        canceledOrdersCount.value = pendingData
+            .where((item) => item['order_status'].toString() == '5')
+            .length;
+      }
+
+      // Load archived orders
+      var archivedResponse = await _archivedOrdersData.getData(userId);
+      var archivedStatus = handlingData(archivedResponse);
+
+      if (archivedStatus == StatusRequest.success &&
+          archivedResponse['status'] == "success") {
+        List archivedData = archivedResponse['data'] ?? [];
+        archivedOrdersCount.value = archivedData.length;
+      }
+    } catch (e) {
+      debugPrint('Error loading order counts: $e');
+      // Reset counts in case of error
+      pendingOrdersCount.value = 0;
+      archivedOrdersCount.value = 0;
+      canceledOrdersCount.value = 0;
+    }
   }
 
   /// Changes the app language
@@ -142,8 +181,7 @@ class SettingsController extends GetxController {
       // Show success message
       showSuccessSnackbar("success".tr, 'language_changed_successfully'.tr);
     } catch (e) {
-      showSuccessSnackbar("error".tr, 'language_change_failed'.tr);
-
+      showErrorSnackbar("error".tr, 'language_change_failed'.tr);
       debugPrint('Error changing language: $e');
     }
   }
@@ -212,22 +250,47 @@ class SettingsController extends GetxController {
       return;
     }
 
-    // Navigate to appropriate order screen based on status
-    switch (status) {
-      case 'pending':
-        Get.toNamed(AppRoute.pendingOrders);
-        break;
-      case 'archived':
-        Get.toNamed(AppRoute.archiveOrders);
-        break;
-      case 'canceled':
-        // Navigate to canceled orders
-        Get.toNamed(AppRoute.canceledOrders);
-        break;
-      default:
-        // Navigate to all orders
-        Get.toNamed(AppRoute.allOrders);
+    try {
+      // Initialize the filtered orders controller if needed
+      FilteredOrdersController? filteredOrdersController;
+      try {
+        filteredOrdersController = Get.find<FilteredOrdersController>();
+      } catch (e) {
+        filteredOrdersController = Get.put(FilteredOrdersController());
+      }
+
+      // Navigate to filtered_orders view with the correct filter
+      switch (status) {
+        case 'pending':
+          filteredOrdersController?.changeFilter('pending');
+          Get.toNamed('/filtered_orders');
+          break;
+        case 'archived':
+          filteredOrdersController?.changeFilter('archived');
+          Get.toNamed('/filtered_orders');
+          break;
+        case 'canceled':
+          filteredOrdersController?.changeFilter('canceled');
+          Get.toNamed('/filtered_orders');
+          break;
+        case 'all':
+        default:
+          filteredOrdersController?.changeFilter('all');
+          Get.toNamed('/filtered_orders');
+      }
+    } catch (e) {
+      debugPrint('Error navigating to orders: $e');
+      // Fallback navigation if filtered controller is unavailable
+      Get.toNamed(AppRoute.allOrders);
     }
+  }
+
+  /// Refresh order counts manually
+  Future<void> refreshOrderCounts() async {
+    isLoading.value = true;
+    await _loadOrderCounts();
+    isLoading.value = false;
+    update();
   }
 
   /// Navigates to help and support screen
@@ -252,7 +315,7 @@ class SettingsController extends GetxController {
       _myServices.sharedPreferences.setString("lang", language);
 
       // Reset user data
-      userName.value = 'Guest';
+      userName.value = 'guest'.tr;
       userPhone.value = '';
       userEmail.value = '';
 
@@ -264,11 +327,11 @@ class SettingsController extends GetxController {
       // Show success message
       showSuccessSnackbar("success".tr, 'logout_successful'.tr);
 
-      // Navigate to login
+      // Navigate to Home
       Get.offAllNamed('/home');
     } catch (e) {
       debugPrint('Error during logout: $e');
-      showSuccessSnackbar('error'.tr, 'logout_failed'.tr);
+      showErrorSnackbar('error'.tr, 'logout_failed'.tr);
     } finally {
       isLoading.value = false;
     }

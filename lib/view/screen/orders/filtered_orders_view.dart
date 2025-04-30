@@ -1,6 +1,8 @@
+// lib/view/screen/orders/filtered_orders_view.dart
 import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/view/widget/orders/order_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +22,7 @@ class FilteredOrdersView extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.notifications_outlined),
             onPressed: () {
-              Get.toNamed('/notifications');
+              Get.toNamed(AppRoute.notifications);
             },
           ),
         ],
@@ -33,21 +35,70 @@ class FilteredOrdersView extends StatelessWidget {
           // Order List
           Expanded(
             child: GetBuilder<FilteredOrdersController>(
-              builder: (controller) => HandlingDataView(
-                statusRequest: controller.statusRequest,
-                widget: controller.isEmpty
-                    ? _buildEmptyState(context, controller.currentFilter)
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(12),
-                        itemCount: controller.filteredOrders.length,
-                        itemBuilder: (context, index) => OrderCard(
-                          orderModel: controller.filteredOrders[index],
-                          onTap: () => controller.showOrderDetails(
-                              controller.filteredOrders[index]),
+              builder: (controller) => RefreshIndicator(
+                onRefresh: () => controller.refreshOrders(),
+                child: HandlingDataView(
+                  statusRequest: controller.statusRequest,
+                  widget: controller.isEmpty
+                      ? _buildEmptyState(context, controller.currentFilter)
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(12),
+                          itemCount: controller.filteredOrders.length,
+                          itemBuilder: (context, index) {
+                            final order = controller.filteredOrders[index];
+                            return OrderCard(
+                              orderModel: order,
+                              onTap: () => controller.showOrderDetails(order),
+                              onAction: () =>
+                                  _handleAction(context, controller, order),
+                            );
+                          },
                         ),
-                      ),
+                ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleAction(BuildContext context, FilteredOrdersController controller,
+      dynamic order) {
+    // Determine appropriate action based on order status
+    if (order.orderStatus == 0) {
+      // Cancel order for pending (status 0)
+      _showCancelConfirmation(context, controller, order);
+    } else if (order.orderStatus == 2) {
+      // Track order for "on the way" (status 2)
+      controller.trackOrder(order);
+    } else {
+      // Default to showing details
+      controller.showOrderDetails(order);
+    }
+  }
+
+  void _showCancelConfirmation(BuildContext context,
+      FilteredOrdersController controller, dynamic order) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('cancel_order'.tr),
+        content: Text('are_you_sure_cancel_order'.tr),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('cancel'.tr),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              controller.cancelOrder(order.orderId.toString());
+            },
+            child: Text('confirm'.tr),
           ),
         ],
       ),
@@ -95,6 +146,16 @@ class FilteredOrdersView extends StatelessWidget {
             message,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
+          const SizedBox(height: 8),
+          if (filter == 'pending' || filter == 'recent')
+            OutlinedButton.icon(
+              onPressed: () {
+                // Navigate to services page to create an order
+                Get.offAllNamed(AppRoute.homepage);
+              },
+              icon: Icon(Icons.add_circle_outline),
+              label: Text('create_new_order'.tr),
+            ),
         ],
       ),
     );
@@ -102,7 +163,7 @@ class FilteredOrdersView extends StatelessWidget {
 }
 
 class OrderFilterTabs extends GetView<FilteredOrdersController> {
-  const OrderFilterTabs({Key? key}) : super(key: key);
+  const OrderFilterTabs({super.key});
 
   @override
   Widget build(BuildContext context) {

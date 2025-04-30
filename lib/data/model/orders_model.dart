@@ -16,7 +16,7 @@ class OrdersModel {
   String? workshopAmount;
   String? appCommission;
   String? paymentStatus;
-  Null? notes;
+  Null notes;
   int? addressId;
   int? addressUserId;
   String? addressName;

@@ -206,61 +206,7 @@ class ProductByCarController extends GetxController {
     update();
   }
 
-  Future<void> _loadProductByCar() async {
-    try {
-      if (selectedMakeIndex.value < 0 ||
-          selectedModelIndex.value < 0 ||
-          selectedModels.isEmpty ||
-          allServiceItems.isEmpty) {
-        filteredServiceItems.value = allServiceItems;
-        return;
-      }
-
-      int modelId = selectedModels[selectedModelIndex.value].modelId;
-
-      int subServiceId = allServiceItems
-          .firstWhere((item) => item.isSelected,
-              orElse: () => allServiceItems.first)
-          .subServiceId;
-
-      final response = await productByCarData.getProductsByCar(
-          modelId.toString(), subServiceId.toString(), selectedYear.toString());
-
-      if (response['status'] == "success" && response['data'] != null) {
-        // Extract valid sub service IDs from product_by_car data
-        List<int> validSubServiceIds = List<int>.from((response['data'] as List)
-            .map((item) => item['sub_service_id'] as int));
-
-        // Filter services based on the valid sub service IDs
-        if (validSubServiceIds.isNotEmpty) {
-          filteredServiceItems.value = allServiceItems
-              .where((service) =>
-                  validSubServiceIds.contains(service.subServiceId))
-              .toList();
-
-          // Ensure at least one service is selected
-          if (!filteredServiceItems.any((service) => service.isSelected)) {
-            filteredServiceItems.first.isSelected = true;
-          }
-        } else {
-          filteredServiceItems.value = allServiceItems;
-        }
-      } else {
-        // If no product_by_car data found, show all services
-        filteredServiceItems.value = allServiceItems;
-      }
-
-      // Apply sorting
-      sortServicesByPrice(currentSort);
-
-      update();
-    } catch (e) {
-      print("Error loading product by car: $e");
-      filteredServiceItems.value = allServiceItems;
-      update();
-    }
-  }
-
+// In _loadServiceDetails() method - remove automatic selection
   Future<void> _loadServiceDetails() async {
     try {
       statusRequest = StatusRequest.loading;
@@ -281,9 +227,10 @@ class ProductByCarController extends GetxController {
                 .whereType<SubServiceModel>()
                 .toList();
 
-            // Set first service as selected by default
-            if (allServiceItems.isNotEmpty) {
-              allServiceItems[0].isSelected = true;
+            // Don't set any service as selected by default
+            // Let the user make the selection themselves
+            for (var service in allServiceItems) {
+              service.isSelected = false;
             }
 
             filteredServiceItems.value = allServiceItems;
@@ -305,6 +252,54 @@ class ProductByCarController extends GetxController {
     }
 
     update();
+  }
+
+// In _loadProductByCar() method - modify to only load when a service is selected
+  Future<void> _loadProductByCar() async {
+    try {
+      // Check if we have all necessary data
+      if (selectedMakeIndex.value < 0 ||
+          selectedModelIndex.value < 0 ||
+          selectedModels.isEmpty ||
+          allServiceItems.isEmpty) {
+        filteredServiceItems.value = allServiceItems;
+        return;
+      }
+
+      int modelId = selectedModels[selectedModelIndex.value].modelId;
+
+      final response = await productByCarData.getProductsByCar(
+          modelId.toString(), serviceId, selectedYear.toString());
+
+      // Process API response as before
+      if (response['status'] == "success" &&
+          response['data'] != null &&
+          response['data'].isNotEmpty) {
+        List<int> validSubServiceIds = List<int>.from((response['data'] as List)
+            .map((item) => item['sub_service_id'] as int));
+
+        if (validSubServiceIds.isNotEmpty) {
+          filteredServiceItems.value = allServiceItems
+              .where((service) =>
+                  validSubServiceIds.contains(service.subServiceId))
+              .toList();
+        } else {
+          filteredServiceItems.value = allServiceItems;
+        }
+      } else {
+        // API call failed or returned no data, show all services
+        filteredServiceItems.value = allServiceItems;
+      }
+
+      // Apply sorting
+      sortServicesByPrice(currentSort);
+
+      update();
+    } catch (e) {
+      print("Error loading product by car: $e");
+      filteredServiceItems.value = allServiceItems;
+      update();
+    }
   }
 
   // Selection and state methods

@@ -1,3 +1,4 @@
+// lib/view/screen/settings.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -164,7 +165,7 @@ class SettingsPage extends StatelessWidget {
         _buildSectionHeader(context, 'account'.tr, Icons.person_outline),
         _buildAccountSection(context, controller),
 
-        // Orders section
+        // Orders section with real-time data
         _buildSectionHeader(context, 'orders'.tr, Icons.receipt_long_outlined),
         _buildOrdersSection(context, controller),
 
@@ -296,6 +297,58 @@ class SettingsPage extends StatelessWidget {
               Theme.of(context).colorScheme.error)),
           onTap: () => controller.navigateToOrdersByStatus('canceled'),
         ),
+        _buildDivider(),
+        _buildListTile(
+          context,
+          title: 'all_orders'.tr,
+          icon: Icons.list_alt_outlined,
+          trailing: Obx(() {
+            final total = controller.pendingOrdersCount.value +
+                controller.archivedOrdersCount.value +
+                controller.canceledOrdersCount.value;
+            return _buildOrderBadge(
+                context, total, Theme.of(context).colorScheme.primary);
+          }),
+          onTap: () => controller.navigateToOrdersByStatus('all'),
+        ),
+        if (controller.isAuthenticated()) ...[
+          _buildDivider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Obx(() => controller.isLoading.value
+                ? Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                  )
+                : TextButton.icon(
+                    onPressed: () => controller.refreshOrderCounts(),
+                    icon: Icon(
+                      Icons.refresh,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    label: Text(
+                      'refresh_orders'.tr,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  )),
+          ),
+        ],
       ],
     );
   }
@@ -339,8 +392,7 @@ class SettingsPage extends StatelessWidget {
       children: [
         // Wrap only the radio button in Obx to minimize reactivity scope
         ListTile(
-          title: const Text('English'),
-          subtitle: const Text('en'),
+          title: Text('english'.tr),
           leading: const Text('🇺🇸'),
           trailing: Obx(() => Radio<String>(
                 value: 'en',
@@ -351,8 +403,7 @@ class SettingsPage extends StatelessWidget {
         ),
         _buildDivider(),
         ListTile(
-          title: const Text('العربية'),
-          subtitle: const Text('ar'),
+          title: Text('arabic'.tr),
           leading: const Text('🇸🇦'),
           trailing: Obx(() => Radio<String>(
                 value: 'ar',

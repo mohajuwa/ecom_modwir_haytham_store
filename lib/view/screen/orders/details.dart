@@ -382,7 +382,7 @@ class OrdersDetails extends StatelessWidget {
                     const Divider(height: 16),
                 ],
               );
-            }).toList(),
+            }),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

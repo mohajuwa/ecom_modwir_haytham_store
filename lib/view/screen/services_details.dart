@@ -10,6 +10,7 @@ import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/screen/orders/service_order_forms.dart';
 import 'package:ecom_modwir/view/widget/services/cars/car_display_card.dart';
 import 'package:ecom_modwir/view/widget/services/cars/car_selection_widgets.dart';
+import 'package:ecom_modwir/view/widget/services/cars/input_sections.dart';
 
 import 'package:ecom_modwir/view/widget/services/service_card_widget.dart';
 
@@ -102,16 +103,43 @@ class _MainContent extends StatelessWidget {
   }
 
   SliverToBoxAdapter _buildCarSelectionSection(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SliverToBoxAdapter(
       child: controller.statusRequest == StatusRequest.loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (controller.carMakes.isNotEmpty)
                   CarMakeSlider(controller: controller),
                 if (controller.selectedMakeIndex.value != -1 &&
                     controller.selectedModels.isNotEmpty)
                   CarModelSlider(controller: controller),
+
+                // Add year selection after model selection
+                if (controller.selectedMakeIndex.value != -1 &&
+                    controller.selectedModelIndex.value != -1)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'year'.tr,
+                          style: MyTextStyle.meduimBold(context),
+                        ),
+                        const SizedBox(height: 8),
+                        YearScrollWheel(
+                          scrollController: controller.scrollController,
+                          selectedYear: controller.selectedYear,
+                          onYearChanged: controller.updateYear,
+                          isDark: isDark,
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
     );

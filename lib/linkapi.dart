@@ -1,8 +1,8 @@
 class AppLink {
   // ============================ Server Link  Links ============================//
 
-  static const String server = "http://10.0.2.2/apis/haytham_store";
-  // static const String server = "http://192.168.33.187/apis/haytham_store";
+  // static const String server = "http://10.0.2.2/apis/haytham_store";
+  static const String server = "http://192.168.129.187/apis/haytham_store";
 
 // ============================ Images Links  Links ============================//
 

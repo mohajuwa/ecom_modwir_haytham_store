@@ -6,11 +6,10 @@ class ProductByCarData {
 
   ProductByCarData(this.crud);
 
-  getProductsByCar(
-      String modelId, String subServiceId, String yearModel) async {
+  getProductsByCar(String modelId, String serviceId, String yearModel) async {
     var response = await crud.postData(AppLink.productByCar, {
       'model_id': modelId,
-      'sub_service_id': subServiceId,
+      'service_id': serviceId,
       "year_model": yearModel,
     });
     return response.fold((l) => l, (r) => r);

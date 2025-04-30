@@ -1,6 +1,5 @@
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
-import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/widget/customappbar.dart';
 import 'package:ecom_modwir/view/widget/home/customcardhome.dart';
@@ -73,7 +72,7 @@ class HomePage extends StatelessWidget {
                         showAll: showAll,
                       ),
                       Text(
-                        'services_text'.tr,
+                        'offers'.tr,
                         style: MyTextStyle.meduimBold(context),
                       ),
                       ListOffersItemsHome(),

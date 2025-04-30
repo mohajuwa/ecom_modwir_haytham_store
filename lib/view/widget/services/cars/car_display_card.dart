@@ -60,7 +60,7 @@ class CarInfoWidget extends StatelessWidget {
             if (!controller.showAddCarForm.value ||
                 controller.userVehicles.length > 1)
               SizedBox(
-                height: 225,
+                height: 250,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 8),

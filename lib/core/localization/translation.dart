@@ -229,6 +229,19 @@ class MyTranslation extends Translations {
           "details": "التفاصيل",
           "currency_symbol": "ر.س",
           "currency_format": "ر.س #,##0.00",
+          "all_orders": "جميع الطلبات",
+          "create_new_order": "إنشاء طلب جديد",
+          "refresh_orders": "تحديث الطلبات",
+          "no_orders": "لا توجد طلبات",
+          "no_recent_orders": "لا توجد طلبات حديثة",
+          "no_pending_orders": "لا توجد طلبات قيد الانتظار",
+          "no_archived_orders": "لا توجد طلبات مؤرشفة",
+          "are_you_sure_cancel_order": "هل أنت متأكد من إلغاء هذا الطلب؟",
+          "logout_successful": "تم تسجيل الخروج بنجاح",
+          "logout_failed": "فشل تسجيل الخروج",
+          "profile": "بروفايل",
+          "addresses": "العناوين",
+          "guest": "ضيف",
         },
         //==================================
 
@@ -463,6 +476,20 @@ class MyTranslation extends Translations {
           "currency": "SAR",
           "currency_symbol": "SAR",
           "currency_format": "SAR #,##0.00",
+          "all_orders": "All Orders",
+          "create_new_order": "Create New Order",
+          "refresh_orders": "Refresh Orders",
+          "no_orders": "No Orders",
+          "no_recent_orders": "No Recent Orders",
+          "no_pending_orders": "No Pending Orders",
+          "no_archived_orders": "No Archived Orders",
+          "are_you_sure_cancel_order":
+              "Are you sure you want to cancel this order?",
+          "logout_successful": "Logout Successful",
+          "logout_failed": "Logout Failed",
+          "profile": "Profile",
+          "addresses": "Adressess",
+          "guest": "Guest",
         }
       };
 }

@@ -2,7 +2,6 @@ import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/data/datasource/remote/offers_data.dart';
 import 'package:ecom_modwir/data/model/offers_model.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class OfferController extends GetxController {
