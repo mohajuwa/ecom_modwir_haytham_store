@@ -1,1 +1,25 @@
-see project and in settings page , in orders things make it take data from the model or api , and make it go to orders depending on status 
+see the project and the orders table and order details table to make complate the order , 
+and add selection for order type 	0=> delivery , 1 => recive , 
+and payment methods 	0=> cash , 1=> card	, and add order coupon input check and funciton to deial with it,
+
+
+here is the tables 
+[
+
+     `orders`(`order_id`, `order_number`, `user_id`, `orders_address`,
+      `vendor_id`, `vehicle_id`, `fault_type`, `order_status`, 
+      `order_type`, `orders_coupon_id`, `orders_paymentmethod`, `orders_pricedelivery`,
+      `order_date`, `total_amount`, `workshop_amount`, `app_commission`, `payment_status`, `notes`)
+
+
+      `order_details`(`detail_id`, `order_id`, `sub_service_id`, 
+      `quantity`, `unit_price`, `discount`, `total_price`, `notes`)
+
+
+      `payments`(`payment_id`, `order_id`, `amount`,
+       `payment_method`, `payment_date`, `payment_status`)
+
+
+       `coupon`(`coupon_id`, `coupon_name`, `coupon_count`,
+        `coupon_discount`, `coupon_expiredate`) 
+]

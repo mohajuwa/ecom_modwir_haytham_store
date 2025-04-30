@@ -57,7 +57,7 @@ class AuthService extends GetxController {
   Function? onAuthSuccess;
   Timer? _loadingTimer;
 
-  final int _loadingTimeoutSeconds = 10; // 30 seconds timeout
+  final int _loadingTimeoutSeconds = 30; // 30 seconds timeout
 
   @override
   void onClose() {
@@ -679,8 +679,6 @@ class AuthService extends GetxController {
       }
 
       if (response['status'] == "success") {
-        await myServices.sharedPreferences.setBool("isLogin", true);
-
         // Get location automatically after OTP verification
         await _getCurrentLocation();
 
@@ -690,6 +688,8 @@ class AuthService extends GetxController {
             needsAddress.value = true;
             isVerifying.value = false;
           } else {
+            await myServices.sharedPreferences.setBool("isLogin", true);
+
             _finalizeAuth();
           }
         } else {
@@ -938,9 +938,6 @@ class AuthService extends GetxController {
     _startLoadingTimer();
 
     try {
-      // Save user data
-      myServices.sharedPreferences.setBool("isLogin", true);
-
       // Save address to database if we have one
       if (address != null && address!.isNotEmpty) {
         String userId = myServices.sharedPreferences.getString("userId") ?? "";

@@ -24,6 +24,7 @@ class ProductByCarController extends GetxController {
   final ServiceItemsData serviceItemsData = ServiceItemsData(Get.find());
   final VehicleData userVehicleData = VehicleData(Get.find());
   final ProductByCarData productByCarData = ProductByCarData(Get.find());
+  bool isLoggedIn = false;
 
   final LicensePlateController licensePlateController =
       Get.put(LicensePlateController());
@@ -104,6 +105,7 @@ class ProductByCarController extends GetxController {
   // Initialize data and services
   Future<void> initializeData() async {
     try {
+      isLoggedIn = myServices.sharedPreferences.getBool("isLogin") ?? false;
       final arguments = Get.arguments;
       serviceId = arguments?['service_id']?.toString().trim() ?? "";
       lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
@@ -126,13 +128,23 @@ class ProductByCarController extends GetxController {
     final initialIndex = currentYear - selectedYear;
     final safeIndex = initialIndex.clamp(0, 29);
 
+    // Dispose of any existing controller first to prevent memory leaks
+    if (scrollController != null) {
+      try {
+        scrollController!.dispose();
+      } catch (e) {
+        print("Error disposing scroll controller: $e");
+      }
+    }
+
+    // Create a new controller
     scrollController = FixedExtentScrollController(initialItem: safeIndex);
   }
 
   Future<void> loadUserVehicles() async {
     try {
       final userId = myServices.sharedPreferences.getString("userId");
-      if (userId == null || userId.isEmpty) return;
+      if (userId == null || userId.isEmpty || !isLoggedIn) return;
 
       final response = await userVehicleData.getUserVehicles(userId, lang);
 
@@ -432,18 +444,51 @@ class ProductByCarController extends GetxController {
       final index = currentYear - year;
       // Ensure index is within valid range
       if (index >= 0 && index < 30) {
-        // Use Future.microtask to ensure UI is updated before jumping
+        // Use animateToItem instead of jumpToItem for smooth scrolling
         Future.microtask(() {
           try {
-            scrollController!.jumpToItem(index);
+            scrollController!.animateToItem(
+              index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
           } catch (e) {
-            print("Error during jump to item: $e");
+            print("Error during animate to item: $e");
           }
         });
       }
     } catch (e) {
       print("Error resetting year scroll position: $e");
     }
+  }
+
+  void updateYear(int newYear) {
+    // Remember the previous year value
+    final previousYear = selectedYear;
+
+    // Update the year
+    selectedYear = newYear;
+
+    // If the wheel isn't currently being scrolled by the user,
+    // update the position to match the new year
+    if (previousYear != newYear && scrollController != null) {
+      final currentYear = DateTime.now().year;
+      final index = currentYear - newYear;
+      if (index >= 0 && index < 30) {
+        try {
+          scrollController!.animateToItem(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        } catch (e) {
+          print("Error updating scroll position: $e");
+        }
+      }
+    }
+    _loadProductByCar();
+
+    update();
   }
 
   void _setVehicleMakeAndModel(int makeId, int modelId) {
@@ -489,31 +534,6 @@ class ProductByCarController extends GetxController {
 
       update();
     }
-  }
-
-  void updateYear(int newYear) {
-    // Remember the previous year value
-    final previousYear = selectedYear;
-
-    // Update the year
-    selectedYear = newYear;
-
-    // If the wheel isn't currently being scrolled by the user,
-    // update the position to match the new year
-    if (previousYear != newYear && scrollController != null) {
-      final currentYear = DateTime.now().year;
-      final index = currentYear - newYear;
-      if (index >= 0 && index < 30) {
-        try {
-          scrollController!.jumpToItem(index);
-        } catch (e) {
-          print("Error updating scroll position: $e");
-        }
-      }
-    }
-    _loadProductByCar();
-
-    update();
   }
 
   void selectService(int index) {

@@ -393,11 +393,11 @@ class _UserCarDetailsForm extends StatelessWidget {
             ),
           ),
         ),
-        Text('car_details'.tr, style: MyTextStyle.styleBold(context)),
-        const SizedBox(height: 24),
 
         // Conditional rendering based on user vehicles
         if (controller.userVehicles.isEmpty) ...[
+          Text('car_details'.tr, style: MyTextStyle.styleBold(context)),
+          const SizedBox(height: 24),
           ModernSaudiLicensePlate(isDark: isDark),
           const SizedBox(height: 16),
           Column(
