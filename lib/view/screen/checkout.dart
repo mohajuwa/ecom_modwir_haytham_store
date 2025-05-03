@@ -8,7 +8,6 @@ import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
-import 'package:ecom_modwir/view/widget/checkout/card_payment_method.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_shipping_address.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
