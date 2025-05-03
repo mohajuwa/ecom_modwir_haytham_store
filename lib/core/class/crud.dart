@@ -63,14 +63,4 @@ class Crud {
       return const Left(StatusRequest.serverFailure);
     }
   }
-
-  /// Helper method to check internet connectivity
-  Future<bool> checkinternet() async {
-    try {
-      return await checkInternet();
-    } catch (e) {
-      print("Error checking internet: $e");
-      return false;
-    }
-  }
 }
