@@ -92,4 +92,6 @@ class AppLink {
   static const String notificatoin = "$notificationLink/notification.php";
   static const String markNotiRead = "$notificationLink/mark_read.php";
   static const String markAllNotiRead = "$notificationLink/mark_all_read.php";
+
+  static const String processPayment = "$server/payments";
 }

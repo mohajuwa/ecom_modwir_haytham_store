@@ -1,141 +1,297 @@
-import "package:ecom_modwir/core/class/statusrequest.dart";
-import "package:ecom_modwir/core/constant/routes.dart";
-import "package:ecom_modwir/core/functions/handingdatacontroller.dart";
-import "package:ecom_modwir/core/services/services.dart";
-import "package:ecom_modwir/data/datasource/remote/address_data.dart";
-import "package:ecom_modwir/data/datasource/remote/checkout_data.dart";
-import "package:ecom_modwir/data/model/address_model.dart";
-import "package:ecom_modwir/data/model/services/services_model.dart";
-import "package:get/get.dart";
+import 'package:ecom_modwir/core/class/statusrequest.dart';
+import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
+import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
+import 'package:ecom_modwir/core/services/services.dart';
+import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
+import 'package:ecom_modwir/data/datasource/remote/cart_data.dart';
+import 'package:ecom_modwir/data/datasource/remote/checkout_data.dart';
+import 'package:ecom_modwir/data/model/address_model.dart';
+import 'package:ecom_modwir/data/model/coupon_model.dart';
+import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CheckoutController extends GetxController {
-  AddressData addressData = Get.put(AddressData(Get.find()));
-  CheckoutData checkoutDate = Get.put(CheckoutData(Get.find()));
-  late ServicesModel servicesModel;
+  // Data sources
+  final AddressData addressData = AddressData(Get.find());
+  final CartData cartData = CartData(Get.find());
+  final CheckoutData checkoutData = CheckoutData(Get.find());
+  final MyServices myServices = Get.find();
 
+  // State variables
   StatusRequest statusRequest = StatusRequest.none;
-  MyServices myServices = Get.find();
+  List<AddressModel> dataAddress = [];
 
+  // Selected service items
+  List<SubServiceModel> selectedServices = [];
+
+  // Form controllers
+  TextEditingController couponController = TextEditingController();
+
+  // Selected values
   String? paymentMethod;
   String? deliveryType;
   String addressId = "0";
 
-  late String discountCoupon;
+  // Order summary values
+  double subTotal = 0.0;
+  double deliveryFee = 10.0; // Default delivery fee
+  double discount = 0.0;
+  double total = 0.0;
 
-  late String couponId;
-  late String priceOrders;
+  // Coupon data
+  CouponModel? appliedCoupon;
+  bool isCheckingCoupon = false;
+  String couponErrorMessage = '';
+  bool isCouponValid = false;
 
-  List<AddressModel> dataAddress = [];
-  intialData() async {
-    statusRequest = StatusRequest.loading;
-    servicesModel = Get.arguments['servicemodel'];
+  @override
+  void onInit() {
+    // Extract data from arguments
+    if (Get.arguments != null) {
+      if (Get.arguments['selectedServices'] != null) {
+        selectedServices = Get.arguments['selectedServices'];
+      }
 
-    statusRequest = StatusRequest.success;
+      // Calculate initial totals
+      calculateTotals();
+    }
+
+    // Load user addresses
+    getShippingAddresses();
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    couponController.dispose();
+    super.onClose();
+  }
+
+  // Calculate order totals
+  void calculateTotals() {
+    // Calculate subtotal from selected services
+    subTotal = 0.0;
+    for (var service in selectedServices) {
+      subTotal += service.price;
+    }
+
+    // Apply discount if coupon is valid
+    if (appliedCoupon != null && isCouponValid) {
+      discount = (subTotal * appliedCoupon!.couponDiscount!) / 100;
+    } else {
+      discount = 0.0;
+    }
+
+    // Calculate total (include delivery fee only if delivery type is selected)
+    double shippingFee = (deliveryType == "0") ? deliveryFee : 0.0;
+    total = subTotal - discount + shippingFee;
+
     update();
   }
 
-  choosePaymentMethod(String val) {
+  // Check coupon validity
+  Future<void> checkCoupon() async {
+    final couponCode = couponController.text.trim();
+    if (couponCode.isEmpty) {
+      couponErrorMessage = 'please_enter_coupon_code'.tr;
+      update();
+      return;
+    }
+
+    isCheckingCoupon = true;
+    couponErrorMessage = '';
+    update();
+
+    try {
+      final response = await cartData.checkCoupon(couponCode);
+
+      if (response['status'] == "success") {
+        // Coupon exists and is valid
+        final couponData = response['data'];
+        appliedCoupon = CouponModel.fromJson(couponData);
+
+        // Additional validation (expiry date, coupon count)
+        final expiryDate = DateTime.parse(appliedCoupon!.couponExpiredate!);
+        if (expiryDate.isBefore(DateTime.now())) {
+          couponErrorMessage = 'coupon_expired'.tr;
+          isCouponValid = false;
+        } else if (appliedCoupon!.couponCount! <= 0) {
+          couponErrorMessage = 'coupon_usage_limit_reached'.tr;
+          isCouponValid = false;
+        } else {
+          couponErrorMessage = '';
+          isCouponValid = true;
+          showSuccessSnackbar('success'.tr, 'coupon_applied_successfully'.tr);
+        }
+      } else {
+        // Coupon not found or invalid
+        couponErrorMessage = 'invalid_coupon'.tr;
+        isCouponValid = false;
+        appliedCoupon = null;
+      }
+    } catch (e) {
+      couponErrorMessage = 'error_checking_coupon'.tr;
+      isCouponValid = false;
+      appliedCoupon = null;
+    } finally {
+      isCheckingCoupon = false;
+      calculateTotals();
+      update();
+    }
+  }
+
+  // Remove applied coupon
+  void removeCoupon() {
+    couponController.clear();
+    couponErrorMessage = '';
+    isCouponValid = false;
+    appliedCoupon = null;
+    calculateTotals();
+    update();
+  }
+
+  // Choose payment method
+  void choosePaymentMethod(String val) {
     paymentMethod = val;
     update();
   }
 
-  chooseDeliveryType(String val) {
+  // Choose delivery type
+  void chooseDeliveryType(String val) {
     deliveryType = val;
+    calculateTotals(); // Recalculate totals as delivery fee may change
     update();
   }
 
-  chooseShippingAddress(String val) {
+  // Choose shipping address
+  void chooseShippingAddress(String val) {
     addressId = val;
     update();
   }
 
-  getShippingAddress() async {
+  // Get user shipping addresses
+  Future<void> getShippingAddresses() async {
     statusRequest = StatusRequest.loading;
+    update();
 
-    var response = await addressData
-        .getData(myServices.sharedPreferences.getString("userId")!);
+    try {
+      final userId = myServices.sharedPreferences.getString("userId");
+      if (userId == null || userId.isEmpty) {
+        statusRequest = StatusRequest.failure;
+        return;
+      }
 
-    print("=====================ChView Address Controller $response ");
+      final response = await addressData.getData(userId);
 
-    statusRequest = handlingData(response);
+      statusRequest = handlingData(response);
+      if (StatusRequest.success == statusRequest) {
+        if (response['status'] == "success") {
+          final List listData = response['data'] ?? [];
+          dataAddress = listData.map((e) => AddressModel.fromJson(e)).toList();
 
-    if (StatusRequest.success == statusRequest) {
-      // Start backend
-      if (response['status'] == "success") {
-        List listData = response['data'];
-        dataAddress.addAll(listData.map((e) => AddressModel.fromJson(e)));
-        addressId = dataAddress[0].Id.toString();
-
-        if (dataAddress.isEmpty) {
+          // Set default address if available
+          if (dataAddress.isNotEmpty) {
+            addressId = dataAddress[0].Id.toString();
+          } else {
+            statusRequest = StatusRequest.failure;
+          }
+        } else {
           statusRequest = StatusRequest.failure;
         }
-      } else {
-        statusRequest = StatusRequest.failure;
       }
-      // End
+    } catch (e) {
+      statusRequest = StatusRequest.serverFailure;
     }
+
     update();
   }
 
-  checkout() async {
+  // Process checkout
+  Future<void> checkout() async {
+    // Validate required fields
+    if (!validateCheckout()) {
+      return;
+    }
+
+    statusRequest = StatusRequest.loading;
+    update();
+
+    try {
+      // Prepare order data
+      final orderData = {
+        "usersid": myServices.sharedPreferences.getString("userId"),
+        "addressid": addressId,
+        "orderstype": deliveryType,
+        "pricedelivery": deliveryType == "0" ? deliveryFee.toString() : "0",
+        "ordersprice": subTotal.toString(),
+        "total_amount": total.toString(),
+        "paymentmethod": paymentMethod,
+        "services": _prepareServicesData(),
+        "couponid": appliedCoupon?.couponId?.toString() ?? "0",
+        "coupondiscount": discount.toString(),
+      };
+
+      // Submit order
+      final response = await checkoutData.checkout(orderData);
+
+      statusRequest = handlingData(response);
+      if (StatusRequest.success == statusRequest) {
+        if (response['status'] == "success") {
+          // Order placed successfully
+          Get.offAllNamed(AppRoute.homepage);
+          showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
+        } else {
+          statusRequest = StatusRequest.failure;
+          showErrorSnackbar('error'.tr, 'checkout_failed'.tr);
+        }
+      } else {
+        showErrorSnackbar('error'.tr, 'server_error'.tr);
+      }
+    } catch (e) {
+      statusRequest = StatusRequest.serverFailure;
+      showErrorSnackbar('error'.tr, 'unexpected_error'.tr);
+    }
+
+    update();
+  }
+
+  // Prepare services data for order
+  List<Map<String, dynamic>> _prepareServicesData() {
+    return selectedServices.map((service) {
+      return {
+        "sub_service_id": service.subServiceId.toString(),
+        "quantity": "1",
+        "unit_price": service.price.toString(),
+        "discount": "0",
+        "total_price": service.price.toString(),
+      };
+    }).toList();
+  }
+
+  // Validate checkout data
+  bool validateCheckout() {
     if (paymentMethod == null) {
-      return Get.snackbar("Error", "Please select payment method");
+      showErrorSnackbar('error'.tr, 'please_select_payment_method'.tr);
+      return false;
     }
+
     if (deliveryType == null) {
-      return Get.snackbar("Error", "Please select an order type ");
-    }
-    if (dataAddress.isEmpty) {
-      // oABO = Order Address Before Order
-      myServices.sharedPreferences.setBool("oABO", true);
-      return Get.snackbar("Error", "Please select shipping address");
+      showErrorSnackbar('error'.tr, 'please_select_delivery_type'.tr);
+      return false;
     }
 
-    statusRequest = StatusRequest.loading;
-    Map<String, dynamic> data = {
-      "usersid": myServices.sharedPreferences.getString("id"),
-      "addressid": addressId.toString(),
-      "orderstype": deliveryType.toString(),
-      "pricedelivery": "10",
-      "ordersprice": priceOrders,
-      "couponid": couponId,
-      "coupondiscount": discountCoupon.toString(),
-      "paymentmethod": paymentMethod.toString()
-    };
-    var response = await checkoutDate.checkout(data);
-
-    print("=====================Checout Func Controller $response ");
-
-    statusRequest = handlingData(response);
-
-    if (StatusRequest.success == statusRequest) {
-      // Start backend
-      if (response['status'] == "success") {
-        // Route to Home
-        Get.offAllNamed(AppRoute.homepage);
-        Get.snackbar("Success", "Order placed successfully ");
-
-        if (dataAddress.isEmpty) {
-          statusRequest = StatusRequest.failure;
-          Get.snackbar("Error! Code: 1299", "Address Not Set ");
-        }
-      } else {
-        statusRequest = StatusRequest.failure;
-        Get.snackbar("Error!", "Try Again");
-      }
-      // End
-    } else {
-      statusRequest = StatusRequest.failure;
+    if (deliveryType == "0" && (addressId == "0" || dataAddress.isEmpty)) {
+      showErrorSnackbar('error'.tr, 'please_add_shipping_address'.tr);
+      return false;
     }
-    update();
-  }
 
-  @override
-  void onInit() {
-    couponId = Get.arguments['couponid'];
-    priceOrders = Get.arguments['priceorder'];
-    discountCoupon = Get.arguments['coupondiscount'];
-    intialData();
-    getShippingAddress();
-    super.onInit();
+    if (selectedServices.isEmpty) {
+      showErrorSnackbar('error'.tr, 'no_services_selected'.tr);
+      return false;
+    }
+
+    return true;
   }
 }
