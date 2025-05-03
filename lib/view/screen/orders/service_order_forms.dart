@@ -125,7 +125,7 @@ class ServiceOrderForm extends StatelessWidget {
           ),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: _UserCarDetailsForm(
+            child: _OrderDetailsForm(
               controller: controller,
               isDark: isDark,
             ),
@@ -367,11 +367,11 @@ class _AttachmentSection extends StatelessWidget {
   }
 }
 
-class _UserCarDetailsForm extends StatelessWidget {
+class _OrderDetailsForm extends StatelessWidget {
   final ProductByCarController controller;
   final bool isDark;
 
-  const _UserCarDetailsForm({
+  const _OrderDetailsForm({
     required this.controller,
     required this.isDark,
   });

@@ -218,7 +218,6 @@ class ProductByCarController extends GetxController {
     update();
   }
 
-// In _loadServiceDetails() method - remove automatic selection
   Future<void> _loadServiceDetails() async {
     try {
       statusRequest = StatusRequest.loading;
@@ -266,7 +265,6 @@ class ProductByCarController extends GetxController {
     update();
   }
 
-// In _loadProductByCar() method - modify to only load when a service is selected
   Future<void> _loadProductByCar() async {
     try {
       // Check if we have all necessary data
