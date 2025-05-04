@@ -13,12 +13,12 @@ class AddressSelectorWidget extends StatelessWidget {
   final VoidCallback onAddAddress;
 
   const AddressSelectorWidget({
-    Key? key,
+    super.key,
     required this.addresses,
     required this.selectedAddressId,
     required this.onSelect,
     required this.onAddAddress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
