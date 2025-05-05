@@ -100,4 +100,11 @@ class CheckoutData {
       return <String, dynamic>{'status': 'error', 'message': e.toString()};
     }
   }
+
+  checkCoupon(String couponName) async {
+    var response = await crud.postData(AppLink.checkCoupon, {
+      "couponname": couponName,
+    });
+    return response.fold((l) => l, (r) => r);
+  }
 }

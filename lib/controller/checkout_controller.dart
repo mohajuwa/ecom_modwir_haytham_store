@@ -4,7 +4,6 @@ import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
-import 'package:ecom_modwir/data/datasource/remote/cart_data.dart';
 import 'package:ecom_modwir/data/datasource/remote/checkout_data.dart';
 import 'package:ecom_modwir/data/model/address_model.dart';
 import 'package:ecom_modwir/data/model/coupon_model.dart';
@@ -15,7 +14,6 @@ import 'package:get/get.dart';
 class CheckoutController extends GetxController {
   // Data sources
   final AddressData addressData = AddressData(Get.find());
-  final CartData cartData = CartData(Get.find());
   final CheckoutData checkoutData = CheckoutData(Get.find());
   final MyServices myServices = Get.find();
 
@@ -148,7 +146,7 @@ class CheckoutController extends GetxController {
     update();
 
     try {
-      final response = await cartData.checkCoupon(couponCode);
+      final response = await checkoutData.checkCoupon(couponCode);
 
       if (response['status'] == "success") {
         // Coupon exists and is valid
