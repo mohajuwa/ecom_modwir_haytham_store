@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -787,30 +788,22 @@ class ProductByCarController extends GetxController {
         orElse: () => filteredServiceItems.first,
       );
 
-      // Get selected car details
-      final selectedMake = carMakes[selectedMakeIndex.value];
-      final selectedModel = selectedModels[selectedModelIndex.value];
-
-      // Prepare order data
-      final Map<String, dynamic> orderData = {
-        'service_id': selectedService.serviceId,
-        'sub_service_id': selectedService.subServiceId,
-        'make_id': selectedMake.makeId,
-        'model_id': selectedModel.modelId,
-        'year': selectedYear,
-        'license_plate': licensePlateController.getLicensePlateJson(),
-        'notes': notesController.text,
-        'user_id': myServices.sharedPreferences.getString("userId") ?? "",
-      };
-
+      Get.toNamed(
+        AppRoute.checkout,
+        arguments: {
+          'selectedServices': selectedService,
+          'orderNotes': notesController.text,
+          'selected_vehicle_id': selectedVehicleIndex.toString(),
+          // 'fault_type_id': selectedFaultTypeId,
+        },
+      );
       // TODO: Implement actual order API call
       await Future.delayed(const Duration(seconds: 2));
-
       statusRequest = StatusRequest.success;
+
       update();
 
       showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
-      _resetForm();
 
       // TODO: Navigate to appropriate screen
       // Get.offNamed('/orders');

@@ -425,7 +425,6 @@ class _OrderDetailsForm extends StatelessWidget {
           text: 'checkout'.tr,
           onTap: () {
             controller.completeOrder();
-            Navigator.pop(context);
           },
           isLoading: controller.statusRequest == StatusRequest.loading,
         ),
@@ -453,6 +452,13 @@ class _OrderDetailsForm extends StatelessWidget {
             controller.selectedModelIndex.value <
                 controller.selectedModels.length
         ? controller.selectedModels[controller.selectedModelIndex.value]
+        : null;
+
+    final selctedCar = controller.selectedVehicleIndex.value >= 0 &&
+            controller.userVehicles.isNotEmpty &&
+            controller.selectedVehicleIndex.value <
+                controller.userVehicles.length
+        ? controller.userVehicles[controller.selectedVehicleIndex.value]
         : null;
 
     return Container(
@@ -484,10 +490,18 @@ class _OrderDetailsForm extends StatelessWidget {
               context,
               valueColor: AppColor.primaryColor,
             ),
-          if (selectedMake != null && selectedModel != null)
+          if (selectedMake != null &&
+              selectedModel != null &&
+              selctedCar == null)
             _summaryItem(
               'car'.tr,
               "${selectedMake.name[controller.lang] ?? ''} ${selectedModel.name[controller.lang] ?? ''}",
+              context,
+            ),
+          if (selctedCar != null)
+            _summaryItem(
+              'car'.tr,
+              "${selctedCar.makeName ?? ''} ${selctedCar.modelName ?? ''}",
               context,
             ),
         ],

@@ -8,7 +8,7 @@ import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
-import 'package:ecom_modwir/view/widget/checkout/card_shipping_address.dart';
+import 'package:ecom_modwir/view/widget/orders/address_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -287,7 +287,7 @@ class Checkout extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.1),
+          color: Colors.black.withOpacity(0.1),
           borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           border: Border.all(color: Colors.red.shade300),
         ),
@@ -306,7 +306,7 @@ class Checkout extends StatelessWidget {
               child: Text(
                 "add_address".tr,
                 style: TextStyle(
-                  color: AppColor.primaryColor,
+                  color: AppColor.blackColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -317,16 +317,14 @@ class Checkout extends StatelessWidget {
     }
 
     return Column(
-      children: controller.dataAddress.map((address) {
-        return InkWell(
-          onTap: () => controller.chooseShippingAddress(address.Id.toString()),
-          child: CardShippingAddressCheckout(
-            title: address.Name ?? "",
-            body: "${address.City ?? ""}, ${address.Street ?? ""}",
-            isActive: controller.addressId == address.Id.toString(),
-          ),
-        );
-      }).toList(),
+      children: [
+        AddressSelectorWidget(
+          addresses: controller.dataAddress,
+          selectedAddressId: controller.addressId, // Remove [1]
+          onSelect: controller.chooseShippingAddress,
+          onAddAddress: () => Get.toNamed(AppRoute.addressadd),
+        )
+      ],
     );
   }
 

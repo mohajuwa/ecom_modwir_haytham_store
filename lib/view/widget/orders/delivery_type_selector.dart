@@ -9,10 +9,10 @@ class DeliveryTypeSelector extends StatelessWidget {
   final Function(String) onSelect;
 
   const DeliveryTypeSelector({
-    Key? key,
+    super.key,
     required this.selectedType,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

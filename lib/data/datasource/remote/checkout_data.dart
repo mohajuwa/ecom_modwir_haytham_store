@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:ecom_modwir/core/class/crud.dart';
+import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/linkapi.dart';
+import 'package:flutter/foundation.dart';
 
 class CheckoutData {
   final Crud crud;
@@ -37,11 +39,41 @@ class CheckoutData {
       // Send checkout request
       var response = await crud.postData(AppLink.checkout, orderData);
 
-      // Make sure we return Map<String, dynamic>
-      return response.fold(
-          (l) => <String, dynamic>{'status': 'error', 'message': l.toString()},
-          (r) => Map<String, dynamic>.from(r));
+      return response.fold((statusRequest) {
+        // Error case from crud.postData
+        return {'status': 'error', 'message': 'Server error: $statusRequest'};
+      }, (responseData) {
+        // Success case from HTTP request, but need to check for PHP errors
+
+        // If the response is a Map, just return it
+        if (responseData is Map<String, dynamic>) {
+          return responseData;
+        }
+
+        // If the response has 'raw_data' and contains PHP errors
+        if (responseData.containsKey('raw_data') &&
+            (responseData['raw_data'].toString().contains('<b>Warning</b>') ||
+                responseData['raw_data']
+                    .toString()
+                    .contains('<b>Fatal error</b>'))) {
+          if (kDebugMode) {
+            print("PHP Error: ${responseData['raw_data']}");
+          }
+
+          return <String, dynamic>{
+            'status': 'error',
+            'message': 'Backend error: Please contact administrator',
+            'debug_info': responseData['raw_data']
+          };
+        }
+
+        // Default case - just return what we got
+        return Map<String, dynamic>.from(responseData);
+      });
     } catch (e) {
+      if (kDebugMode) {
+        print("Exception in checkout: $e");
+      }
       return <String, dynamic>{'status': 'error', 'message': e.toString()};
     }
   }

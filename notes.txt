@@ -1,0 +1,273 @@
+see the project and database tables , here is what I want :
+I want to make the order deliveryFee choosed after ordre completed ,
+I mean the user choose the sub service and vehicle with other stuff,
+and go to check out page , the deliveryFee should not defind there , 
+and defind it after order taken by a vendor that the admin has choose 
+
+
+thin make invoice after vendor make order completed , improve the database for that and the project codes 
+
+
+
+
+TableCreate table
+addresses
+CREATE TABLE `addresses` (
+ `address_id` int(11) NOT NULL AUTO_INCREMENT,
+ `address_user_id` int(11) NOT NULL,
+ `address_name` varchar(50) DEFAULT NULL,
+ `address_street` varchar(255) NOT NULL,
+ `address_city` varchar(255) NOT NULL,
+ `address_latitude` double DEFAULT NULL,
+ `address_longitude` double DEFAULT NULL,
+ `address_status` tinyint(4) NOT NULL DEFAULT 0,
+ PRIMARY KEY (`address_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+admins
+CREATE TABLE `admins` (
+ `admin_id` int(11) NOT NULL AUTO_INCREMENT,
+ `full_name` varchar(255) NOT NULL,
+ `email` varchar(255) NOT NULL,
+ `password` varchar(255) NOT NULL,
+ `role` varchar(50) DEFAULT 'superadmin',
+ `status` enum('active','inactive') DEFAULT 'active',
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (`admin_id`),
+ UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+car_makes
+CREATE TABLE `car_makes` (
+ `make_id` int(11) NOT NULL AUTO_INCREMENT,
+ `name` longtext NOT NULL CHECK (json_valid(`name`)),
+ `logo` varchar(255) NOT NULL DEFAULT 'toyota.png',
+ `status` tinyint(4) DEFAULT 1,
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (`make_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+car_models
+CREATE TABLE `car_models` (
+ `model_id` int(11) NOT NULL AUTO_INCREMENT,
+ `make_id` int(11) DEFAULT NULL,
+ `name` longtext NOT NULL CHECK (json_valid(`name`)),
+ `year` year(4) DEFAULT NULL,
+ `status` tinyint(4) DEFAULT 1,
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (`model_id`),
+ KEY `make_id` (`make_id`),
+ CONSTRAINT `car_models_ibfk_1` FOREIGN KEY (`make_id`) REFERENCES `car_makes` (`make_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+coupon
+CREATE TABLE `coupon` (
+ `coupon_id` int(11) NOT NULL,
+ `coupon_name` varchar(50) NOT NULL,
+ `coupon_count` int(11) NOT NULL,
+ `coupon_discount` smallint(6) NOT NULL DEFAULT 0,
+ `coupon_expiredate` datetime NOT NULL,
+ PRIMARY KEY (`coupon_id`),
+ UNIQUE KEY `coupon_name` (`coupon_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+fault_types
+CREATE TABLE `fault_types` (
+ `fault_id` int(11) NOT NULL AUTO_INCREMENT,
+ `name` longtext NOT NULL CHECK (json_valid(`name`)),
+ `service_id` int(11) NOT NULL,
+ `status` tinyint(4) NOT NULL DEFAULT 0,
+ PRIMARY KEY (`fault_id`),
+ KEY `fault_types_service_fk` (`service_id`),
+ CONSTRAINT `fault_types_service_fk` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+notification
+CREATE TABLE `notification` (
+ `notification_id` int(11) NOT NULL AUTO_INCREMENT,
+ `notification_order_id` int(11) NOT NULL,
+ `notification_title` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`notification_title`)),
+ `notification_body` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`notification_body`)),
+ `notification_userid` int(11) NOT NULL,
+ `notification_datetime` datetime NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`notification_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+offers
+CREATE TABLE `offers` (
+ `offer_id` int(11) NOT NULL AUTO_INCREMENT,
+ `sub_service_id` int(11) NOT NULL,
+ `offer_title` longtext DEFAULT NULL CHECK (json_valid(`offer_title`)),
+ `offer_description` longtext DEFAULT NULL CHECK (json_valid(`offer_description`)),
+ `offer_img` varchar(500) DEFAULT NULL,
+ PRIMARY KEY (`offer_id`),
+ KEY `sub_service_id` (`sub_service_id`),
+ CONSTRAINT `offers_ibfk_1` FOREIGN KEY (`sub_service_id`) REFERENCES `sub_services` (`sub_service_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+orders
+CREATE TABLE `orders` (
+ `order_id` int(11) NOT NULL AUTO_INCREMENT,
+ `order_number` int(11) NOT NULL,
+ `user_id` int(11) DEFAULT NULL,
+ `orders_address` int(11) NOT NULL,
+ `vendor_id` int(11) DEFAULT NULL,
+ `vehicle_id` int(11) DEFAULT NULL,
+ `fault_type_id` int(11) DEFAULT NULL,
+ `order_status` tinyint(4) DEFAULT 0,
+ `order_type` tinyint(4) NOT NULL DEFAULT 0,
+ `orders_coupon_id` int(11) DEFAULT NULL,
+ `orders_paymentmethod` int(11) DEFAULT 0,
+ `orders_pricedelivery` int(11) NOT NULL,
+ `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+ `total_amount` decimal(10,2) DEFAULT NULL,
+ `workshop_amount` decimal(10,2) DEFAULT NULL,
+ `app_commission` decimal(10,2) DEFAULT NULL,
+ `payment_status` enum('pending','paid','failed') DEFAULT 'pending',
+ `notes` text DEFAULT NULL,
+ PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+order_details
+CREATE TABLE `order_details` (
+ `detail_id` int(11) NOT NULL AUTO_INCREMENT,
+ `order_id` int(11) NOT NULL,
+ `sub_service_id` int(11) NOT NULL,
+ `quantity` int(11) NOT NULL DEFAULT 1,
+ `unit_price` decimal(10,2) NOT NULL,
+ `discount` decimal(10,2) DEFAULT 0.00,
+ `total_price` decimal(10,2) NOT NULL,
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (`detail_id`),
+ KEY `order_id` (`order_id`),
+ KEY `sub_service_id` (`sub_service_id`),
+ CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
+ CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`sub_service_id`) REFERENCES `sub_services` (`sub_service_id`) ON DELETE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+payments
+CREATE TABLE `payments` (
+ `payment_id` int(11) NOT NULL AUTO_INCREMENT,
+ `order_id` int(11) DEFAULT NULL,
+ `amount` decimal(10,2) NOT NULL,
+ `payment_method` varchar(50) DEFAULT NULL,
+ `payment_date` timestamp NOT NULL DEFAULT current_timestamp(),
+ `payment_status` enum('pending','completed','failed') DEFAULT 'pending',
+ PRIMARY KEY (`payment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+product_by_car
+CREATE TABLE `product_by_car` (
+ `product_id` int(11) NOT NULL AUTO_INCREMENT,
+ `model_id` int(11) DEFAULT NULL,
+ `service_id` int(11) NOT NULL,
+ `sub_service_id` int(11) DEFAULT NULL,
+ `status` int(11) NOT NULL DEFAULT 0,
+ `year` int(11) DEFAULT NULL,
+ PRIMARY KEY (`product_id`),
+ KEY `model_id` (`model_id`),
+ KEY `sub_service_id` (`sub_service_id`),
+ CONSTRAINT `product_by_car_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `car_models` (`model_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+ CONSTRAINT `product_by_car_ibfk_2` FOREIGN KEY (`sub_service_id`) REFERENCES `sub_services` (`sub_service_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+services
+CREATE TABLE `services` (
+ `service_id` int(11) NOT NULL AUTO_INCREMENT,
+ `service_name` longtext DEFAULT NULL CHECK (json_valid(`service_name`)),
+ `service_img` varchar(500) DEFAULT NULL,
+ `status` tinyint(4) NOT NULL DEFAULT 0,
+ `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+ `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`service_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+service_notes
+CREATE TABLE `service_notes` (
+ `note_id` int(11) NOT NULL AUTO_INCREMENT,
+ `sub_service_id` int(11) NOT NULL,
+ `content` longtext NOT NULL CHECK (json_valid(`content`)),
+ `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`note_id`),
+ KEY `service_notes_ibfk_1` (`sub_service_id`),
+ CONSTRAINT `service_notes_ibfk_1` FOREIGN KEY (`sub_service_id`) REFERENCES `sub_services` (`sub_service_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+settings
+CREATE TABLE `settings` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `settings_titlehome` longtext DEFAULT NULL,
+ `settings_bodyhome` longtext DEFAULT NULL,
+ `settings_img` varchar(500) DEFAULT NULL,
+ `settings_deliverytime` int(11) DEFAULT NULL,
+ `status` tinyint(4) NOT NULL DEFAULT 0,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+sub_services
+CREATE TABLE `sub_services` (
+ `sub_service_id` int(11) NOT NULL AUTO_INCREMENT,
+ `service_id` int(11) NOT NULL,
+ `name` longtext NOT NULL CHECK (json_valid(`name`)),
+ `price` double NOT NULL DEFAULT 0,
+ `status` tinyint(4) NOT NULL DEFAULT 0,
+ `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+ `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (`sub_service_id`),
+ KEY `sub_services_ibfk_1` (`service_id`),
+ CONSTRAINT `sub_services_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+users
+CREATE TABLE `users` (
+ `user_id` int(11) NOT NULL AUTO_INCREMENT,
+ `full_name` varchar(255) NOT NULL,
+ `phone` varchar(50) DEFAULT NULL,
+ `status` enum('active','inactive','banned') DEFAULT 'active',
+ `approve` tinyint(4) DEFAULT 0,
+ `verfiycode` int(11) DEFAULT NULL,
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+vehicles
+CREATE TABLE `vehicles` (
+ `vehicle_id` int(11) NOT NULL AUTO_INCREMENT,
+ `user_id` int(11) NOT NULL,
+ `car_make_id` int(11) NOT NULL,
+ `car_model_id` int(11) NOT NULL,
+ `year` int(11) DEFAULT NULL,
+ `license_plate_number` longtext DEFAULT NULL CHECK (json_valid(`license_plate_number`)),
+ `status` tinyint(4) DEFAULT 0,
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`vehicle_id`),
+ KEY `car_make_id` (`car_make_id`),
+ KEY `car_model_id` (`car_model_id`),
+ KEY `user_id` (`user_id`),
+ CONSTRAINT `vehicles_ibfk_1` FOREIGN KEY (`car_make_id`) REFERENCES `car_makes` (`make_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ CONSTRAINT `vehicles_ibfk_2` FOREIGN KEY (`car_model_id`) REFERENCES `car_models` (`model_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ CONSTRAINT `vehicles_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+vendors
+CREATE TABLE `vendors` (
+ `vendor_id` int(11) NOT NULL AUTO_INCREMENT,
+ `vendor_name` longtext NOT NULL CHECK (json_valid(`vendor_name`)),
+ `vendor_type` enum('workshop','tow_truck') NOT NULL,
+ `email` varchar(255) NOT NULL,
+ `phone` varchar(50) DEFAULT NULL,
+ `address` varchar(255) DEFAULT NULL,
+ `description` text DEFAULT NULL,
+ `status` enum('active','inactive','suspended') DEFAULT 'active',
+ `registered_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`vendor_id`),
+ UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+vendor_sub_services
+CREATE TABLE `vendor_sub_services` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `vendor_id` int(11) NOT NULL,
+ `sub_service_id` int(11) NOT NULL,
+ `status` tinyint(4) NOT NULL DEFAULT 0,
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `vendor_service_unique` (`vendor_id`,`sub_service_id`),
+ KEY `vendor_sub_services_vendor_fk` (`vendor_id`),
+ KEY `vendor_sub_services_service_fk` (`sub_service_id`),
+ CONSTRAINT `vendor_sub_services_service_fk` FOREIGN KEY (`sub_service_id`) REFERENCES `sub_services` (`sub_service_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ CONSTRAINT `vendor_sub_services_vendor_fk` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`vendor_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+Views
+ViewCreate view
+enhanced_orders_viewCREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `haytham_store_up`.`enhanced_orders_view` AS select `o`.`order_id` AS `order_id`,`o`.`order_number` AS `order_number`,`o`.`user_id` AS `user_id`,`u`.`full_name` AS `user_name`,`o`.`orders_address` AS `orders_address`,`o`.`vendor_id` AS `vendor_id`,`v`.`vendor_name` AS `vendor_name`,`o`.`vehicle_id` AS `vehicle_id`,`vm`.`name` AS `make_name`,`vmod`.`name` AS `model_name`,`veh`.`year` AS `year`,`veh`.`license_plate_number` AS `license_plate_number`,group_concat(`od`.`sub_service_id` separator ',') AS `sub_service_ids`,group_concat(`ss`.`name` separator ',') AS `sub_service_names`,sum(`od`.`total_price`) AS `services_total_price`,group_concat(distinct `s`.`service_id` separator ',') AS `service_ids`,group_concat(distinct `s`.`service_name` separator ',') AS `service_names`,`fau`.`name` AS `fault_type_name`,`o`.`order_status` AS `order_status`,`o`.`order_type` AS `order_type`,`o`.`orders_coupon_id` AS `orders_coupon_id`,`o`.`orders_paymentmethod` AS `orders_paymentmethod`,`o`.`orders_pricedelivery` AS `orders_pricedelivery`,`o`.`order_date` AS `order_date`,`o`.`total_amount` AS `total_amount`,`o`.`workshop_amount` AS `workshop_amount`,`o`.`app_commission` AS `app_commission`,`o`.`payment_status` AS `payment_status`,`o`.`notes` AS `notes`,`a`.`address_name` AS `address_name`,`a`.`address_street` AS `address_street`,`a`.`address_city` AS `address_city`,`a`.`address_latitude` AS `address_latitude`,`a`.`address_longitude` AS `address_longitude` from ((((((((((`haytham_store_up`.`orders` `o` left join `haytham_store_up`.`users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `haytham_store_up`.`vendors` `v` on(`o`.`vendor_id` = `v`.`vendor_id`)) left join `haytham_store_up`.`vehicles` `veh` on(`o`.`vehicle_id` = `veh`.`vehicle_id`)) left join `haytham_store_up`.`car_makes` `vm` on(`veh`.`car_make_id` = `vm`.`make_id`)) left join `haytham_store_up`.`car_models` `vmod` on(`veh`.`car_model_id` = `vmod`.`model_id`)) left join `haytham_store_up`.`addresses` `a` on(`o`.`orders_address` = `a`.`address_id`)) left join `haytham_store_up`.`order_details` `od` on(`o`.`order_id` = `od`.`order_id`)) left join `haytham_store_up`.`sub_services` `ss` on(`od`.`sub_service_id` = `ss`.`sub_service_id`)) left join `haytham_store_up`.`services` `s` on(`ss`.`service_id` = `s`.`service_id`)) left join `haytham_store_up`.`fault_types` `fau` on(`o`.`fault_type_id` = `fau`.`fault_id`)) group by `o`.`order_id`
+ordersviewCREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `haytham_store_up`.`ordersview` AS select `haytham_store_up`.`orders`.`order_id` AS `order_id`,`haytham_store_up`.`orders`.`order_number` AS `order_number`,`haytham_store_up`.`orders`.`user_id` AS `user_id`,`haytham_store_up`.`orders`.`orders_address` AS `orders_address`,`haytham_store_up`.`orders`.`vendor_id` AS `vendor_id`,`haytham_store_up`.`orders`.`vehicle_id` AS `vehicle_id`,`haytham_store_up`.`orders`.`fault_type_id` AS `fault_type_id`,`haytham_store_up`.`orders`.`order_status` AS `order_status`,`haytham_store_up`.`orders`.`order_type` AS `order_type`,`haytham_store_up`.`orders`.`orders_coupon_id` AS `orders_coupon_id`,`haytham_store_up`.`orders`.`orders_paymentmethod` AS `orders_paymentmethod`,`haytham_store_up`.`orders`.`orders_pricedelivery` AS `orders_pricedelivery`,`haytham_store_up`.`orders`.`order_date` AS `order_date`,`haytham_store_up`.`orders`.`total_amount` AS `total_amount`,`haytham_store_up`.`orders`.`workshop_amount` AS `workshop_amount`,`haytham_store_up`.`orders`.`app_commission` AS `app_commission`,`haytham_store_up`.`orders`.`payment_status` AS `payment_status`,`haytham_store_up`.`orders`.`notes` AS `notes`,`haytham_store_up`.`addresses`.`address_id` AS `address_id`,`haytham_store_up`.`addresses`.`address_user_id` AS `address_user_id`,`haytham_store_up`.`addresses`.`address_name` AS `address_name`,`haytham_store_up`.`addresses`.`address_street` AS `address_street`,`haytham_store_up`.`addresses`.`address_city` AS `address_city`,`haytham_store_up`.`addresses`.`address_latitude` AS `address_latitude`,`haytham_store_up`.`addresses`.`address_longitude` AS `address_longitude`,`haytham_store_up`.`addresses`.`address_status` AS `address_status` from (`haytham_store_up`.`orders` left join `haytham_store_up`.`addresses` on(`haytham_store_up`.`addresses`.`address_id` = `haytham_store_up`.`orders`.`orders_address`))
+order_calculations_viewCREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `haytham_store_up`.`order_calculations_view` AS select `od`.`order_id` AS `order_id`,sum(`od`.`quantity` * `od`.`unit_price`) AS `subtotal`,sum(`od`.`discount`) AS `total_discounts`,sum(`od`.`total_price`) AS `total_services_amount`,`o`.`orders_pricedelivery` AS `delivery_price`,`o`.`total_amount` AS `total_amount`,`o`.`workshop_amount` AS `workshop_amount`,`o`.`app_commission` AS `app_commission` from (`haytham_store_up`.`order_details` `od` join `haytham_store_up`.`orders` `o` on(`od`.`order_id` = `o`.`order_id`)) group by `od`.`order_id`
+order_details_viewCREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `haytham_store_up`.`order_details_view` AS select `od`.`detail_id` AS `detail_id`,`od`.`order_id` AS `order_id`,`od`.`sub_service_id` AS `sub_service_id`,`ss`.`service_id` AS `service_id`,json_unquote(`ss`.`name`) AS `sub_service_name`,json_unquote(`s`.`service_name`) AS `service_name`,`od`.`quantity` AS `quantity`,`od`.`unit_price` AS `unit_price`,`od`.`discount` AS `discount`,`od`.`total_price` AS `total_price`,`od`.`notes` AS `notes`,`od`.`created_at` AS `created_at`,`od`.`updated_at` AS `updated_at` from ((`haytham_store_up`.`order_details` `od` join `haytham_store_up`.`sub_services` `ss` on(`od`.`sub_service_id` = `ss`.`sub_service_id`)) join `haytham_store_up`.`services` `s` on(`ss`.`service_id` = `s`.`service_id`))
+order_summary_viewCREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `haytham_store_up`.`order_summary_view` AS select `o`.`order_id` AS `order_id`,`o`.`order_number` AS `order_number`,`o`.`user_id` AS `user_id`,`u`.`full_name` AS `user_name`,`o`.`vendor_id` AS `vendor_id`,json_unquote(`v`.`vendor_name`) AS `vendor_name`,`o`.`vehicle_id` AS `vehicle_id`,json_unquote(`vm`.`name`) AS `make_name`,json_unquote(`vmod`.`name`) AS `model_name`,`o`.`order_status` AS `order_status`,`o`.`payment_status` AS `payment_status`,`o`.`order_date` AS `order_date`,`o`.`total_amount` AS `total_amount`,count(`od`.`detail_id`) AS `service_count`,sum(`od`.`total_price`) AS `services_total` from ((((((`haytham_store_up`.`orders` `o` left join `haytham_store_up`.`users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `haytham_store_up`.`vendors` `v` on(`o`.`vendor_id` = `v`.`vendor_id`)) left join `haytham_store_up`.`vehicles` `veh` on(`o`.`vehicle_id` = `veh`.`vehicle_id`)) left join `haytham_store_up`.`car_makes` `vm` on(`veh`.`car_make_id` = `vm`.`make_id`)) left join `haytham_store_up`.`car_models` `vmod` on(`veh`.`car_model_id` = `vmod`.`model_id`)) left join `haytham_store_up`.`order_details` `od` on(`o`.`order_id` = `od`.`order_id`)) group by `o`.`order_id`
+vehicle_essential_infoCREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `haytham_store_up`.`vehicle_essential_info` AS select `v`.`vehicle_id` AS `vehicle_id`,`u`.`user_id` AS `user_id`,`cm`.`make_id` AS `make_id`,`cmod`.`model_id` AS `model_id`,`cm`.`name` AS `make_name`,`cm`.`logo` AS `make_logo`,`cmod`.`name` AS `model_name`,`v`.`year` AS `year`,`v`.`license_plate_number` AS `license_plate_number`,`v`.`status` AS `status` from (((`haytham_store_up`.`vehicles` `v` left join `haytham_store_up`.`users` `u` on(`v`.`user_id` = `u`.`user_id`)) left join `haytham_store_up`.`car_makes` `cm` on(`v`.`car_make_id` = `cm`.`make_id`)) left join `haytham_store_up`.`car_models` `cmod` on(`v`.`car_model_id` = `cmod`.`model_id`))

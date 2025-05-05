@@ -30,6 +30,10 @@ class CheckoutController extends GetxController {
   TextEditingController couponController = TextEditingController();
 
   // Selected values
+  String? orderNotes;
+  String? selectedVehicleId;
+  String? faultTypeId;
+
   String? paymentMethod;
   String? deliveryType;
   String addressId = "0";
@@ -48,19 +52,55 @@ class CheckoutController extends GetxController {
 
   @override
   void onInit() {
-    // Extract data from arguments
-    if (Get.arguments != null) {
-      if (Get.arguments['selectedServices'] != null) {
-        selectedServices = Get.arguments['selectedServices'];
+    try {
+      // Extract data from arguments
+      if (Get.arguments != null) {
+        if (Get.arguments['selectedServices'] != null) {
+          final selectedServicesData = Get.arguments['selectedServices'];
+          orderNotes = Get.arguments['orderNotes'];
+          selectedVehicleId = Get.arguments['selected_vehicle_id'];
+          faultTypeId = Get.arguments['fault_type_id'];
+
+          // Make sure we have a List<SubServiceModel> regardless of input type
+          if (selectedServicesData is List) {
+            selectedServices = _convertToSubServiceModels(selectedServicesData);
+          } else if (selectedServicesData is SubServiceModel) {
+            selectedServices = [selectedServicesData];
+          } else if (selectedServicesData is Map<String, dynamic>) {
+            selectedServices = [SubServiceModel.fromJson(selectedServicesData)];
+          }
+        }
+
+        // Calculate initial totals
+        calculateTotals();
       }
 
-      // Calculate initial totals
-      calculateTotals();
+      // Load user addresses
+      getShippingAddresses();
+    } catch (e) {
+      print("Error in onInit: $e");
+      statusRequest = StatusRequest.failure;
+    }
+    super.onInit();
+  }
+
+  // Helper method to convert various input types to SubServiceModel list
+  List<SubServiceModel> _convertToSubServiceModels(List inputList) {
+    List<SubServiceModel> result = [];
+
+    for (var item in inputList) {
+      if (item is SubServiceModel) {
+        result.add(item);
+      } else if (item is Map<String, dynamic>) {
+        try {
+          result.add(SubServiceModel.fromJson(item));
+        } catch (e) {
+          print("Error converting map to SubServiceModel: $e");
+        }
+      }
     }
 
-    // Load user addresses
-    getShippingAddresses();
-    super.onInit();
+    return result;
   }
 
   @override
@@ -71,23 +111,26 @@ class CheckoutController extends GetxController {
 
   // Calculate order totals
   void calculateTotals() {
-    // Calculate subtotal from selected services
-    subTotal = 0.0;
-    for (var service in selectedServices) {
-      subTotal += service.price;
+    try {
+      // Calculate subtotal from selected services
+      subTotal = 0.0;
+      for (var service in selectedServices) {
+        subTotal += service.price;
+      }
+
+      // Apply discount if coupon is valid
+      if (appliedCoupon != null && isCouponValid) {
+        discount = (subTotal * appliedCoupon!.couponDiscount!) / 100;
+      } else {
+        discount = 0.0;
+      }
+
+      // Calculate total (include delivery fee only if delivery type is selected)
+      double shippingFee = (deliveryType == "0") ? deliveryFee : 0.0;
+      total = subTotal - discount + shippingFee;
+    } catch (e) {
+      print("Error calculating totals: $e");
     }
-
-    // Apply discount if coupon is valid
-    if (appliedCoupon != null && isCouponValid) {
-      discount = (subTotal * appliedCoupon!.couponDiscount!) / 100;
-    } else {
-      discount = 0.0;
-    }
-
-    // Calculate total (include delivery fee only if delivery type is selected)
-    double shippingFee = (deliveryType == "0") ? deliveryFee : 0.0;
-    total = subTotal - discount + shippingFee;
-
     update();
   }
 
@@ -132,6 +175,7 @@ class CheckoutController extends GetxController {
         appliedCoupon = null;
       }
     } catch (e) {
+      print("Error checking coupon: $e");
       couponErrorMessage = 'error_checking_coupon'.tr;
       isCouponValid = false;
       appliedCoupon = null;
@@ -167,6 +211,7 @@ class CheckoutController extends GetxController {
 
   // Choose shipping address
   void chooseShippingAddress(String val) {
+    if (val.isEmpty) return;
     addressId = val;
     update();
   }
@@ -180,12 +225,13 @@ class CheckoutController extends GetxController {
       final userId = myServices.sharedPreferences.getString("userId");
       if (userId == null || userId.isEmpty) {
         statusRequest = StatusRequest.failure;
+        update();
         return;
       }
 
       final response = await addressData.getData(userId);
-
       statusRequest = handlingData(response);
+
       if (StatusRequest.success == statusRequest) {
         if (response['status'] == "success") {
           final List listData = response['data'] ?? [];
@@ -202,6 +248,7 @@ class CheckoutController extends GetxController {
         }
       }
     } catch (e) {
+      print("Error fetching addresses: $e");
       statusRequest = StatusRequest.serverFailure;
     }
 
@@ -222,34 +269,39 @@ class CheckoutController extends GetxController {
       // Prepare order data
       final orderData = {
         "usersid": myServices.sharedPreferences.getString("userId"),
+        "vehicle_id": selectedVehicleId,
         "addressid": addressId,
         "orderstype": deliveryType,
+        "fault_type_id": faultTypeId,
         "pricedelivery": deliveryType == "0" ? deliveryFee.toString() : "0",
         "ordersprice": subTotal.toString(),
         "total_amount": total.toString(),
         "paymentmethod": paymentMethod,
+        "order_notes": orderNotes,
         "services": _prepareServicesData(),
         "couponid": appliedCoupon?.couponId?.toString() ?? "0",
         "coupondiscount": discount.toString(),
       };
 
+      // Log the data for debugging
+      print("Checkout data: $orderData");
+
       // Submit order
       final response = await checkoutData.checkout(orderData);
 
-      statusRequest = handlingData(response);
-      if (StatusRequest.success == statusRequest) {
-        if (response['status'] == "success") {
-          // Order placed successfully
-          Get.offAllNamed(AppRoute.homepage);
-          showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
-        } else {
-          statusRequest = StatusRequest.failure;
-          showErrorSnackbar('error'.tr, 'checkout_failed'.tr);
-        }
+      // Check response
+      if (response['status'] == "success") {
+        // Order placed successfully
+        Get.offAllNamed(AppRoute.homepage);
+        showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
       } else {
-        showErrorSnackbar('error'.tr, 'server_error'.tr);
+        // Handle error response
+        String errorMessage = response['message'] ?? 'checkout_failed'.tr;
+        statusRequest = StatusRequest.failure;
+        showErrorSnackbar('error'.tr, errorMessage);
       }
     } catch (e) {
+      print("Error during checkout: $e");
       statusRequest = StatusRequest.serverFailure;
       showErrorSnackbar('error'.tr, 'unexpected_error'.tr);
     }

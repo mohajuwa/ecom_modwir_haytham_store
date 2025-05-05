@@ -15,14 +15,14 @@ class OrderSummaryWidget extends StatelessWidget {
   final double total;
 
   const OrderSummaryWidget({
-    Key? key,
+    super.key,
     required this.selectedServices,
     required this.subtotal,
     required this.deliveryFee,
     required this.isDelivery,
     required this.discount,
     required this.total,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

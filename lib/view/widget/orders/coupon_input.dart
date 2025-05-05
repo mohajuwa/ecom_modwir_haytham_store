@@ -14,7 +14,7 @@ class CouponInputWidget extends StatelessWidget {
   final String? discountText;
 
   const CouponInputWidget({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onApply,
     required this.onRemove,
@@ -22,7 +22,7 @@ class CouponInputWidget extends StatelessWidget {
     this.isValid = false,
     this.errorMessage,
     this.discountText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

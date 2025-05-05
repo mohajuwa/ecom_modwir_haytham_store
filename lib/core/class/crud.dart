@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
-import 'package:ecom_modwir/core/functions/checkinternet.dart';
 import 'package:http/http.dart' as http;
 
 class Crud {

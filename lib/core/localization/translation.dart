@@ -242,6 +242,20 @@ class MyTranslation extends Translations {
           "profile": "بروفايل",
           "addresses": "العناوين",
           "guest": "ضيف",
+          "backend_error": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقًا.",
+          "unexpected_error": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+          "checkout_failed":
+              "فشل إتمام عملية الشراء. يرجى المحاولة مرة أخرى لاحقًا.",
+          "please_select_payment_method": "يرجى اختيار طريقة الدفع",
+          "please_select_delivery_type": "يرجى اختيار نوع التوصيل",
+          "no_services_selected": "لم يتم اختيار خدمات",
+          "coupon_applied_successfully": "تم تطبيق القسيمة بنجاح",
+          "error_checking_coupon": "خطأ في التحقق من القسيمة",
+          "invalid_coupon": "قسيمة غير صالحة",
+          "coupon_expired": "انتهت صلاحية هذه القسيمة",
+          "coupon_usage_limit_reached":
+              "تم الوصول إلى الحد الأقصى لاستخدام القسيمة",
+          "please_enter_coupon_code": "يرجى إدخال رمز القسيمة",
         },
         //==================================
 
@@ -490,6 +504,18 @@ class MyTranslation extends Translations {
           "profile": "Profile",
           "addresses": "Adressess",
           "guest": "Guest",
+          "backend_error": "Server error occurred. Please try again later.",
+          "unexpected_error": "An unexpected error occurred. Please try again.",
+          "checkout_failed": "Checkout failed. Please try again later.",
+          "please_select_payment_method": "Please select a payment method",
+          "please_select_delivery_type": "Please select a delivery type",
+          "no_services_selected": "No services selected",
+          "coupon_applied_successfully": "Coupon applied successfully",
+          "error_checking_coupon": "Error checking coupon",
+          "invalid_coupon": "Invalid coupon",
+          "coupon_expired": "This coupon has expired",
+          "coupon_usage_limit_reached": "Coupon usage limit reached",
+          "please_enter_coupon_code": "Please enter a coupon code",
         }
       };
 }

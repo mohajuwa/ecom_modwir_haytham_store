@@ -21,8 +21,7 @@ class ServiceItemsData {
       return result.fold(
         (left) =>
             Left(left), // In case of failure (left), return the status request
-        (right) => Right(right as Map<String,
-            dynamic>), // In case of success (right), return the data as a map
+        (right) => Right(right), // In case of success (right), return the data as a map
       );
     } catch (e) {
       // Catching any exception and returning a server failure status
@@ -43,8 +42,7 @@ class ServiceItemsData {
       return result.fold(
         (left) =>
             Left(left), // In case of failure (left), return the status request
-        (right) => Right(right as Map<String,
-            dynamic>), // In case of success (right), return the data as a map
+        (right) => Right(right), // In case of success (right), return the data as a map
       );
     } catch (e) {
       // Catching any exception and returning a server failure status
