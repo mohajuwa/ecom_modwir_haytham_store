@@ -1,4 +1,10 @@
 see the project and database tables , here is what I want :
+
+and I want to display offers as sliding items under Services in home page,
+and if user click on offer make it go to makeing order but the defrent here is that the offer should has  sub_service_id 
+and offer price and I do not know , you know what I am talking about,
+
+
 I want to make the order deliveryFee choosed after ordre completed ,
 I mean the user choose the sub service and vehicle with other stuff,
 and go to check out page , the deliveryFee should not defind there , 
@@ -7,6 +13,55 @@ and defind it after order taken by a vendor that the admin has choose
 
 thin make invoice after vendor make order completed , improve the database for that and the project codes 
 
+and I want to display fault type selection above the sub services selection ,
+here is the table api response example: [
+
+    {
+  "status": "success",
+  "sub_services": [
+    {
+      "fault_id": 2,
+      "name": "Battery problems",
+      "service_id": 4,
+      "status": 0
+    },
+    {
+      "fault_id": 8,
+      "name": "Transmission problems",
+      "service_id": 4,
+      "status": 0
+    }
+  ]
+}
+];
+and here is the model : [
+
+    class FaultTypeModel {
+  int? faultId;
+  String? name;
+  int? serviceId;
+  int? status;
+
+  FaultTypeModel({this.faultId, this.name, this.serviceId, this.status});
+
+  FaultTypeModel.fromJson(Map<String, dynamic> json) {
+    faultId = json['fault_id'];
+    name = json['name'];
+    serviceId = json['service_id'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['fault_id'] = faultId;
+    data['name'] = name;
+    data['service_id'] = serviceId;
+    data['status'] = status;
+    return data;
+  }
+}
+
+]
 
 
 
