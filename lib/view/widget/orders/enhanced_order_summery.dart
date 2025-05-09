@@ -154,7 +154,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.name ?? "Unknown Service",
+                  service.name,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,

@@ -10,7 +10,6 @@ class CardDeliveryTypeChecout extends StatelessWidget {
       required this.imageName,
       required this.title,
       required this.isActive});
-
   @override
   Widget build(BuildContext context) {
     return Container(
