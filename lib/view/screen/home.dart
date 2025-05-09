@@ -52,9 +52,6 @@ class HomePage extends StatelessWidget {
                             isArabic: isArabic,
                             settingsModels: controller.settingsModel),
 
-                      // Add the offers carousel here, after the settings slider
-                      const HomeOffersCarousel(),
-
                       Row(
                         children: [
                           Text(
@@ -75,6 +72,9 @@ class HomePage extends StatelessWidget {
                         itemCount: itemCount,
                         showAll: showAll,
                       ),
+
+                      // Add the offers carousel here, after the settings slider
+                      const HomeOffersCarousel(),
                     ],
                   )),
             ],

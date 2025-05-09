@@ -108,19 +108,45 @@ class ProductByCarController extends GetxController {
   Future<void> initializeData() async {
     try {
       isLoggedIn = myServices.sharedPreferences.getBool("isLogin") ?? false;
+
       final arguments = Get.arguments;
+
       serviceId = arguments?['service_id']?.toString().trim() ?? "";
+
       lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
 
       if (serviceId.isEmpty) {
         throw "Invalid service ID: $serviceId";
       }
 
+      // Initialize FaultTypeController with the correct serviceId
+
+      FaultTypeController faultTypeController;
+
+      try {
+        faultTypeController = Get.find<FaultTypeController>();
+
+        // Only reload if the service ID has changed
+
+        if (faultTypeController.serviceId != serviceId) {
+          faultTypeController.loadFaultTypes(serviceId);
+        }
+      } catch (e) {
+        // If not found, create a new instance with the correct serviceId
+
+        faultTypeController = Get.put(FaultTypeController());
+
+        faultTypeController.loadFaultTypes(serviceId);
+      }
+
       await _loadServiceDetails();
     } catch (e) {
       print("Initialization error: $e");
+
       statusRequest = StatusRequest.failure;
+
       update();
+
       Get.back();
     }
   }
@@ -546,6 +572,7 @@ class ProductByCarController extends GetxController {
     filteredServiceItems[index].isSelected = true;
 
     // Also update selection in the main list
+
     int mainIndex = allServiceItems.indexWhere((item) =>
         item.subServiceId == filteredServiceItems[index].subServiceId);
 
@@ -555,6 +582,18 @@ class ProductByCarController extends GetxController {
       }
 
       allServiceItems[mainIndex].isSelected = true;
+    }
+
+    // Ensure fault types are loaded for the current service
+
+    try {
+      final faultTypeController = Get.find<FaultTypeController>();
+
+      // Pass the main service ID to the fault type controller
+
+      faultTypeController.reloadForService(serviceId);
+    } catch (e) {
+      print("Error updating fault types: $e");
     }
 
     update();
@@ -784,10 +823,17 @@ class ProductByCarController extends GetxController {
       update();
 
       // Get the selected service
-      final selectedService = filteredServiceItems.firstWhere(
-        (service) => service.isSelected,
-        orElse: () => filteredServiceItems.first,
-      );
+      SubServiceModel? selectedService;
+      try {
+        selectedService = filteredServiceItems.firstWhere(
+          (service) => service.isSelected,
+        );
+      } catch (e) {
+        showErrorSnackbar('error'.tr, 'please_select_service'.tr);
+        statusRequest = StatusRequest.none;
+        update();
+        return;
+      }
 
       // Get the selected fault type
       final faultTypeController = Get.find<FaultTypeController>();
@@ -800,14 +846,24 @@ class ProductByCarController extends GetxController {
         return;
       }
 
+      // Determine which vehicle ID to use
+      String vehicleId;
+      if (userVehicles.isNotEmpty && selectedVehicleIndex.value >= 0) {
+        // Use saved vehicle
+        vehicleId =
+            userVehicles[selectedVehicleIndex.value].vehicleId.toString();
+      } else {
+        // No saved vehicle, use "0" to indicate using form data
+        vehicleId = "0";
+      }
+
+      // Navigate to checkout with all the necessary data
       Get.toNamed(
         AppRoute.checkout,
         arguments: {
           'selectedServices': selectedService,
           'orderNotes': notesController.text,
-          'selected_vehicle_id': userVehicles.isNotEmpty
-              ? userVehicles[selectedVehicleIndex.value].vehicleId.toString()
-              : "0",
+          'selected_vehicle_id': vehicleId,
           'fault_type_id': selectedFaultType.faultId.toString(),
           'attachments': attachments,
         },
@@ -850,13 +906,59 @@ class ProductByCarController extends GetxController {
   }
 
   bool _validateOrderDetails() {
+    // Check if license plate is empty
+
     final licensePlateData = licensePlateController.getLicensePlateJson();
 
-    // Check if license plate is empty
     if (licensePlateData == '[{"en":"-","ar":"-"}]') {
       showErrorSnackbar('Error', 'Please enter license plate');
+
       return false;
     }
+
+    // Check if any service is selected
+
+    bool isServiceSelected =
+        filteredServiceItems.any((service) => service.isSelected);
+
+    if (!isServiceSelected) {
+      showErrorSnackbar(
+        'error'.tr,
+        'please_select_service'.tr,
+      );
+
+      return false;
+    }
+
+    // Get the fault type controller
+
+    try {
+      final faultTypeController = Get.find<FaultTypeController>();
+
+      // Check if fault type is selected
+
+      if (faultTypeController.selectedFaultTypeIndex.value < 0) {
+        showErrorSnackbar(
+          'error'.tr,
+          'please_select_fault_type'.tr,
+        );
+
+        return false;
+      }
+    } catch (e) {
+      // If fault type controller isn't found, this is a serious error
+
+      print("Error accessing fault type controller: $e");
+
+      showErrorSnackbar(
+        'error'.tr,
+        'please_select_fault_type'.tr,
+      );
+
+      return false;
+    }
+
+    // All validations passed
 
     return true;
   }

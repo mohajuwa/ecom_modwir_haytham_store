@@ -1,4 +1,5 @@
 // lib/view/screen/services_details.dart
+import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
@@ -81,9 +82,27 @@ class _MainContent extends StatelessWidget {
               )
             : _buildCarSelectionSection(context),
 
-        // Add Fault Type Selector
         SliverToBoxAdapter(
-          child: FaultTypeSelector(serviceId: serviceId),
+          child: GetBuilder<ProductByCarController>(
+            builder: (controller) {
+              // This ensures both controllers are properly initialized
+
+              final faultTypeController = Get.put(FaultTypeController());
+
+              // Make sure fault type controller has the correct service ID
+
+              if (controller.serviceId.isNotEmpty &&
+                  faultTypeController.serviceId != controller.serviceId) {
+                // Use a post-frame callback to avoid build errors
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  faultTypeController.loadFaultTypes(controller.serviceId);
+                });
+              }
+
+              return FaultTypeSelector(serviceId: controller.serviceId);
+            },
+          ),
         ),
 
         _buildServicesHeader(context),

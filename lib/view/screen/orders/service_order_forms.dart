@@ -60,6 +60,7 @@ class ServiceOrderForm extends StatelessWidget {
   void _handleSubmit(BuildContext context, ProductByCarController controller,
       FaultTypeController faultTypeController) {
     // Check if any service is selected
+
     bool isServiceSelected =
         controller.filteredServiceItems.any((service) => service.isSelected);
 
@@ -68,29 +69,48 @@ class ServiceOrderForm extends StatelessWidget {
         'error'.tr,
         'please_select_service'.tr,
       );
+
       return;
     }
 
     // Check if fault type is selected
+
     if (faultTypeController.selectedFaultTypeIndex.value < 0) {
       showErrorSnackbar(
         'error'.tr,
         'please_select_fault_type'.tr,
       );
+
       return;
     }
 
-    // Check if car is selected
-    if (controller.selectedMakeIndex.value == -1 ||
-        controller.selectedModelIndex.value == -1) {
+    // Vehicle selection validation based on whether user has saved vehicles
+
+    if (controller.userVehicles.isEmpty) {
+      // No saved vehicles, check make/model selection
+
+      if (controller.selectedMakeIndex.value == -1 ||
+          controller.selectedModelIndex.value == -1) {
+        showErrorSnackbar(
+          'error'.tr,
+          'select_your_car'.tr,
+        );
+
+        return;
+      }
+    } else if (controller.selectedVehicleIndex.value < 0) {
+      // Has saved vehicles but none selected
+
       showErrorSnackbar(
         'error'.tr,
         'select_your_car'.tr,
       );
+
       return;
     }
 
     // Check if user is logged in
+
     bool isLoggedIn =
         controller.myServices.sharedPreferences.getBool("isLogin") ?? false;
 
@@ -98,7 +118,9 @@ class ServiceOrderForm extends StatelessWidget {
       _showOrderDetailsSheet(context, controller, faultTypeController);
     } else {
       // Get or create an AuthService instance safely
+
       AuthService authService;
+
       try {
         authService = Get.find<AuthService>();
       } catch (e) {
@@ -106,18 +128,24 @@ class ServiceOrderForm extends StatelessWidget {
       }
 
       // Show auth dialog and proceed after successful auth
+
       authService.showAuthDialog(context, onSuccess: () {
         // Add a small delay to ensure SharedPreferences has time to persist
+
         Future.delayed(Duration(milliseconds: 300), () {
           // First try to load user vehicles - this must be called first
+
           controller.loadUserVehicles().then((_) {
             // Then load car makes regardless of whether vehicles were found
+
             controller.loadCarMakes();
 
             // Force update to refresh UI
+
             controller.update();
 
             // Force GetX to update the UI in case it missed the controller.update()
+
             Get.forceAppUpdate();
           });
         });

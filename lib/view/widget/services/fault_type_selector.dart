@@ -1,15 +1,10 @@
 // lib/view/widget/services/fault_type_selector.dart
 
 import 'package:ecom_modwir/controller/fault_type_controller.dart';
-
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
-
 import 'package:ecom_modwir/core/constant/color.dart';
-
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 
 class FaultTypeSelector extends StatelessWidget {
@@ -22,13 +17,15 @@ class FaultTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(FaultTypeController());
+    // Get controller that should already be initialized with productByCarController
+    final controller = Get.find<FaultTypeController>();
 
-    // Load fault types when the widget is built
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.loadFaultTypes(serviceId);
-    });
+    // Only load fault types if it hasn't been loaded yet or if the service ID changed
+    if (controller.serviceId != serviceId || controller.faultTypes.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.loadFaultTypes(serviceId);
+      });
+    }
 
     return GetBuilder<FaultTypeController>(
       builder: (controller) => HandlingDataView(
