@@ -85,10 +85,63 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text("${widget.service.price} SR",
-                style: MyTextStyle.meduimBold(context)),
+            // If there's an original price (meaning there's a discount), show both prices
+
+            if (widget.service.originalPrice != null &&
+                widget.service.originalPrice! > widget.service.price)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "${widget.service.originalPrice} SR",
+                    style: TextStyle(
+                      decoration: TextDecoration.lineThrough,
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      if (widget.service.discountPercentage != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            "-${widget.service.discountPercentage}%",
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "${widget.service.price} SR",
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            else
+              Text("${widget.service.price} SR",
+                  style: MyTextStyle.meduimBold(context)),
+
             if (widget.service.isSelected)
-              Icon(Icons.check_circle, size: 18, color: AppColor.primaryColor),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Icon(Icons.check_circle,
+                    size: 18, color: AppColor.primaryColor),
+              ),
           ],
         ),
       ],

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/data/datasource/remote/home_data.dart';
+import 'package:ecom_modwir/data/model/services/note_services_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -111,35 +113,69 @@ class ProductByCarController extends GetxController {
 
       final arguments = Get.arguments;
 
-      serviceId = arguments?['service_id']?.toString().trim() ?? "";
+      // Handle offer-specific parameters
 
-      lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+      final bool isOffer = arguments?['is_offer'] ?? false;
 
-      if (serviceId.isEmpty) {
-        throw "Invalid service ID: $serviceId";
-      }
+      final int? offerId = arguments?['offer_id'];
 
-      // Initialize FaultTypeController with the correct serviceId
+      final int? discountPercentage = arguments?['discount_percentage'];
 
-      FaultTypeController faultTypeController;
+      // Handle different ID parameters
 
-      try {
-        faultTypeController = Get.find<FaultTypeController>();
+      if (isOffer) {
+        // For offers, we get the sub_service_id instead of service_id
 
-        // Only reload if the service ID has changed
+        final String subServiceId =
+            arguments?['sub_service_id']?.toString().trim() ?? "";
 
-        if (faultTypeController.serviceId != serviceId) {
+        if (subServiceId.isEmpty) {
+          throw "Invalid sub service ID for offer";
+        }
+
+        // We'll determine the parent service_id in _loadServiceDetails
+
+        // For now, store the sub_service_id in a special variable
+
+        serviceId = ""; // Will be set after we determine the parent service_id
+
+        // Store sub_service_id to use later
+
+        final subServiceIdValue = int.tryParse(subServiceId) ?? 0;
+
+        await _loadServiceDetailsFromOffer(
+            subServiceId: subServiceIdValue,
+            offerId: offerId,
+            discountPercentage: discountPercentage);
+      } else {
+        // Regular case - not an offer
+
+        serviceId = arguments?['service_id']?.toString().trim() ?? "";
+
+        if (serviceId.isEmpty) {
+          throw "Invalid service ID";
+        }
+
+        lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
+        // Initialize FaultTypeController with the correct serviceId
+
+        FaultTypeController faultTypeController;
+
+        try {
+          faultTypeController = Get.find<FaultTypeController>();
+
+          if (faultTypeController.serviceId != serviceId) {
+            faultTypeController.loadFaultTypes(serviceId);
+          }
+        } catch (e) {
+          faultTypeController = Get.put(FaultTypeController());
+
           faultTypeController.loadFaultTypes(serviceId);
         }
-      } catch (e) {
-        // If not found, create a new instance with the correct serviceId
 
-        faultTypeController = Get.put(FaultTypeController());
-
-        faultTypeController.loadFaultTypes(serviceId);
+        await _loadServiceDetails();
       }
-
-      await _loadServiceDetails();
     } catch (e) {
       print("Initialization error: $e");
 
@@ -246,47 +282,239 @@ class ProductByCarController extends GetxController {
     update();
   }
 
-  Future<void> _loadServiceDetails() async {
+  Future<void> _loadServiceDetails(
+      {bool isSpecificSubService = false,
+      int? targetSubServiceId,
+      int? discountPercentage}) async {
     try {
-      statusRequest = StatusRequest.loading;
-      update();
+      if (!isSpecificSubService) {
+        statusRequest = StatusRequest.loading;
+
+        update();
+      }
+
+      lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
+      print(
+          "🔍 DEBUG: Loading service details for service ID: $serviceId, lang: $lang");
+
+      if (isSpecificSubService) {
+        print(
+            "🔍 DEBUG: Looking for specific sub-service ID: $targetSubServiceId");
+      }
+
+      // Regular service loading with possible discount for specific sub-service
 
       final result = await serviceItemsData.getServiceDetails(serviceId, lang);
 
       result.fold(
         (failure) {
+          print("❌ ERROR: Failed to load service details: $failure");
+
           allServiceItems = [];
+
           filteredServiceItems.clear();
+
           statusRequest = failure;
         },
         (response) {
-          try {
-            allServiceItems = (response['sub_services'] as List? ?? [])
-                .map((x) => SubServiceModel.fromJson(x))
-                .whereType<SubServiceModel>()
-                .toList();
+          print(
+              "📋 DEBUG: Service details API response status: ${response['status']}");
 
-            // Don't set any service as selected by default
-            // Let the user make the selection themselves
-            for (var service in allServiceItems) {
-              service.isSelected = false;
+          if (response['sub_services'] != null) {
+            print(
+                "📋 DEBUG: Number of sub-services returned: ${(response['sub_services'] as List).length}");
+          } else {
+            print("⚠️ WARNING: 'sub_services' field is null in response");
+          }
+
+          try {
+            // Extract all sub-services
+
+            List<SubServiceModel> allSubServices =
+                (response['sub_services'] as List? ?? [])
+                    .map((x) => SubServiceModel.fromJson(x))
+                    .whereType<SubServiceModel>()
+                    .toList();
+
+            print("📋 DEBUG: Parsed ${allSubServices.length} sub-services");
+
+            // Apply discount if needed
+
+            if (discountPercentage != null && discountPercentage > 0) {
+              print(
+                  "📋 DEBUG: Applying $discountPercentage% discount to services");
+
+              for (var service in allSubServices) {
+                // Only apply discount to target sub-service if specified
+
+                if (!isSpecificSubService ||
+                    service.subServiceId == targetSubServiceId) {
+                  print(
+                      "📋 DEBUG: Applying discount to service ID: ${service.subServiceId}");
+
+                  // Store original price
+
+                  service.originalPrice = service.price;
+
+                  // Calculate the discounted price
+
+                  double discountAmount =
+                      service.price * (discountPercentage / 100);
+
+                  double discountedPrice = service.price - discountAmount;
+
+                  print(
+                      "📋 DEBUG: Original price: ${service.price}, Discounted price: $discountedPrice");
+
+                  // Update the price with the discounted price
+
+                  service.price = discountedPrice;
+
+                  service.discountPercentage = discountPercentage;
+
+                  // Add a note about the discount
+
+                  service.notes.add(ServiceNote(
+                      noteId: 9999, // Placeholder ID
+
+                      subServiceId: service.subServiceId,
+                      content:
+                          "Special offer: $discountPercentage% discount applied"));
+
+                  // If it's a specific sub-service, mark it as selected
+
+                  if (isSpecificSubService &&
+                      service.subServiceId == targetSubServiceId) {
+                    print(
+                        "✅ DEBUG: Marking sub-service ${service.subServiceId} as selected");
+
+                    service.isSelected = true;
+                  }
+                }
+              }
             }
 
+            // Check if we found any services
+
+            if (allSubServices.isEmpty) {
+              print(
+                  "⚠️ WARNING: No sub-services found - empty list after parsing");
+
+              // If this is a specific sub-service request and we found nothing, create a placeholder
+
+              if (isSpecificSubService && targetSubServiceId != null) {
+                print(
+                    "🔄 FALLBACK: Creating placeholder sub-service for ID: $targetSubServiceId");
+
+                SubServiceModel placeholderService = SubServiceModel(
+                  subServiceId: targetSubServiceId,
+
+                  serviceId: int.parse(serviceId),
+
+                  name:
+                      "Special Offer Service", // You can update this with actual offer title if available
+
+                  price: 100.0, // Default price, you may want to update this
+
+                  status: 1,
+
+                  notes: [],
+                );
+
+                // Apply discount if needed
+
+                if (discountPercentage != null && discountPercentage > 0) {
+                  placeholderService.originalPrice = placeholderService.price;
+
+                  double discountAmount =
+                      placeholderService.price * (discountPercentage / 100);
+
+                  placeholderService.price -= discountAmount;
+
+                  placeholderService.discountPercentage = discountPercentage;
+
+                  placeholderService.notes.add(ServiceNote(
+                      noteId: 9999,
+                      subServiceId: placeholderService.subServiceId,
+                      content:
+                          "Special offer: $discountPercentage% discount applied"));
+                }
+
+                // Add the placeholder service
+
+                placeholderService.isSelected = true;
+
+                allSubServices = [placeholderService];
+
+                print("✅ DEBUG: Added placeholder sub-service");
+              }
+            }
+
+            // Initialize fault type controller with the correct service ID
+
+            try {
+              FaultTypeController faultTypeController =
+                  Get.find<FaultTypeController>();
+
+              if (faultTypeController.serviceId != serviceId) {
+                print(
+                    "📋 DEBUG: Updating fault type controller with service ID: $serviceId");
+
+                faultTypeController.loadFaultTypes(serviceId);
+              }
+            } catch (e) {
+              // If controller doesn't exist, create it
+
+              print(
+                  "📋 DEBUG: Creating new fault type controller with service ID: $serviceId");
+
+              FaultTypeController faultTypeController =
+                  Get.put(FaultTypeController());
+
+              faultTypeController.loadFaultTypes(serviceId);
+            }
+
+            allServiceItems = allSubServices;
+
             filteredServiceItems.value = allServiceItems;
+
+            // If it's a specific sub-service, filter to only show it
+
+            if (isSpecificSubService && targetSubServiceId != null) {
+              print(
+                  "📋 DEBUG: Filtering to show only sub-service ID: $targetSubServiceId");
+
+              filteredServiceItems.value = allServiceItems
+                  .where(
+                      (service) => service.subServiceId == targetSubServiceId)
+                  .toList();
+
+              print(
+                  "📋 DEBUG: Filtered list contains ${filteredServiceItems.length} items");
+            }
+
             sortServicesByPrice(currentSort);
+
             statusRequest = StatusRequest.success;
           } catch (e) {
-            print("Error parsing service details: $e");
+            print("❌ ERROR parsing service details: $e");
+
             allServiceItems = [];
+
             filteredServiceItems.clear();
+
             statusRequest = StatusRequest.failure;
           }
         },
       );
     } catch (e) {
-      print("Service details error: $e");
+      print("❌ ERROR in _loadServiceDetails: $e");
+
       allServiceItems = [];
+
       filteredServiceItems.clear();
+
       statusRequest = StatusRequest.serverFailure;
     }
 
@@ -416,6 +644,357 @@ class ProductByCarController extends GetxController {
 
       update();
     }
+  }
+
+  Future<void> _loadServiceDetailsFromOffer(
+      {required int subServiceId,
+      int? offerId,
+      int? discountPercentage}) async {
+    try {
+      statusRequest = StatusRequest.loading;
+
+      update();
+
+      // Detailed debug logging
+
+      print(
+          "🔍 DEBUG: Loading offer details for sub-service ID: $subServiceId");
+
+      // Create a temporary API call to get all services or main categories
+
+      final homeData = HomeData(Get.find());
+
+      print("🔍 DEBUG: Calling homeData.getData() to fetch all services");
+
+      final allServicesResult = await homeData.getData(lang);
+
+      allServicesResult.fold((failure) {
+        print("❌ ERROR: Failed to fetch services: $failure");
+
+        statusRequest = failure;
+
+        allServiceItems = [];
+
+        filteredServiceItems.clear();
+      }, (response) async {
+        print("✅ SUCCESS: Home data API response received");
+
+        print("📋 DEBUG: API Status: ${response['status']}");
+
+        // Extract services from home data API response and log count
+
+        final List services = response['services'] ?? [];
+
+        print("📋 DEBUG: Found ${services.length} services in response");
+
+        // Find the service containing our sub-service
+
+        bool foundService = false;
+
+        for (var service in services) {
+          // Log each service ID we're checking
+
+          print(
+              "🔍 DEBUG: Checking service: ${service['categories_id']} - ${service['categories_name']}");
+
+          // If the service has the sub_service_id, use its service_id
+
+          if (_serviceContainsSubService(service, subServiceId)) {
+            // We found the parent service!
+
+            foundService = true;
+
+            // Set the service_id for future use
+
+            serviceId = service['categories_id'].toString();
+
+            print(
+                "✅ SUCCESS: Found parent service ID: $serviceId for sub-service ID: $subServiceId");
+
+            // Now that we have the service_id, load all its sub-services
+
+            await _loadServiceDetails(
+                isSpecificSubService: true,
+                targetSubServiceId: subServiceId,
+                discountPercentage: discountPercentage);
+
+            break;
+          }
+        }
+
+        if (!foundService) {
+          print(
+              "❌ ERROR: Could not find parent service for sub-service ID: $subServiceId");
+
+          print(
+              "📋 DEBUG: Available service IDs: ${services.map((s) => s['categories_id']).toList()}");
+
+          // Check if we can get the sub-service directly
+
+          print("🔄 FALLBACK: Attempting to load the sub-service directly...");
+
+          // Try to get the sub-service details directly using a different API call
+
+          // This is a fallback in case the parent service cannot be found
+
+          await _loadSubServiceDirectly(subServiceId, discountPercentage);
+
+          if (statusRequest == StatusRequest.failure) {
+            // Show a user-friendly error message
+
+            Get.snackbar(
+              "Error",
+              "Could not find the requested service",
+              snackPosition: SnackPosition.BOTTOM,
+              duration: Duration(seconds: 3),
+            );
+          }
+        }
+      });
+    } catch (e) {
+      print("❌ ERROR in _loadServiceDetailsFromOffer: $e");
+
+      statusRequest = StatusRequest.serverFailure;
+
+      allServiceItems = [];
+
+      filteredServiceItems.clear();
+
+      // Show a user-friendly error message
+
+      Get.snackbar(
+        "Error",
+        "An error occurred while loading the offer",
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
+    }
+
+    update();
+  }
+
+  Future<void> _loadSubServiceDirectly(
+      int subServiceId, int? discountPercentage) async {
+    try {
+      print("🔍 DEBUG: Attempting to load sub-service $subServiceId directly");
+
+      // Use the sub-service ID itself as a temporary service ID
+
+      // This might work if your API can handle sub-service IDs in the service ID parameter
+
+      serviceId = subServiceId.toString();
+
+      // Make the API call using the sub-service ID
+
+      final result = await serviceItemsData.getServiceDetails(serviceId, lang);
+
+      result.fold(
+        (failure) {
+          print("❌ ERROR: Failed to load sub-service directly: $failure");
+
+          allServiceItems = [];
+
+          filteredServiceItems.clear();
+
+          statusRequest = failure;
+        },
+        (response) {
+          print(
+              "📋 DEBUG: Direct sub-service API response: ${response['status']}");
+
+          if (response['sub_services'] != null) {
+            print(
+                "📋 DEBUG: Number of sub-services returned: ${(response['sub_services'] as List).length}");
+          }
+
+          try {
+            if (response['status'] == "success") {
+              // If we got a response but empty sub-services
+
+              if ((response['sub_services'] as List? ?? []).isEmpty) {
+                print("⚠️ WARNING: Received empty sub-services array");
+
+                // Create a placeholder sub-service based on the offer information
+
+                // This is a last resort fallback when no sub-services are returned
+
+                SubServiceModel placeholderService = SubServiceModel(
+                  subServiceId: subServiceId,
+
+                  serviceId: int.parse(serviceId),
+
+                  name:
+                      "Special Offer Service", // You can update this with actual offer title if available
+
+                  price: 100.0, // Default price, you may want to update this
+
+                  status: 1,
+
+                  notes: [],
+                );
+
+                // Apply discount if needed
+
+                if (discountPercentage != null && discountPercentage > 0) {
+                  placeholderService.originalPrice = placeholderService.price;
+
+                  double discountAmount =
+                      placeholderService.price * (discountPercentage / 100);
+
+                  placeholderService.price -= discountAmount;
+
+                  placeholderService.discountPercentage = discountPercentage;
+
+                  placeholderService.notes.add(ServiceNote(
+                      noteId: 9999,
+                      subServiceId: placeholderService.subServiceId,
+                      content:
+                          "Special offer: $discountPercentage% discount applied"));
+                }
+
+                // Add the placeholder service
+
+                placeholderService.isSelected = true;
+
+                allServiceItems = [placeholderService];
+
+                filteredServiceItems.value = allServiceItems;
+
+                statusRequest = StatusRequest.success;
+              } else {
+                // Normal processing if sub-services are returned
+
+                List<SubServiceModel> subServices =
+                    (response['sub_services'] as List? ?? [])
+                        .map((x) => SubServiceModel.fromJson(x))
+                        .whereType<SubServiceModel>()
+                        .toList();
+
+                // Apply discount if needed
+
+                if (discountPercentage != null && discountPercentage > 0) {
+                  for (var service in subServices) {
+                    service.originalPrice = service.price;
+
+                    double discountAmount =
+                        service.price * (discountPercentage / 100);
+
+                    service.price -= discountAmount;
+
+                    service.discountPercentage = discountPercentage;
+
+                    service.notes.add(ServiceNote(
+                        noteId: 9999,
+                        subServiceId: service.subServiceId,
+                        content:
+                            "Special offer: $discountPercentage% discount applied"));
+                  }
+                }
+
+                allServiceItems = subServices;
+
+                filteredServiceItems.value = allServiceItems;
+
+                statusRequest = StatusRequest.success;
+              }
+            } else {
+              allServiceItems = [];
+
+              filteredServiceItems.clear();
+
+              statusRequest = StatusRequest.failure;
+            }
+          } catch (e) {
+            print("❌ ERROR parsing sub-service details: $e");
+
+            allServiceItems = [];
+
+            filteredServiceItems.clear();
+
+            statusRequest = StatusRequest.failure;
+          }
+        },
+      );
+    } catch (e) {
+      print("❌ ERROR in _loadSubServiceDirectly: $e");
+
+      statusRequest = StatusRequest.serverFailure;
+    }
+  }
+
+  bool _serviceContainsSubService(
+      Map<String, dynamic> service, int subServiceId) {
+    print(
+        "🔍 DEBUG: Checking if service ${service['categories_id']} contains sub-service $subServiceId");
+
+    // Check the items/sub_services field - the exact field name may depend on your API structure
+
+    List? subServices;
+
+    String? fieldName;
+
+    // Try different possible field names based on your API
+
+    if (service.containsKey('sub_services')) {
+      subServices = service['sub_services'] as List?;
+
+      fieldName = 'sub_services';
+    } else if (service.containsKey('items')) {
+      subServices = service['items'] as List?;
+
+      fieldName = 'items';
+    } else if (service.containsKey('sub_categories')) {
+      subServices = service['sub_categories'] as List?;
+
+      fieldName = 'sub_categories';
+    }
+
+    print("📋 DEBUG: Field name used: $fieldName");
+
+    if (subServices != null) {
+      print("📋 DEBUG: Number of items in $fieldName: ${subServices.length}");
+
+      // Log the first few sub-service IDs for debugging
+
+      if (subServices.isNotEmpty) {
+        var sampleIds = subServices.take(5).map((sub) {
+          final id = sub['sub_service_id'] ??
+              sub['itemsid'] ??
+              sub['id'] ??
+              sub['sub_categories_id'];
+
+          return id;
+        }).toList();
+
+        print("📋 DEBUG: Sample sub-service IDs: $sampleIds");
+      }
+    } else {
+      print("⚠️ WARNING: No sub-services found in this service");
+    }
+
+    // If we found any sub-services, check for the target ID
+
+    if (subServices != null && subServices.isNotEmpty) {
+      return subServices.any((subService) {
+        // Try different possible ID field names
+
+        final id = subService['sub_service_id'] ??
+            subService['itemsid'] ??
+            subService['id'] ??
+            subService['sub_categories_id'];
+
+        bool matches = id == subServiceId;
+
+        if (matches) {
+          print(
+              "✅ SUCCESS: Found matching sub-service ID: $id == $subServiceId");
+        }
+
+        return matches;
+      });
+    }
+
+    return false;
   }
 
   void _loadLicensePlateFromVehicle(UserCarModel vehicle) {

@@ -48,14 +48,24 @@ class HomeOffersController extends GetxController {
     update();
   }
 
-  goToOfferDetails(HomeOffersModel offer) {
+  void goToOfferDetails(HomeOffersModel offer) {
     if (offer.subServiceId != null) {
+      // We need to pass both IDs: the sub_service_id for identifying the specific offer
+
+      // and a special flag to let the controller know it needs to fetch the parent service_id
+
       Get.toNamed(
         AppRoute.servicesDisplay,
         arguments: {
-          'service_id': offer.subServiceId.toString(),
-          'is_offer': true,
+          'sub_service_id':
+              offer.subServiceId.toString(), // Pass the sub_service_id
+
+          'is_offer': true, // Flag indicating this is an offer
+
           'offer_id': offer.offerId,
+
+          'discount_percentage':
+              offer.discountPercentage, // Pass the discount percentage
         },
       );
     }
