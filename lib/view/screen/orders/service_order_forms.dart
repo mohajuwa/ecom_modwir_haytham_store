@@ -438,7 +438,7 @@ class _OrderDetailsForm extends StatelessWidget {
           const SizedBox(height: 24),
         ],
 
-        _buildOrderSummary(context),
+        // _buildOrderSummary(context),
         const SizedBox(height: 32),
         PrimaryButton(
           text: 'checkout'.tr,
@@ -449,114 +449,6 @@ class _OrderDetailsForm extends StatelessWidget {
         ),
         const SizedBox(height: 16),
       ],
-    );
-  }
-
-  Widget _buildOrderSummary(BuildContext context) {
-    // Get the selected fault type
-    final selectedFaultType = faultTypeController.selectedFaultType;
-
-    // Null safety checks
-    final selectedService = controller.filteredServiceItems.isNotEmpty
-        ? controller.filteredServiceItems.firstWhere(
-            (service) => service.isSelected,
-            orElse: () => controller.filteredServiceItems.first,
-          )
-        : null;
-
-    final selectedMake = controller.selectedMakeIndex.value >= 0 &&
-            controller.selectedMakeIndex.value < controller.carMakes.length
-        ? controller.carMakes[controller.selectedMakeIndex.value]
-        : null;
-
-    final selectedModel = controller.selectedModelIndex.value >= 0 &&
-            controller.selectedModels.isNotEmpty &&
-            controller.selectedModelIndex.value <
-                controller.selectedModels.length
-        ? controller.selectedModels[controller.selectedModelIndex.value]
-        : null;
-
-    final selctedCar = controller.selectedVehicleIndex.value >= 0 &&
-            controller.userVehicles.isNotEmpty &&
-            controller.selectedVehicleIndex.value <
-                controller.userVehicles.length
-        ? controller.userVehicles[controller.selectedVehicleIndex.value]
-        : null;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Color(0xFF2A2A2A) : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        border:
-            Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'order_summary'.tr,
-            style: MyTextStyle.styleBold(context),
-          ),
-          const SizedBox(height: 12),
-          if (selectedService != null)
-            _summaryItem(
-              'service'.tr,
-              selectedService.name ?? 'N/A',
-              context,
-            ),
-          if (selectedFaultType != null)
-            _summaryItem(
-              'fault_type'.tr,
-              selectedFaultType.name ?? 'N/A',
-              context,
-              valueColor: AppColor.primaryColor,
-            ),
-          if (selectedService != null)
-            _summaryItem(
-              'price'.tr,
-              "${selectedService.price ?? 0} SR",
-              context,
-              valueColor: AppColor.primaryColor,
-            ),
-          if (selectedMake != null &&
-              selectedModel != null &&
-              selctedCar == null)
-            _summaryItem(
-              'car'.tr,
-              "${selectedMake.name[controller.lang] ?? ''} ${selectedModel.name[controller.lang] ?? ''}",
-              context,
-            ),
-          if (selctedCar != null)
-            _summaryItem(
-              'car'.tr,
-              "${selctedCar.makeName ?? ''} ${selctedCar.modelName ?? ''}",
-              context,
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _summaryItem(String label, String value, BuildContext context,
-      {Color? valueColor}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: MyTextStyle.meduimBold(context),
-          ),
-          Text(
-            value,
-            style: MyTextStyle.meduimBold(context).copyWith(
-              color: valueColor,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
