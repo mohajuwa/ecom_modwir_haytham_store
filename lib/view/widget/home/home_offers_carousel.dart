@@ -85,10 +85,9 @@ class HomeOffersCarousel extends StatelessWidget {
   ) {
     final lang =
         controller.myServices.sharedPreferences.getString("lang") ?? "en";
-    final title = offer.offerTitle != null ? offer.offerTitle![lang] ?? '' : '';
-    final description = offer.offerDescription != null
-        ? offer.offerDescription![lang] ?? ''
-        : '';
+    final title = offer.offerTitle != null ? offer.offerTitle! ?? '' : '';
+    final description =
+        offer.offerDescription != null ? offer.offerDescription! ?? '' : '';
 
     return GestureDetector(
       onTap: () => controller.goToOfferDetails(offer),

@@ -2,8 +2,8 @@
 class HomeOffersModel {
   int? offerId;
   int? subServiceId;
-  Map<String, dynamic>? offerTitle;
-  Map<String, dynamic>? offerDescription;
+  String? offerTitle;
+  String? offerDescription;
   String? offerImg;
 
   HomeOffersModel({

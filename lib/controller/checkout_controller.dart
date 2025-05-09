@@ -38,7 +38,7 @@ class CheckoutController extends GetxController {
 
   // Order summary values
   double subTotal = 0.0;
-  double deliveryFee = 10.0; // Default delivery fee
+  double deliveryFee = 0.0; // Default delivery fee
   double discount = 0.0;
   double total = 0.0;
 

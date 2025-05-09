@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -788,25 +789,32 @@ class ProductByCarController extends GetxController {
         orElse: () => filteredServiceItems.first,
       );
 
+      // Get the selected fault type
+      final faultTypeController = Get.find<FaultTypeController>();
+      final selectedFaultType = faultTypeController.selectedFaultType;
+
+      if (selectedFaultType == null) {
+        showErrorSnackbar('error'.tr, 'please_select_fault_type'.tr);
+        statusRequest = StatusRequest.none;
+        update();
+        return;
+      }
+
       Get.toNamed(
         AppRoute.checkout,
         arguments: {
           'selectedServices': selectedService,
           'orderNotes': notesController.text,
-          'selected_vehicle_id': selectedVehicleIndex.toString(),
-          // 'fault_type_id': selectedFaultTypeId,
+          'selected_vehicle_id': userVehicles.isNotEmpty
+              ? userVehicles[selectedVehicleIndex.value].vehicleId.toString()
+              : "0",
+          'fault_type_id': selectedFaultType.faultId.toString(),
+          'attachments': attachments,
         },
       );
-      // TODO: Implement actual order API call
-      await Future.delayed(const Duration(seconds: 2));
+
       statusRequest = StatusRequest.success;
-
       update();
-
-      showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
-
-      // TODO: Navigate to appropriate screen
-      // Get.offNamed('/orders');
     } catch (e) {
       print("Error completing order: $e");
       statusRequest = StatusRequest.failure;

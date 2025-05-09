@@ -17,13 +17,13 @@ class FaultTypeController extends GetxController {
 
   List<FaultTypeModel> faultTypes = [];
 
-  RxInt selectedFaultTypeIndex = (-1).obs;
+  RxInt selectedFaultTypeIndex = 0.obs;
 
   StatusRequest statusRequest = StatusRequest.none;
 
   MyServices myServices = Get.find();
 
-  String serviceId = "";
+  String serviceId = "4";
 
   String lang = "en";
 

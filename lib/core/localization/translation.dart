@@ -256,6 +256,8 @@ class MyTranslation extends Translations {
           "coupon_usage_limit_reached":
               "تم الوصول إلى الحد الأقصى لاستخدام القسيمة",
           "please_enter_coupon_code": "يرجى إدخال رمز القسيمة",
+          "delivery_fee_definded_after_order_complated":
+              "يُحدد بعد اكمال الطلب",
         },
         //==================================
 
@@ -516,6 +518,8 @@ class MyTranslation extends Translations {
           "coupon_expired": "This coupon has expired",
           "coupon_usage_limit_reached": "Coupon usage limit reached",
           "please_enter_coupon_code": "Please enter a coupon code",
+          "delivery_fee_definded_after_order_complated":
+              "After order complated",
         }
       };
 }

@@ -89,7 +89,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                   child: _buildSummaryRow(
                     context,
                     "delivery_fee".tr,
-                    formatCurrency(deliveryFee),
+                    formatDeliveryFee(deliveryFee),
                   ),
                 ),
 
