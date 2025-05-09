@@ -11,6 +11,7 @@ import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
 import 'package:ecom_modwir/view/widget/orders/address_selector.dart';
 import 'package:ecom_modwir/view/widget/orders/enhanced_order_summery.dart';
 import 'package:ecom_modwir/view/widget/orders/order_summery.dart'; // Import the EnhancedOrderSummaryWidget here
+import 'package:ecom_modwir/view/widget/orders/payment_selector.dart'; // Import PaymentMethodSelector
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -157,108 +158,10 @@ class Checkout extends StatelessWidget {
 
   Widget _buildPaymentMethods(
       BuildContext context, CheckoutController controller) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        children: [
-          // Cash on Delivery Option
-          InkWell(
-            onTap: () => controller.choosePaymentMethod('0'),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: controller.paymentMethod == "0"
-                    ? AppColor.primaryColor.withOpacity(0.1)
-                    : null,
-                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-                border: Border.all(
-                  color: controller.paymentMethod == "0"
-                      ? AppColor.primaryColor
-                      : Colors.grey.shade300,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.money,
-                    color: controller.paymentMethod == "0"
-                        ? AppColor.primaryColor
-                        : Colors.grey,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "cash_on_delivery".tr,
-                    style: TextStyle(
-                      color: controller.paymentMethod == "0"
-                          ? AppColor.primaryColor
-                          : null,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (controller.paymentMethod == "0")
-                    Icon(
-                      Icons.check_circle,
-                      color: AppColor.primaryColor,
-                    ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Card Payment Option
-          InkWell(
-            onTap: () => controller.choosePaymentMethod('1'),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: controller.paymentMethod == "1"
-                    ? AppColor.primaryColor.withOpacity(0.1)
-                    : null,
-                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-                border: Border.all(
-                  color: controller.paymentMethod == "1"
-                      ? AppColor.primaryColor
-                      : Colors.grey.shade300,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.credit_card,
-                    color: controller.paymentMethod == "1"
-                        ? AppColor.primaryColor
-                        : Colors.grey,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "payment_cards".tr,
-                    style: TextStyle(
-                      color: controller.paymentMethod == "1"
-                          ? AppColor.primaryColor
-                          : null,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (controller.paymentMethod == "1")
-                    Icon(
-                      Icons.check_circle,
-                      color: AppColor.primaryColor,
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+    // Simply use the PaymentMethodSelector widget with the required parameters
+    return PaymentMethodSelector(
+      selectedMethod: controller.paymentMethod,
+      onSelect: controller.choosePaymentMethod,
     );
   }
 
