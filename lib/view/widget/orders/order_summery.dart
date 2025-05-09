@@ -1,224 +1,182 @@
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
-import 'package:ecom_modwir/core/functions/format_currency.dart';
+import 'package:ecom_modwir/data/model/cars/make_model.dart';
+import 'package:ecom_modwir/data/model/cars/user_cars.dart';
+import 'package:ecom_modwir/data/model/services/fault_type_model.dart';
 import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class OrderSummaryWidget extends StatelessWidget {
-  final List<SubServiceModel> selectedServices;
-  final double subtotal;
-  final double deliveryFee;
-  final bool isDelivery;
-  final double discount;
-  final double total;
+  // Required parameters
+  final BuildContext context;
+
+  // Optional parameters for service details
+  final SubServiceModel? selectedService;
+  final FaultTypeModel? selectedFaultType;
+
+  // Optional parameters for car details
+  final CarMake? selectedMake;
+  final CarModel? selectedModel;
+  final UserCarModel? selectedCar;
+  final String? lang;
+
+  // Optional parameters for pricing
+  final double? deliveryFee;
+  final double? discount;
+  final bool showTotal;
+  final bool isDark;
 
   const OrderSummaryWidget({
     super.key,
-    required this.selectedServices,
-    required this.subtotal,
-    required this.deliveryFee,
-    required this.isDelivery,
-    required this.discount,
-    required this.total,
+    required this.context,
+    this.selectedService,
+    this.selectedFaultType,
+    this.selectedMake,
+    this.selectedModel,
+    this.selectedCar,
+    this.lang,
+    this.deliveryFee,
+    this.discount,
+    this.showTotal = true,
+    this.isDark = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? Color(0xFF2A2A2A) : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border:
+            Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[200]!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Row(
-            children: [
-              Icon(
-                Icons.receipt_long_outlined,
-                color: AppColor.primaryColor,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "order_summary".tr,
-                style: MyTextStyle.meduimBold(context).copyWith(
-                  color: AppColor.primaryColor,
-                ),
-              ),
-            ],
+          Text(
+            'order_summary'.tr,
+            style: MyTextStyle.styleBold(context),
           ),
+          const SizedBox(height: 12),
 
-          const SizedBox(height: 16),
+          // Service details
+          if (selectedService != null)
+            _summaryItem(
+              'service'.tr,
+              selectedService!.name ?? 'N/A',
+              context,
+            ),
 
-          // Services list
-          ...selectedServices
-              .map((service) => _buildServiceItem(context, service)),
+          // Fault type details
+          if (selectedFaultType != null)
+            _summaryItem(
+              'fault_type'.tr,
+              selectedFaultType!.name ?? 'N/A',
+              context,
+              valueColor: AppColor.primaryColor,
+            ),
 
-          const Divider(height: 24),
+          // Service price
+          if (selectedService != null)
+            _summaryItem(
+              'price'.tr,
+              "${selectedService!.price ?? 0} SR",
+              context,
+              valueColor: AppColor.primaryColor,
+            ),
 
-          // Order calculations
-          Column(
-            children: [
-              // Subtotal
-              _buildSummaryRow(
-                context,
-                "subtotal".tr,
-                formatCurrency(subtotal),
-              ),
+          // Car details - either from make/model selection or from selected car
+          if (selectedMake != null &&
+              selectedModel != null &&
+              selectedCar == null &&
+              lang != null)
+            _summaryItem(
+              'car'.tr,
+              "${selectedMake!.name[lang] ?? ''} ${selectedModel!.name[lang] ?? ''}",
+              context,
+            ),
 
-              const SizedBox(height: 8),
+          if (selectedCar != null)
+            _summaryItem(
+              'car'.tr,
+              "${selectedCar!.makeName ?? ''} ${selectedCar!.modelName ?? ''}",
+              context,
+            ),
 
-              // Delivery fee (if applicable)
-              if (isDelivery)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _buildSummaryRow(
-                    context,
-                    "delivery_fee".tr,
-                    formatCurrency(deliveryFee),
-                  ),
-                ),
+          // Delivery fee if provided
+          if (deliveryFee != null && deliveryFee! > 0)
+            _summaryItem(
+              'delivery_fee'.tr,
+              "$deliveryFee SR",
+              context,
+            ),
 
-              // Discount (if any)
-              if (discount > 0)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _buildSummaryRow(
-                    context,
-                    "discount".tr,
-                    "- ${formatCurrency(discount)}",
-                    valueColor: Colors.green,
-                  ),
-                ),
+          // Discount if provided
+          if (discount != null && discount! > 0)
+            _summaryItem(
+              'discount'.tr,
+              "- $discount SR",
+              context,
+              valueColor: Colors.green,
+            ),
 
-              const Divider(height: 16),
-
-              // Total
-              _buildSummaryRow(
-                context,
-                "total".tr,
-                formatCurrency(total),
-                titleStyle: MyTextStyle.styleBold(context),
-                valueStyle: MyTextStyle.styleBold(context).copyWith(
-                  color: AppColor.primaryColor,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
+          // Total calculation if requested
+          if (showTotal && selectedService != null) ...[
+            const Divider(height: 24),
+            _summaryItem(
+              'total'.tr,
+              "${_calculateTotal()} SR",
+              context,
+              valueColor: AppColor.primaryColor,
+              isTotal: true,
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildServiceItem(BuildContext context, SubServiceModel service) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  // Helper method to calculate total
+  double _calculateTotal() {
+    double total = selectedService?.price ?? 0;
 
+    if (deliveryFee != null) {
+      total += deliveryFee!;
+    }
+
+    if (discount != null) {
+      total -= discount!;
+    }
+
+    return total;
+  }
+
+  // Helper method to create summary item rows
+  Widget _summaryItem(String label, String value, BuildContext context,
+      {Color? valueColor, bool isTotal = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: AppColor.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Icon(
-                Icons.check,
-                color: AppColor.primaryColor,
-                size: 16,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  service.name ?? "Unknown Service",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                if (service.notes.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      service.notes.first.content ?? "",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade700,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-              ],
-            ),
+          Text(
+            label,
+            style: isTotal
+                ? MyTextStyle.styleBold(context)
+                : MyTextStyle.meduimBold(context),
           ),
           Text(
-            formatCurrency(service.price),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-            ),
+            value,
+            style: isTotal
+                ? MyTextStyle.styleBold(context)
+                    .copyWith(color: valueColor, fontSize: 16)
+                : MyTextStyle.meduimBold(context).copyWith(color: valueColor),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSummaryRow(
-    BuildContext context,
-    String title,
-    String value, {
-    TextStyle? titleStyle,
-    TextStyle? valueStyle,
-    Color? valueColor,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: titleStyle ??
-              TextStyle(
-                color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-              ),
-        ),
-        Text(
-          value,
-          style: valueStyle ??
-              TextStyle(
-                color: valueColor ?? (isDark ? Colors.white : Colors.black87),
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
     );
   }
 }

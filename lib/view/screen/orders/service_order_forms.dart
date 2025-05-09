@@ -1,5 +1,6 @@
 // lib/view/screen/orders/service_order_forms.dart (updated)
 import 'package:ecom_modwir/controller/auth/auth_service.dart';
+import 'package:ecom_modwir/controller/checkout_controller.dart';
 import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
@@ -7,6 +8,9 @@ import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
+import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
+import 'package:ecom_modwir/view/widget/orders/enhanced_order_summery.dart';
+import 'package:ecom_modwir/view/widget/orders/order_summery.dart';
 import 'package:ecom_modwir/view/widget/services/cars/primary_button.dart';
 import 'package:ecom_modwir/view/widget/services/cars/saudi_license_plate.dart';
 import 'package:ecom_modwir/view/widget/services/cars/scroll_year.dart';
@@ -438,7 +442,7 @@ class _OrderDetailsForm extends StatelessWidget {
           const SizedBox(height: 24),
         ],
 
-        // _buildOrderSummary(context),
+        _buildOrderSummary(context),
         const SizedBox(height: 32),
         PrimaryButton(
           text: 'checkout'.tr,
@@ -449,6 +453,67 @@ class _OrderDetailsForm extends StatelessWidget {
         ),
         const SizedBox(height: 16),
       ],
+    );
+  }
+
+// Example: Using OrderSummaryWidget in OrderDetailsForm
+
+  Widget _buildOrderSummary(BuildContext context) {
+    // Get isDark value from the current theme
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Get the selected service (first selected service from filteredServiceItems)
+    SubServiceModel? selectedService;
+    try {
+      if (controller.filteredServiceItems.isNotEmpty) {
+        // First try to find a service that is selected
+        selectedService = controller.filteredServiceItems.firstWhere(
+          (service) => service.isSelected,
+          // If no service is selected, orElse must return a SubServiceModel (not null)
+          orElse: () => controller.filteredServiceItems.first,
+        );
+      }
+    } catch (e) {
+      // Handle potential exceptions if list is empty or other issues
+      print("Error finding selected service: $e");
+      selectedService = null;
+    }
+
+    // Get the selected fault type
+    final selectedFaultType = faultTypeController.selectedFaultType;
+
+    // Get selected car details
+    final selectedCar = controller.selectedVehicleIndex.value >= 0 &&
+            controller.userVehicles.isNotEmpty &&
+            controller.selectedVehicleIndex.value <
+                controller.userVehicles.length
+        ? controller.userVehicles[controller.selectedVehicleIndex.value]
+        : null;
+
+    // Get selected make and model if no car is selected
+    final selectedMake = controller.selectedMakeIndex.value >= 0 &&
+            controller.carMakes.isNotEmpty &&
+            controller.selectedMakeIndex.value < controller.carMakes.length
+        ? controller.carMakes[controller.selectedMakeIndex.value]
+        : null;
+
+    final selectedModel = controller.selectedModelIndex.value >= 0 &&
+            controller.selectedModels.isNotEmpty &&
+            controller.selectedModelIndex.value <
+                controller.selectedModels.length
+        ? controller.selectedModels[controller.selectedModelIndex.value]
+        : null;
+
+    return OrderSummaryWidget(
+      context: context,
+      selectedService: selectedService,
+      selectedFaultType: selectedFaultType,
+      selectedCar: selectedCar,
+      selectedMake: selectedMake,
+      selectedModel: selectedModel,
+      lang: controller.lang,
+      isDark: isDark,
+      showTotal: true,
     );
   }
 }

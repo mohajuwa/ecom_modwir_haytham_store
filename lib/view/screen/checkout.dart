@@ -9,6 +9,8 @@ import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
 import 'package:ecom_modwir/view/widget/orders/address_selector.dart';
+import 'package:ecom_modwir/view/widget/orders/enhanced_order_summery.dart';
+import 'package:ecom_modwir/view/widget/orders/order_summery.dart'; // Import the EnhancedOrderSummaryWidget here
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -125,7 +127,15 @@ class Checkout extends StatelessWidget {
                 // Order Summary Section
                 _buildSectionTitle(context, "order_summary".tr),
                 const SizedBox(height: 12),
-                _buildOrderSummary(context, controller),
+                // Use the new EnhancedOrderSummaryWidget instead of building the summary manually
+                EnhancedOrderSummaryWidget(
+                  selectedServices: controller.selectedServices,
+                  subtotal: controller.subTotal,
+                  deliveryFee: controller.deliveryFee,
+                  isDelivery: controller.deliveryType == "0",
+                  discount: controller.discount,
+                  total: controller.total,
+                ),
               ],
             ),
           ),
@@ -320,7 +330,7 @@ class Checkout extends StatelessWidget {
       children: [
         AddressSelectorWidget(
           addresses: controller.dataAddress,
-          selectedAddressId: controller.addressId, // Remove [1]
+          selectedAddressId: controller.addressId,
           onSelect: controller.chooseShippingAddress,
           onAddAddress: () => Get.toNamed(AppRoute.addressadd),
         )
@@ -429,92 +439,6 @@ class Checkout extends StatelessWidget {
             ),
         ],
       ),
-    );
-  }
-
-  Widget _buildOrderSummary(
-      BuildContext context, CheckoutController controller) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        children: [
-          // Subtotal
-          _buildSummaryRow(
-            context,
-            "subtotal".tr,
-            formatCurrency(controller.subTotal),
-          ),
-
-          // Delivery fee (if delivery type is selected)
-          if (controller.deliveryType == "0")
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: _buildSummaryRow(
-                context,
-                "delivery_fee".tr,
-                formatCurrency(controller.deliveryFee),
-              ),
-            ),
-
-          // Discount (if coupon applied)
-          if (controller.discount > 0)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: _buildSummaryRow(
-                context,
-                "discount".tr,
-                "- ${formatCurrency(controller.discount)}",
-                valueColor: Colors.green,
-              ),
-            ),
-
-          const Divider(height: 24),
-
-          // Total
-          _buildSummaryRow(
-            context,
-            "total".tr,
-            formatCurrency(controller.total),
-            titleStyle: MyTextStyle.styleBold(context),
-            valueStyle: MyTextStyle.styleBold(context).copyWith(
-              color: AppColor.primaryColor,
-              fontSize: 16,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryRow(
-    BuildContext context,
-    String title,
-    String value, {
-    TextStyle? titleStyle,
-    TextStyle? valueStyle,
-    Color? valueColor,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: titleStyle ?? Theme.of(context).textTheme.bodyMedium,
-        ),
-        Text(
-          value,
-          style: valueStyle ??
-              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: valueColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-        ),
-      ],
     );
   }
 }
