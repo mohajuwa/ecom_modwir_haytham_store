@@ -1,5 +1,6 @@
+// lib/view/screen/orders/service_order_forms.dart (updated)
 import 'package:ecom_modwir/controller/auth/auth_service.dart';
-
+import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
@@ -24,6 +25,8 @@ class ServiceOrderForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Get the fault type controller to access selected fault type
+    final faultTypeController = Get.find<FaultTypeController>();
 
     return GetBuilder<ProductByCarController>(
       builder: (controller) => Padding(
@@ -40,7 +43,8 @@ class ServiceOrderForm extends StatelessWidget {
             const SizedBox(height: 24),
             PrimaryButton(
               text: 'checkout'.tr,
-              onTap: () => _handleSubmit(context, controller),
+              onTap: () =>
+                  _handleSubmit(context, controller, faultTypeController),
               isLoading: controller.statusRequest == StatusRequest.loading,
             ),
           ],
@@ -49,7 +53,8 @@ class ServiceOrderForm extends StatelessWidget {
     );
   }
 
-  void _handleSubmit(BuildContext context, ProductByCarController controller) {
+  void _handleSubmit(BuildContext context, ProductByCarController controller,
+      FaultTypeController faultTypeController) {
     // Check if any service is selected
     bool isServiceSelected =
         controller.filteredServiceItems.any((service) => service.isSelected);
@@ -58,6 +63,15 @@ class ServiceOrderForm extends StatelessWidget {
       showErrorSnackbar(
         'error'.tr,
         'please_select_service'.tr,
+      );
+      return;
+    }
+
+    // Check if fault type is selected
+    if (faultTypeController.selectedFaultTypeIndex.value < 0) {
+      showErrorSnackbar(
+        'error'.tr,
+        'please_select_fault_type'.tr,
       );
       return;
     }
@@ -77,7 +91,7 @@ class ServiceOrderForm extends StatelessWidget {
         controller.myServices.sharedPreferences.getBool("isLogin") ?? false;
 
     if (isLoggedIn) {
-      _showOrderDetailsSheet(context, controller);
+      _showOrderDetailsSheet(context, controller, faultTypeController);
     } else {
       // Get or create an AuthService instance safely
       AuthService authService;
@@ -108,7 +122,9 @@ class ServiceOrderForm extends StatelessWidget {
   }
 
   void _showOrderDetailsSheet(
-      BuildContext context, ProductByCarController controller) {
+      BuildContext context,
+      ProductByCarController controller,
+      FaultTypeController faultTypeController) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
@@ -127,6 +143,7 @@ class ServiceOrderForm extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: _OrderDetailsForm(
               controller: controller,
+              faultTypeController: faultTypeController,
               isDark: isDark,
             ),
           ),
@@ -369,10 +386,12 @@ class _AttachmentSection extends StatelessWidget {
 
 class _OrderDetailsForm extends StatelessWidget {
   final ProductByCarController controller;
+  final FaultTypeController faultTypeController;
   final bool isDark;
 
   const _OrderDetailsForm({
     required this.controller,
+    required this.faultTypeController,
     required this.isDark,
   });
 
@@ -434,6 +453,9 @@ class _OrderDetailsForm extends StatelessWidget {
   }
 
   Widget _buildOrderSummary(BuildContext context) {
+    // Get the selected fault type
+    final selectedFaultType = faultTypeController.selectedFaultType;
+
     // Null safety checks
     final selectedService = controller.filteredServiceItems.isNotEmpty
         ? controller.filteredServiceItems.firstWhere(
@@ -483,6 +505,13 @@ class _OrderDetailsForm extends StatelessWidget {
               selectedService.name ?? 'N/A',
               context,
             ),
+          if (selectedFaultType != null)
+            _summaryItem(
+              'fault_type'.tr,
+              selectedFaultType.name ?? 'N/A',
+              context,
+              valueColor: AppColor.primaryColor,
+            ),
           if (selectedService != null)
             _summaryItem(
               'price'.tr,
@@ -522,7 +551,9 @@ class _OrderDetailsForm extends StatelessWidget {
           ),
           Text(
             value,
-            style: MyTextStyle.meduimBold(context),
+            style: MyTextStyle.meduimBold(context).copyWith(
+              color: valueColor,
+            ),
           ),
         ],
       ),

@@ -1,21 +1,17 @@
+// lib/view/screen/services_details.dart
 import 'package:ecom_modwir/controller/service_items_controller.dart';
-
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
-
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/keys.dart';
-
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/screen/orders/service_order_forms.dart';
 import 'package:ecom_modwir/view/widget/services/cars/car_display_card.dart';
 import 'package:ecom_modwir/view/widget/services/cars/car_selection_widgets.dart';
 import 'package:ecom_modwir/view/widget/services/cars/input_sections.dart';
-
+import 'package:ecom_modwir/view/widget/services/fault_type_selector.dart';
 import 'package:ecom_modwir/view/widget/services/service_card_widget.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 
 class ProductByCarScreen extends StatelessWidget {
@@ -24,10 +20,14 @@ class ProductByCarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ProductByCarController());
+    final bool isOffer = Get.arguments?['is_offer'] ?? false;
+    final String serviceId = Get.arguments?['service_id'] ?? "";
+    final int? offerId = Get.arguments?['offer_id'];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('make_an_order'.tr, style: MyTextStyle.styleBold(context)),
+        title: Text(isOffer ? 'make_an_order_offer'.tr : 'make_an_order'.tr,
+            style: MyTextStyle.styleBold(context)),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -43,7 +43,12 @@ class ProductByCarScreen extends StatelessWidget {
       body: GetBuilder<ProductByCarController>(
         builder: (controller) => HandlingDataView(
           statusRequest: controller.statusRequest,
-          widget: _MainContent(controller: controller),
+          widget: _MainContent(
+            controller: controller,
+            serviceId: serviceId,
+            isOffer: isOffer,
+            offerId: offerId,
+          ),
         ),
       ),
     );
@@ -52,8 +57,16 @@ class ProductByCarScreen extends StatelessWidget {
 
 class _MainContent extends StatelessWidget {
   final ProductByCarController controller;
+  final String serviceId;
+  final bool isOffer;
+  final int? offerId;
 
-  const _MainContent({required this.controller});
+  const _MainContent({
+    required this.controller,
+    required this.serviceId,
+    this.isOffer = false,
+    this.offerId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +75,16 @@ class _MainContent extends StatelessWidget {
         _buildHeaderSection(context),
 
         // Conditional sliver section based on user vehicles
-
         controller.userVehicles.isNotEmpty
             ? SliverToBoxAdapter(
                 child: CarInfoWidget(controller: controller),
               )
             : _buildCarSelectionSection(context),
+
+        // Add Fault Type Selector
+        SliverToBoxAdapter(
+          child: FaultTypeSelector(serviceId: serviceId),
+        ),
 
         _buildServicesHeader(context),
 
@@ -88,7 +105,7 @@ class _MainContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'make_an_order'.tr,
+              isOffer ? 'special_offer'.tr : 'make_an_order'.tr,
               style: MyTextStyle.styleBold(context),
             ),
             const SizedBox(height: 8),

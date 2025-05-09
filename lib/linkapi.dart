@@ -24,6 +24,7 @@ class AppLink {
   static const String homeLink = server;
   static const String homePage = "$homeLink/";
   static const String offers = "$homeLink/offers.php";
+  static const String homeOffers = "$homeLink/offers.php";
 
   // ============================ Services  Links ============================//
   static const String linkServices = "$server/services";

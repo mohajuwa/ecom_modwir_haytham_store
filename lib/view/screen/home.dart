@@ -1,11 +1,11 @@
+// lib/view/screen/home.dart (updated)
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/widget/customappbar.dart';
-import 'package:ecom_modwir/view/widget/home/customcardhome.dart';
-// import the slider widget
+import 'package:ecom_modwir/view/widget/home/custom_card_home.dart';
+import 'package:ecom_modwir/view/widget/home/home_offers_carousel.dart'; // Import the new offers carousel
 import 'package:ecom_modwir/view/widget/home/services_list.dart';
-import 'package:ecom_modwir/view/widget/home/list_offers_items_home.dart';
 import 'package:ecom_modwir/view/widget/mytextbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,6 +51,10 @@ class HomePage extends StatelessWidget {
                         CustomCardHomeSlider(
                             isArabic: isArabic,
                             settingsModels: controller.settingsModel),
+
+                      // Add the offers carousel here, after the settings slider
+                      const HomeOffersCarousel(),
+
                       Row(
                         children: [
                           Text(
@@ -71,11 +75,6 @@ class HomePage extends StatelessWidget {
                         itemCount: itemCount,
                         showAll: showAll,
                       ),
-                      Text(
-                        'offers'.tr,
-                        style: MyTextStyle.meduimBold(context),
-                      ),
-                      ListOffersItemsHome(),
                     ],
                   )),
             ],
