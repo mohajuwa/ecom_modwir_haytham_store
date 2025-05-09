@@ -26,6 +26,9 @@ class FaultTypeSelector extends StatelessWidget {
 
     // Load fault types when the widget is built
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadFaultTypes(serviceId);
+    });
 
     return GetBuilder<FaultTypeController>(
       builder: (controller) => HandlingDataView(
