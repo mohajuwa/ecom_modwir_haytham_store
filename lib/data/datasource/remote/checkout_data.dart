@@ -46,10 +46,8 @@ class CheckoutData {
         // Success case from HTTP request, but need to check for PHP errors
 
         // If the response is a Map, just return it
-        if (responseData is Map<String, dynamic>) {
-          return responseData;
-        }
-
+        return responseData;
+      
         // If the response has 'raw_data' and contains PHP errors
         if (responseData.containsKey('raw_data') &&
             (responseData['raw_data'].toString().contains('<b>Warning</b>') ||
