@@ -32,7 +32,8 @@ class AddressView extends StatelessWidget {
                 return CardAddress(
                   addressModel: controller.data[i],
                   onDelete: () {
-                    controller.deleteAddress(controller.data[i].Id.toString());
+                    controller
+                        .deleteAddress(controller.data[i].addressId.toString());
                   },
                 );
               },
@@ -53,8 +54,9 @@ class CardAddress extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(10),
         child: ListTile(
-          title: Text(addressModel.Name.toString()),
-          subtitle: Text("${addressModel.City!} ${addressModel.Street}"),
+          title: Text(addressModel.addressName.toString()),
+          subtitle: Text(
+              "${addressModel.addressCity!} ${addressModel.addressStreet}"),
           trailing: GetBuilder<AddressViewController>(
             builder: (controller) =>
                 controller.statusRequest == StatusRequest.loading

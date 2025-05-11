@@ -237,7 +237,7 @@ class CheckoutController extends GetxController {
 
           // Set default address if available
           if (dataAddress.isNotEmpty) {
-            addressId = dataAddress[0].Id.toString();
+            addressId = dataAddress[0].addressId.toString();
           } else {
             statusRequest = StatusRequest.failure;
           }

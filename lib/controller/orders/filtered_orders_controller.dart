@@ -1,4 +1,3 @@
-// lib/controller/orders/filtered_orders_controller.dart
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
@@ -7,6 +6,7 @@ import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/archive_data.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/pending_data.dart';
 import 'package:ecom_modwir/data/model/orders_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class FilteredOrdersController extends GetxController {
@@ -19,7 +19,6 @@ class FilteredOrdersController extends GetxController {
   List<OrdersModel> allOrders = [];
   List<OrdersModel> pendingOrders = [];
   List<OrdersModel> archivedOrders = [];
-  List<OrdersModel> canceledOrders = [];
   List<OrdersModel> recentOrders = [];
 
   // State
@@ -58,7 +57,8 @@ class FilteredOrdersController extends GetxController {
     // Reload data if it's empty for the selected filter
     if ((filter == 'pending' && pendingOrders.isEmpty) ||
         (filter == 'archived' && archivedOrders.isEmpty) ||
-        (filter == 'canceled' && canceledOrders.isEmpty)) {
+        (filter == 'canceled' &&
+            pendingOrders.where((order) => order.orderStatus == 5).isEmpty)) {
       loadOrders();
     } else {
       // Just update the view with existing data
@@ -104,7 +104,9 @@ class FilteredOrdersController extends GetxController {
       isEmpty = filteredOrders.isEmpty;
       statusRequest = StatusRequest.success;
     } catch (e) {
-      print("Error loading orders: $e");
+      if (kDebugMode) {
+        print("Error loading orders: $e");
+      }
       statusRequest = StatusRequest.failure;
       showErrorSnackbar('error'.tr, 'failed_to_load_orders'.tr);
     }
@@ -114,49 +116,69 @@ class FilteredOrdersController extends GetxController {
 
   // Sort orders by date (most recent first)
   void _sortOrdersByDate() {
-    allOrders.sort((a, b) {
-      DateTime? aDate;
-      DateTime? bDate;
+    try {
+      allOrders.sort((a, b) {
+        DateTime? aDate;
+        DateTime? bDate;
 
-      try {
-        aDate = a.orderDate != null ? DateTime.parse(a.orderDate!) : null;
-      } catch (e) {
-        print("Error parsing date for order ${a.orderId}: $e");
+        try {
+          aDate = a.orderDate != null ? DateTime.parse(a.orderDate!) : null;
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error parsing date for order ${a.orderId}: $e");
+          }
+        }
+
+        try {
+          bDate = b.orderDate != null ? DateTime.parse(b.orderDate!) : null;
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error parsing date for order ${b.orderId}: $e");
+          }
+        }
+
+        // Handle null dates
+        if (aDate == null && bDate == null) return 0;
+        if (aDate == null) return 1;
+        if (bDate == null) return -1;
+
+        // Sort by date (descending)
+        return bDate.compareTo(aDate);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error sorting orders: $e");
       }
-
-      try {
-        bDate = b.orderDate != null ? DateTime.parse(b.orderDate!) : null;
-      } catch (e) {
-        print("Error parsing date for order ${b.orderId}: $e");
-      }
-
-      // Handle null dates
-      if (aDate == null && bDate == null) return 0;
-      if (aDate == null) return 1;
-      if (bDate == null) return -1;
-
-      // Sort by date (descending)
-      return bDate.compareTo(aDate);
-    });
+    }
   }
 
   // Filter orders from the last 7 days
   void _filterRecentOrders() {
-    final now = DateTime.now();
-    recentOrders = allOrders.where((order) {
-      if (order.orderDate == null) return false;
+    try {
+      final now = DateTime.now();
+      recentOrders = allOrders.where((order) {
+        if (order.orderDate == null) return false;
 
-      try {
-        final orderDate = DateTime.parse(order.orderDate!);
-        return now.difference(orderDate).inDays <= 7;
-      } catch (e) {
-        print("Error parsing date for recent order ${order.orderId}: $e");
-        return false;
+        try {
+          final orderDate = DateTime.parse(order.orderDate!);
+          return now.difference(orderDate).inDays <= 7;
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error parsing date for recent order ${order.orderId}: $e");
+          }
+          return false;
+        }
+      }).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error filtering recent orders: $e");
       }
-    }).toList();
+      // In case of error, return all orders
+      recentOrders = List.from(allOrders);
+    }
   }
 
-  // Load pending orders
+  // Load pending orders safely
   Future<void> _loadPendingOrders(String userId) async {
     try {
       final response = await pendingData.getData(userId);
@@ -171,24 +193,31 @@ class FilteredOrdersController extends GetxController {
             final order = OrdersModel.fromJson(item);
             pendingOrders.add(order);
           } catch (e) {
-            print("Error parsing pending order: $e");
+            if (kDebugMode) {
+              print("Error parsing pending order: $e");
+              print("Problematic data: $item");
+            }
             // Continue with the next item
           }
         }
 
-        print("Loaded ${pendingOrders.length} pending orders");
+        if (kDebugMode) {
+          print("Loaded ${pendingOrders.length} pending orders");
 
-        // Log canceled orders count (usually status 5)
-        final canceledCount =
-            pendingOrders.where((order) => order.orderStatus == 5).length;
-        print("Found $canceledCount canceled orders");
+          // Log canceled orders count (usually status 5)
+          final canceledCount =
+              pendingOrders.where((order) => order.orderStatus == 5).length;
+          print("Found $canceledCount canceled orders");
+        }
       }
     } catch (e) {
-      print("Error loading pending orders: $e");
+      if (kDebugMode) {
+        print("Error loading pending orders: $e");
+      }
     }
   }
 
-  // Load archived orders
+  // Load archived orders safely
   Future<void> _loadArchivedOrders(String userId) async {
     try {
       final response = await archiveData.getData(userId);
@@ -203,15 +232,22 @@ class FilteredOrdersController extends GetxController {
             final order = OrdersModel.fromJson(item);
             archivedOrders.add(order);
           } catch (e) {
-            print("Error parsing archived order: $e");
+            if (kDebugMode) {
+              print("Error parsing archived order: $e");
+              print("Problematic data: $item");
+            }
             // Continue with the next item
           }
         }
 
-        print("Loaded ${archivedOrders.length} archived orders");
+        if (kDebugMode) {
+          print("Loaded ${archivedOrders.length} archived orders");
+        }
       }
     } catch (e) {
-      print("Error loading archived orders: $e");
+      if (kDebugMode) {
+        print("Error loading archived orders: $e");
+      }
     }
   }
 
@@ -232,7 +268,11 @@ class FilteredOrdersController extends GetxController {
       final response = await pendingData.makeOrderCanceled(
           orderId, myServices.sharedPreferences.getString("userId")!);
       statusRequest = handlingData(response);
-      print(response);
+
+      if (kDebugMode) {
+        print("Cancel order response: $response");
+      }
+
       if (statusRequest == StatusRequest.success &&
           response['status'] == "success") {
         showSuccessSnackbar('success'.tr, 'order_canceled_successfully'.tr);
@@ -243,7 +283,9 @@ class FilteredOrdersController extends GetxController {
         statusRequest = StatusRequest.failure;
       }
     } catch (e) {
-      print("Error canceling order: $e");
+      if (kDebugMode) {
+        print("Error canceling order: $e");
+      }
       showErrorSnackbar('error'.tr, 'failed_to_cancel_order'.tr);
       statusRequest = StatusRequest.failure;
     }

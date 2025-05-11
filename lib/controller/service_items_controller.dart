@@ -77,8 +77,16 @@ class ProductByCarController extends GetxController {
     update();
 
     try {
+      // Check if user is logged in before doing anything else
+      isLoggedIn = myServices.sharedPreferences.getBool("isLogin") ?? false;
+
       await initializeData();
-      await loadUserVehicles();
+
+      // Only load user vehicles if logged in
+      if (isLoggedIn) {
+        await loadUserVehicles();
+      }
+
       await loadCarMakes();
       _setDefaultSelections();
       _initScrollController();
@@ -204,15 +212,30 @@ class ProductByCarController extends GetxController {
     scrollController = FixedExtentScrollController(initialItem: safeIndex);
   }
 
+  void onUserLoggedIn() {
+    isLoggedIn = true;
+    loadUserVehicles();
+  }
+
   Future<void> loadUserVehicles() async {
     try {
+      // Get the latest login state
+      isLoggedIn = myServices.sharedPreferences.getBool("isLogin") ?? false;
       final userId = myServices.sharedPreferences.getString("userId");
-      if (userId == null || userId.isEmpty || !isLoggedIn) return;
+
+      if (userId == null || userId.isEmpty || !isLoggedIn) {
+        userVehicles.clear();
+        update();
+        return;
+      }
 
       final response = await userVehicleData.getUserVehicles(userId, lang);
 
       if (response['status'] == "success") {
         final rawData = response['data'] ?? [];
+
+        // Clear existing vehicles to avoid duplicates
+        userVehicles.clear();
 
         userVehicles.value = List<UserCarModel>.from(rawData.map((x) {
           try {
@@ -225,8 +248,17 @@ class ProductByCarController extends GetxController {
 
         if (userVehicles.isNotEmpty) {
           selectedVehicleIndex.value = 0;
-          _loadLicensePlateFromVehicle(
-              userVehicles[selectedVehicleIndex.value]);
+
+          // Load the license plate using the existing method
+          final selectedVehicle = userVehicles[selectedVehicleIndex.value];
+          try {
+            editVehicle(0); // This will load the license plate
+            selectedVehicleIndex.value = 0; // Reset back to 0 after editing
+            showAddCarForm.value = false; // Make sure form is not showing
+            isEditingVehicle.value = false; // Reset editing state
+          } catch (e) {
+            print("Error loading vehicle details: $e");
+          }
         }
       } else {
         print("Vehicles API returned non-success status");
@@ -1284,9 +1316,13 @@ class ProductByCarController extends GetxController {
     return true;
   }
 
-  void _resetForm() {
+  void resetForm() {
+    initializeData();
     notesController.clear();
-    licensePlateController.clearAll();
+    if (!isLoggedIn) {
+      licensePlateController.clearAll();
+    }
+
     phoneController.clear();
     selectedYear = DateTime.now().year;
     attachments.clear();

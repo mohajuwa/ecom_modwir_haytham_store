@@ -5,6 +5,7 @@ import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/middleware/mymiddleware.dart';
 import 'package:ecom_modwir/view/screen/address/add.dart';
+import 'package:ecom_modwir/view/screen/address/adddetailes.dart';
 import 'package:ecom_modwir/view/screen/address/view.dart';
 import 'package:ecom_modwir/view/screen/checkout.dart';
 import 'package:ecom_modwir/view/screen/help/help_support_page.dart';
@@ -94,4 +95,7 @@ List<GetPage<dynamic>>? routes = [
   // Address management
   GetPage(name: AppRoute.addressview, page: () => const AddressView()),
   GetPage(name: AppRoute.addressadd, page: () => const AddressAdd()),
+  GetPage(
+      name: AppRoute.addressadddetails,
+      page: () => const AddressAddPartDetails()),
 ];

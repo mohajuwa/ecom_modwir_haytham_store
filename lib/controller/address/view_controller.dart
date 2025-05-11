@@ -20,13 +20,14 @@ class AddressViewController extends GetxController {
       // Show loading indicator while waiting for API response
       statusRequest = StatusRequest.loading;
       update();
-
+      final userId = myServices.sharedPreferences.getString("userId");
       // Call API to delete address
-      var response = await addressData.deleteData(addressId);
+      var response = await addressData.deleteData(addressId, userId!);
 
       if (response['status'] == "success") {
         // Remove the address from the local list
-        data.removeWhere((element) => element.Id.toString() == addressId);
+        data.removeWhere(
+            (element) => element.addressId.toString() == addressId);
 
         // Check if data is empty after deletion
         if (data.isEmpty) {

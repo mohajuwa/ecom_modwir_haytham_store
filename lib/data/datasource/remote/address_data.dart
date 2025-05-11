@@ -38,9 +38,11 @@ class AddressData {
     return response.fold((l) => l, (r) => r);
   }
 
-  deleteData(String addressId) async {
-    var response = await crud.postData(AppLink.addressDelete, {
-      "addressid": addressId,
+  deleteData(String addressId, String userId) async {
+    var response = await crud.postData(AppLink.addressStatus, {
+      "addressId": addressId,
+      "userId": userId,
+      "addressStatus": "1",
     });
     return response.fold((l) => l, (r) => r);
   }

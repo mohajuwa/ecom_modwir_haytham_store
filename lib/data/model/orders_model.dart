@@ -26,61 +26,89 @@ class OrdersModel {
   double? addressLongitude;
   int? addressStatus;
 
-  OrdersModel(
-      {this.orderId,
-      this.orderNumber,
-      this.userId,
-      this.ordersAddress,
-      this.vendorId,
-      this.vehicleId,
-      this.serviceId,
-      this.faultType,
-      this.orderStatus,
-      this.orderType,
-      this.ordersPaymentmethod,
-      this.ordersPricedelivery,
-      this.orderDate,
-      this.totalAmount,
-      this.workshopAmount,
-      this.appCommission,
-      this.paymentStatus,
-      this.notes,
-      this.addressId,
-      this.addressUserId,
-      this.addressName,
-      this.addressStreet,
-      this.addressCity,
-      this.addressLatitude,
-      this.addressLongitude,
-      this.addressStatus});
+  OrdersModel({
+    this.orderId,
+    this.orderNumber,
+    this.userId,
+    this.ordersAddress,
+    this.vendorId,
+    this.vehicleId,
+    this.serviceId,
+    this.faultType,
+    this.orderStatus,
+    this.orderType,
+    this.ordersPaymentmethod,
+    this.ordersPricedelivery,
+    this.orderDate,
+    this.totalAmount,
+    this.workshopAmount,
+    this.appCommission,
+    this.paymentStatus,
+    this.notes,
+    this.addressId,
+    this.addressUserId,
+    this.addressName,
+    this.addressStreet,
+    this.addressCity,
+    this.addressLatitude,
+    this.addressLongitude,
+    this.addressStatus,
+  });
 
   OrdersModel.fromJson(Map<String, dynamic> json) {
-    orderId = json['order_id'];
-    orderNumber = json['order_number'];
-    userId = json['user_id'];
-    ordersAddress = json['orders_address'];
-    vendorId = json['vendor_id'];
-    vehicleId = json['vehicle_id'];
-    serviceId = json['service_id'];
-    faultType = json['fault_type'];
-    orderStatus = json['order_status'];
-    orderType = json['order_type'];
-    ordersPaymentmethod = json['orders_paymentmethod'];
-    ordersPricedelivery = json['orders_pricedelivery'];
-    orderDate = json['order_date'];
-    totalAmount = json['total_amount'];
-    workshopAmount = json['workshop_amount'];
-    appCommission = json['app_commission'];
-    paymentStatus = json['payment_status'];
-    notes = json['notes']?.toString();
-    addressId = json['address_id'];
-    addressUserId = json['address_user_id'];
-    addressName = json['address_name'];
-    addressStreet = json['address_street'];
-    addressCity = json['address_city'];
-    addressLatitude = json['address_latitude'];
-    addressLongitude = json['address_longitude'];
-    addressStatus = json['address_status'];
+    try {
+      orderId = json['order_id'];
+      orderNumber = json['order_number'];
+      userId = json['user_id'];
+      ordersAddress = json['orders_address'];
+      vendorId = json['vendor_id'];
+      vehicleId = json['vehicle_id'];
+      serviceId = json['service_id'];
+      faultType = json['fault_type'];
+      orderStatus = json['order_status'];
+      orderType = json['order_type'];
+      ordersPaymentmethod = json['orders_paymentmethod'];
+      ordersPricedelivery = json['orders_pricedelivery'];
+      orderDate = json['order_date'];
+      totalAmount = json['total_amount'];
+      workshopAmount = json['workshop_amount'];
+      appCommission = json['app_commission'];
+      paymentStatus = json['payment_status'];
+
+      // Safe handling of notes: if null, assign empty string or maintain as null
+      notes = json['notes'] != null ? json['notes'].toString() : '';
+
+      addressId = json['address_id'];
+      addressUserId = json['address_user_id'];
+      addressName = json['address_name'];
+      addressStreet = json['address_street'];
+      addressCity = json['address_city'];
+
+      // Safe handling of latitude and longitude which might be strings
+      if (json['address_latitude'] != null) {
+        if (json['address_latitude'] is double) {
+          addressLatitude = json['address_latitude'];
+        } else {
+          addressLatitude =
+              double.tryParse(json['address_latitude'].toString());
+        }
+      }
+
+      if (json['address_longitude'] != null) {
+        if (json['address_longitude'] is double) {
+          addressLongitude = json['address_longitude'];
+        } else {
+          addressLongitude =
+              double.tryParse(json['address_longitude'].toString());
+        }
+      }
+
+      addressStatus = json['address_status'];
+    } catch (e) {
+      print("Error parsing OrdersModel: $e");
+      // Initialize with default values if parsing fails
+      notes = '';
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -102,7 +130,10 @@ class OrdersModel {
     data['workshop_amount'] = workshopAmount;
     data['app_commission'] = appCommission;
     data['payment_status'] = paymentStatus;
-    data['notes'] = notes.toString();
+
+    // Safely handle null notes in toJson
+    data['notes'] = notes ?? '';
+
     data['address_id'] = addressId;
     data['address_user_id'] = addressUserId;
     data['address_name'] = addressName;

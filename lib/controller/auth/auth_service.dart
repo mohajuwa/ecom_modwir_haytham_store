@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:ecom_modwir/controller/home_controller.dart';
+import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/data/datasource/remote/auth/login.dart';
 import 'package:flutter/material.dart';
@@ -684,16 +686,20 @@ class AuthService extends GetxController {
         await _getCurrentLocation();
 
         if (isLoginMode.value) {
+          // Check if user has address using the existing method
           bool hasAddress = await _checkIfUserHasAddress();
+
           if (!hasAddress) {
+            // User doesn't have an address, show address screen
             needsAddress.value = true;
             isVerifying.value = false;
           } else {
+            // User has address, set login state and finalize
             await myServices.sharedPreferences.setBool("isLogin", true);
-
             _finalizeAuth();
           }
         } else {
+          // For signup, always show address screen
           needsAddress.value = true;
           isVerifying.value = false;
         }
@@ -902,9 +908,15 @@ class AuthService extends GetxController {
 
     try {
       var response = await addressData.getData(userId);
-      return response['status'] == "success" &&
-          response['data'] != null &&
-          response['data'].isNotEmpty;
+
+      if (response['status'] == "success" && response['data'] != null) {
+        // Check if data is a list and has items
+        if (response['data'] is List && (response['data'] as List).isNotEmpty) {
+          return true;
+        }
+        return false;
+      }
+      return false;
     } catch (e) {
       print("Error checking user address: $e");
       return false;
@@ -939,7 +951,10 @@ class AuthService extends GetxController {
     _startLoadingTimer();
 
     try {
-      // Save address to database if we have one
+      // Set login flag first
+      await myServices.sharedPreferences.setBool("isLogin", true);
+
+      // Only save address if we have one
       if (address != null && address!.isNotEmpty) {
         String userId = myServices.sharedPreferences.getString("userId") ?? "";
 
@@ -975,9 +990,9 @@ class AuthService extends GetxController {
 
         // Create a local reference to the callback before clearing it
         final callback = onAuthSuccess;
-        onAuthSuccess = null; // Clear the callback reference
+        onAuthSuccess = null;
 
-        // Now call the callback
+        // Call the callback
         callback!();
       }
 

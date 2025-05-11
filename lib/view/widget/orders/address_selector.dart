@@ -160,12 +160,12 @@ class AddressSelectorWidget extends StatelessWidget {
 
   Widget _buildAddressItem(BuildContext context, AddressModel address) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelected = selectedAddressId == address.Id.toString();
+    final isSelected = selectedAddressId == address.addressId.toString();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () => onSelect(address.Id.toString()),
+        onTap: () => onSelect(address.addressId.toString()),
         borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -229,7 +229,7 @@ class AddressSelectorWidget extends StatelessWidget {
                   children: [
                     // Address name
                     Text(
-                      address.Name ?? "Address",
+                      address.addressName ?? "Address",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isSelected
@@ -244,7 +244,7 @@ class AddressSelectorWidget extends StatelessWidget {
 
                     // Address details
                     Text(
-                      "${address.Street ?? ''}, ${address.City ?? ''}",
+                      "${address.addressStreet ?? ''}, ${address.addressCity ?? ''}",
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark
@@ -254,11 +254,12 @@ class AddressSelectorWidget extends StatelessWidget {
                     ),
 
                     // Coordinates (for debugging)
-                    if (address.Lat != null && address.Long != null)
+                    if (address.addressLat != null &&
+                        address.addressLong != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
-                          "${address.Lat!.toStringAsFixed(6)}, ${address.Long!.toStringAsFixed(6)}",
+                          "${address.addressLat!.toStringAsFixed(6)}, ${address.addressLong!.toStringAsFixed(6)}",
                           style: TextStyle(
                             fontSize: 10,
                             color: isDark

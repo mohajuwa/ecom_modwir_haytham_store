@@ -37,7 +37,7 @@ class ProductByCarScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => controller.initializeData(),
+            onPressed: () => controller.resetForm(),
           ),
         ],
       ),

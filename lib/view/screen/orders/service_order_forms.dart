@@ -108,7 +108,6 @@ class ServiceOrderForm extends StatelessWidget {
     }
 
     // Check if user is logged in
-
     bool isLoggedIn =
         controller.myServices.sharedPreferences.getBool("isLogin") ?? false;
 
@@ -116,9 +115,7 @@ class ServiceOrderForm extends StatelessWidget {
       _showOrderDetailsSheet(context, controller, faultTypeController);
     } else {
       // Get or create an AuthService instance safely
-
       AuthService authService;
-
       try {
         authService = Get.find<AuthService>();
       } catch (e) {
@@ -126,26 +123,16 @@ class ServiceOrderForm extends StatelessWidget {
       }
 
       // Show auth dialog and proceed after successful auth
-
       authService.showAuthDialog(context, onSuccess: () {
-        // Add a small delay to ensure SharedPreferences has time to persist
-
+        // Force the controller to reload everything after login
         Future.delayed(Duration(milliseconds: 300), () {
-          // First try to load user vehicles - this must be called first
+          // Reload data since we're now logged in
+          controller.isLoggedIn = true;
+          controller.loadUserVehicles();
 
-          controller.loadUserVehicles().then((_) {
-            // Then load car makes regardless of whether vehicles were found
-
-            controller.loadCarMakes();
-
-            // Force update to refresh UI
-
-            controller.update();
-
-            // Force GetX to update the UI in case it missed the controller.update()
-
-            Get.forceAppUpdate();
-          });
+          // Force update the UI
+          controller.update();
+          Get.forceAppUpdate();
         });
       });
     }

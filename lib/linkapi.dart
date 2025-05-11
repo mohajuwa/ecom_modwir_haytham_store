@@ -59,7 +59,7 @@ class AppLink {
   static const String addressView = "$addressLink/view.php";
   static const String addressAdd = "$addressLink/add.php";
   static const String addressEdit = "$addressLink/edit.php";
-  static const String addressDelete = "$addressLink/delete.php";
+  static const String addressStatus = "$addressLink/status.php";
 
   // ============================ Coupon  Links ============================//
   static const String checkCoupon = "$server/coupon/checkcoupon.php";
