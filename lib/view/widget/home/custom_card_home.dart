@@ -21,6 +21,9 @@ class CustomCardHomeSlider extends StatelessWidget {
         options: CarouselOptions(
           height: 199,
           autoPlay: true,
+          autoPlayInterval: const Duration(seconds: 10),
+          autoPlayAnimationDuration: const Duration(milliseconds: 800),
+          autoPlayCurve: Curves.fastOutSlowIn,
           viewportFraction: 1.0,
           enlargeCenterPage: false,
         ),

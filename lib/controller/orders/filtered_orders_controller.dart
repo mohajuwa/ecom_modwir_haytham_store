@@ -2,6 +2,7 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
+import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/archive_data.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/pending_data.dart';
@@ -22,7 +23,7 @@ class FilteredOrdersController extends GetxController {
   List<OrdersModel> recentOrders = [];
 
   // State
-  late StatusRequest statusRequest;
+  StatusRequest statusRequest = StatusRequest.none;
   String currentFilter = 'recent';
   bool isEmpty = false;
 
@@ -34,7 +35,7 @@ class FilteredOrdersController extends GetxController {
       case 'all':
         return allOrders;
       case 'pending':
-        return pendingOrders.where((order) => order.orderStatus != 5).toList();
+        return pendingOrders.where((order) => order.orderStatus == 0).toList();
       case 'archived':
         return archivedOrders;
       case 'canceled':
@@ -55,9 +56,9 @@ class FilteredOrdersController extends GetxController {
     currentFilter = filter;
 
     // Reload data if it's empty for the selected filter
-    if (filter == 'pending' && pendingOrders.isEmpty ||
-        filter == 'archived' && archivedOrders.isEmpty ||
-        filter == 'canceled' && canceledOrders.isEmpty) {
+    if ((filter == 'pending' && pendingOrders.isEmpty) ||
+        (filter == 'archived' && archivedOrders.isEmpty) ||
+        (filter == 'canceled' && canceledOrders.isEmpty)) {
       loadOrders();
     } else {
       // Just update the view with existing data
@@ -79,71 +80,138 @@ class FilteredOrdersController extends GetxController {
         return;
       }
 
+      // Clear existing data
+      pendingOrders.clear();
+      archivedOrders.clear();
+      allOrders.clear();
+      recentOrders.clear();
+
+      // Load data from both endpoints separately
       await Future.wait([
-        loadPendingOrders(userId),
-        loadArchivedOrders(userId),
+        _loadPendingOrders(userId),
+        _loadArchivedOrders(userId),
       ]);
 
       // Combine all orders
       allOrders = [...pendingOrders, ...archivedOrders];
 
       // Sort by date for 'all' and 'recent' views
-      allOrders.sort((a, b) {
-        final aDate = DateTime.parse(a.orderDate ?? DateTime.now().toString());
-        final bDate = DateTime.parse(b.orderDate ?? DateTime.now().toString());
-        return bDate.compareTo(aDate); // Most recent first
-      });
+      _sortOrdersByDate();
 
-      // Recent orders are orders from the last 7 days
-      final now = DateTime.now();
-      recentOrders = allOrders.where((order) {
-        if (order.orderDate == null) return false;
-        final orderDate = DateTime.parse(order.orderDate!);
-        return now.difference(orderDate).inDays <= 7;
-      }).toList();
+      // Filter recent orders (last 7 days)
+      _filterRecentOrders();
 
       isEmpty = filteredOrders.isEmpty;
       statusRequest = StatusRequest.success;
     } catch (e) {
       print("Error loading orders: $e");
       statusRequest = StatusRequest.failure;
+      showErrorSnackbar('error'.tr, 'failed_to_load_orders'.tr);
     }
 
     update();
   }
 
+  // Sort orders by date (most recent first)
+  void _sortOrdersByDate() {
+    allOrders.sort((a, b) {
+      DateTime? aDate;
+      DateTime? bDate;
+
+      try {
+        aDate = a.orderDate != null ? DateTime.parse(a.orderDate!) : null;
+      } catch (e) {
+        print("Error parsing date for order ${a.orderId}: $e");
+      }
+
+      try {
+        bDate = b.orderDate != null ? DateTime.parse(b.orderDate!) : null;
+      } catch (e) {
+        print("Error parsing date for order ${b.orderId}: $e");
+      }
+
+      // Handle null dates
+      if (aDate == null && bDate == null) return 0;
+      if (aDate == null) return 1;
+      if (bDate == null) return -1;
+
+      // Sort by date (descending)
+      return bDate.compareTo(aDate);
+    });
+  }
+
+  // Filter orders from the last 7 days
+  void _filterRecentOrders() {
+    final now = DateTime.now();
+    recentOrders = allOrders.where((order) {
+      if (order.orderDate == null) return false;
+
+      try {
+        final orderDate = DateTime.parse(order.orderDate!);
+        return now.difference(orderDate).inDays <= 7;
+      } catch (e) {
+        print("Error parsing date for recent order ${order.orderId}: $e");
+        return false;
+      }
+    }).toList();
+  }
+
   // Load pending orders
-  Future<void> loadPendingOrders(String userId) async {
-    final response = await pendingData.getData(userId);
-    final status = handlingData(response);
+  Future<void> _loadPendingOrders(String userId) async {
+    try {
+      final response = await pendingData.getData(userId);
+      final status = handlingData(response);
 
-    if (status == StatusRequest.success && response['status'] == "success") {
-      final List data = response['data'] ?? [];
-      pendingOrders = data.map((e) => OrdersModel.fromJson(e)).toList();
+      if (status == StatusRequest.success && response['status'] == "success") {
+        final List data = response['data'] ?? [];
 
-      // Log pending orders count
-      print("Loaded ${pendingOrders.length} pending orders");
+        // Process each order item individually to handle partial data
+        for (var item in data) {
+          try {
+            final order = OrdersModel.fromJson(item);
+            pendingOrders.add(order);
+          } catch (e) {
+            print("Error parsing pending order: $e");
+            // Continue with the next item
+          }
+        }
 
-      // Log canceled orders count (usually status 5)
-      final canceledCount =
-          pendingOrders.where((order) => order.orderStatus == 5).length;
-      print("Found $canceledCount canceled orders");
-    } else {
-      pendingOrders = [];
+        print("Loaded ${pendingOrders.length} pending orders");
+
+        // Log canceled orders count (usually status 5)
+        final canceledCount =
+            pendingOrders.where((order) => order.orderStatus == 5).length;
+        print("Found $canceledCount canceled orders");
+      }
+    } catch (e) {
+      print("Error loading pending orders: $e");
     }
   }
 
   // Load archived orders
-  Future<void> loadArchivedOrders(String userId) async {
-    final response = await archiveData.getData(userId);
-    final status = handlingData(response);
+  Future<void> _loadArchivedOrders(String userId) async {
+    try {
+      final response = await archiveData.getData(userId);
+      final status = handlingData(response);
 
-    if (status == StatusRequest.success && response['status'] == "success") {
-      final List data = response['data'] ?? [];
-      archivedOrders = data.map((e) => OrdersModel.fromJson(e)).toList();
-      print("Loaded ${archivedOrders.length} archived orders");
-    } else {
-      archivedOrders = [];
+      if (status == StatusRequest.success && response['status'] == "success") {
+        final List data = response['data'] ?? [];
+
+        // Process each order item individually to handle partial data
+        for (var item in data) {
+          try {
+            final order = OrdersModel.fromJson(item);
+            archivedOrders.add(order);
+          } catch (e) {
+            print("Error parsing archived order: $e");
+            // Continue with the next item
+          }
+        }
+
+        print("Loaded ${archivedOrders.length} archived orders");
+      }
+    } catch (e) {
+      print("Error loading archived orders: $e");
     }
   }
 
@@ -160,17 +228,23 @@ class FilteredOrdersController extends GetxController {
     statusRequest = StatusRequest.loading;
     update();
 
-    final response = await pendingData.deleteData(orderId);
-    statusRequest = handlingData(response);
-
-    if (statusRequest == StatusRequest.success &&
-        response['status'] == "success") {
-      Get.snackbar("Success", "Order canceled successfully");
-
-      // Refresh orders data
-      await loadOrders();
-    } else {
-      Get.snackbar("Error", "Failed to cancel order");
+    try {
+      final response = await pendingData.makeOrderCanceled(
+          orderId, myServices.sharedPreferences.getString("userId")!);
+      statusRequest = handlingData(response);
+      print(response);
+      if (statusRequest == StatusRequest.success &&
+          response['status'] == "success") {
+        showSuccessSnackbar('success'.tr, 'order_canceled_successfully'.tr);
+        // Refresh orders data
+        await loadOrders();
+      } else {
+        showErrorSnackbar('error'.tr, 'failed_to_cancel_order'.tr);
+        statusRequest = StatusRequest.failure;
+      }
+    } catch (e) {
+      print("Error canceling order: $e");
+      showErrorSnackbar('error'.tr, 'failed_to_cancel_order'.tr);
       statusRequest = StatusRequest.failure;
     }
 

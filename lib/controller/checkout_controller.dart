@@ -281,9 +281,6 @@ class CheckoutController extends GetxController {
         "coupondiscount": discount.toString(),
       };
 
-      // Log the data for debugging
-      print("Checkout data: $orderData");
-
       // Submit order
       final response = await checkoutData.checkout(orderData);
 

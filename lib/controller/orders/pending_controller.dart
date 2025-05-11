@@ -79,29 +79,6 @@ class OrdersPendingController extends GetxController {
     update();
   }
 
-  deleteOrder(String orderId) async {
-    data.clear();
-
-    statusRequest = StatusRequest.loading;
-
-    update();
-
-    var response = await pendingData.deleteData(orderId);
-    print("=================== deleteOrder Controller $response ");
-    statusRequest = handlingData(response);
-    if (StatusRequest.success == statusRequest) {
-      // Start backend
-      if (response['status'] == "success") {
-        refreshOrder();
-        Get.snackbar("Notification", "Order Deleted Succussfully");
-      } else {
-        statusRequest = StatusRequest.failure;
-      }
-      // End
-    }
-    update();
-  }
-
   refreshOrder() {
     getOrders();
   }

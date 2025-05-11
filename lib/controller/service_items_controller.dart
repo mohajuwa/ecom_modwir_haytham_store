@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/data/model/services/note_services_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -108,19 +109,79 @@ class ProductByCarController extends GetxController {
   Future<void> initializeData() async {
     try {
       isLoggedIn = myServices.sharedPreferences.getBool("isLogin") ?? false;
+
       final arguments = Get.arguments;
-      serviceId = arguments?['service_id']?.toString().trim() ?? "";
-      lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
 
-      if (serviceId.isEmpty) {
-        throw "Invalid service ID: $serviceId";
+      // Handle offer-specific parameters
+
+      final bool isOffer = arguments?['is_offer'] ?? false;
+
+      final int? offerId = arguments?['offer_id'];
+
+      final int? discountPercentage = arguments?['discount_percentage'];
+
+      // Handle different ID parameters
+
+      if (isOffer) {
+        // For offers, we get the sub_service_id instead of service_id
+
+        final String subServiceId =
+            arguments?['sub_service_id']?.toString().trim() ?? "";
+
+        if (subServiceId.isEmpty) {
+          throw "Invalid sub service ID for offer";
+        }
+
+        // We'll determine the parent service_id in _loadServiceDetails
+
+        // For now, store the sub_service_id in a special variable
+
+        serviceId = ""; // Will be set after we determine the parent service_id
+
+        // Store sub_service_id to use later
+
+        final subServiceIdValue = int.tryParse(subServiceId) ?? 0;
+
+        await _loadServiceDetailsFromOffer(
+            subServiceId: subServiceIdValue,
+            offerId: offerId,
+            discountPercentage: discountPercentage);
+      } else {
+        // Regular case - not an offer
+
+        serviceId = arguments?['service_id']?.toString().trim() ?? "";
+
+        if (serviceId.isEmpty) {
+          throw "Invalid service ID";
+        }
+
+        lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
+        // Initialize FaultTypeController with the correct serviceId
+
+        FaultTypeController faultTypeController;
+
+        try {
+          faultTypeController = Get.find<FaultTypeController>();
+
+          if (faultTypeController.serviceId != serviceId) {
+            faultTypeController.loadFaultTypes(serviceId);
+          }
+        } catch (e) {
+          faultTypeController = Get.put(FaultTypeController());
+
+          faultTypeController.loadFaultTypes(serviceId);
+        }
+
+        await _loadServiceDetails();
       }
-
-      await _loadServiceDetails();
     } catch (e) {
       print("Initialization error: $e");
+
       statusRequest = StatusRequest.failure;
+
       update();
+
       Get.back();
     }
   }
@@ -220,47 +281,243 @@ class ProductByCarController extends GetxController {
     update();
   }
 
-  Future<void> _loadServiceDetails() async {
+  Future<void> _loadServiceDetails(
+      {bool isSpecificSubService = false,
+      int? targetSubServiceId,
+      int? discountPercentage}) async {
     try {
-      statusRequest = StatusRequest.loading;
-      update();
+      if (!isSpecificSubService) {
+        statusRequest = StatusRequest.loading;
+
+        update();
+      }
+
+      lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
+
+      print(
+          "🔍 DEBUG: Loading service details for service ID: $serviceId, lang: $lang");
+
+      if (isSpecificSubService) {
+        print(
+            "🔍 DEBUG: Looking for specific sub-service ID: $targetSubServiceId");
+      }
+
+      // Regular service loading with possible discount for specific sub-service
 
       final result = await serviceItemsData.getServiceDetails(serviceId, lang);
 
       result.fold(
         (failure) {
+          print("❌ ERROR: Failed to load service details: $failure");
+
           allServiceItems = [];
+
           filteredServiceItems.clear();
+
           statusRequest = failure;
         },
         (response) {
-          try {
-            allServiceItems = (response['sub_services'] as List? ?? [])
-                .map((x) => SubServiceModel.fromJson(x))
-                .whereType<SubServiceModel>()
-                .toList();
+          print(
+              "📋 DEBUG: Service details API response status: ${response['status']}");
 
-            // Don't set any service as selected by default
-            // Let the user make the selection themselves
-            for (var service in allServiceItems) {
-              service.isSelected = false;
+          if (response['sub_services'] != null) {
+            print(
+                "📋 DEBUG: Number of sub-services returned: ${(response['sub_services'] as List).length}");
+          } else {
+            print("⚠️ WARNING: 'sub_services' field is null in response");
+          }
+
+          try {
+            // Extract all sub-services
+
+            List<SubServiceModel> allSubServices =
+                (response['sub_services'] as List? ?? [])
+                    .map((x) => SubServiceModel.fromJson(x))
+                    .whereType<SubServiceModel>()
+                    .toList();
+
+            print("📋 DEBUG: Parsed ${allSubServices.length} sub-services");
+
+            // Apply discount if needed
+
+            if (discountPercentage != null && discountPercentage > 0) {
+              print(
+                  "📋 DEBUG: Applying $discountPercentage% discount to services");
+
+              for (var service in allSubServices) {
+                // Only apply discount to target sub-service if specified
+
+                if (!isSpecificSubService ||
+                    service.subServiceId == targetSubServiceId) {
+                  print(
+                      "📋 DEBUG: Applying discount to service ID: ${service.subServiceId}");
+
+                  // Store original price
+
+                  service.originalPrice = service.price;
+
+                  // Calculate the discounted price
+
+                  double discountAmount =
+                      service.price * (discountPercentage / 100);
+
+                  double discountedPrice = service.price - discountAmount;
+
+                  print(
+                      "📋 DEBUG: Original price: ${service.price}, Discounted price: $discountedPrice");
+
+                  // Update the price with the discounted price
+
+                  service.price = discountedPrice;
+
+                  service.discountPercentage = discountPercentage;
+
+                  // Add a note about the discount
+
+                  service.notes.add(ServiceNote(
+                    noteId: 9999, // Placeholder ID
+
+                    subServiceId: service.subServiceId,
+                    content: "special_offer_discount"
+                        .tr
+                        .replaceAll("{discount}", "$discountPercentage"),
+                  ));
+
+                  // If it's a specific sub-service, mark it as selected
+
+                  if (isSpecificSubService &&
+                      service.subServiceId == targetSubServiceId) {
+                    print(
+                        "✅ DEBUG: Marking sub-service ${service.subServiceId} as selected");
+
+                    service.isSelected = true;
+                  }
+                }
+              }
             }
 
+            // Check if we found any services
+
+            if (allSubServices.isEmpty) {
+              print(
+                  "⚠️ WARNING: No sub-services found - empty list after parsing");
+
+              // If this is a specific sub-service request and we found nothing, create a placeholder
+
+              if (isSpecificSubService && targetSubServiceId != null) {
+                print(
+                    "🔄 FALLBACK: Creating placeholder sub-service for ID: $targetSubServiceId");
+
+                SubServiceModel placeholderService = SubServiceModel(
+                  subServiceId: targetSubServiceId,
+
+                  serviceId: int.parse(serviceId),
+
+                  name:
+                      "Special Offer Service", // You can update this with actual offer title if available
+
+                  price: 100.0, // Default price, you may want to update this
+
+                  status: 1,
+
+                  notes: [],
+                );
+
+                // Apply discount if needed
+
+                if (discountPercentage != null && discountPercentage > 0) {
+                  placeholderService.originalPrice = placeholderService.price;
+
+                  double discountAmount =
+                      placeholderService.price * (discountPercentage / 100);
+
+                  placeholderService.price -= discountAmount;
+
+                  placeholderService.discountPercentage = discountPercentage;
+
+                  placeholderService.notes.add(ServiceNote(
+                    noteId: 9999,
+                    subServiceId: placeholderService.subServiceId,
+                    content: "special_offer_discount"
+                        .tr
+                        .replaceAll("{discount}", "$discountPercentage"),
+                  ));
+                }
+
+                // Add the placeholder service
+
+                placeholderService.isSelected = true;
+
+                allSubServices = [placeholderService];
+
+                print("✅ DEBUG: Added placeholder sub-service");
+              }
+            }
+
+            // Initialize fault type controller with the correct service ID
+
+            try {
+              FaultTypeController faultTypeController =
+                  Get.find<FaultTypeController>();
+
+              if (faultTypeController.serviceId != serviceId) {
+                print(
+                    "📋 DEBUG: Updating fault type controller with service ID: $serviceId");
+
+                faultTypeController.loadFaultTypes(serviceId);
+              }
+            } catch (e) {
+              // If controller doesn't exist, create it
+
+              print(
+                  "📋 DEBUG: Creating new fault type controller with service ID: $serviceId");
+
+              FaultTypeController faultTypeController =
+                  Get.put(FaultTypeController());
+
+              faultTypeController.loadFaultTypes(serviceId);
+            }
+
+            allServiceItems = allSubServices;
+
             filteredServiceItems.value = allServiceItems;
+
+            // If it's a specific sub-service, filter to only show it
+
+            if (isSpecificSubService && targetSubServiceId != null) {
+              print(
+                  "📋 DEBUG: Filtering to show only sub-service ID: $targetSubServiceId");
+
+              filteredServiceItems.value = allServiceItems
+                  .where(
+                      (service) => service.subServiceId == targetSubServiceId)
+                  .toList();
+
+              print(
+                  "📋 DEBUG: Filtered list contains ${filteredServiceItems.length} items");
+            }
+
             sortServicesByPrice(currentSort);
+
             statusRequest = StatusRequest.success;
           } catch (e) {
-            print("Error parsing service details: $e");
+            print("❌ ERROR parsing service details: $e");
+
             allServiceItems = [];
+
             filteredServiceItems.clear();
+
             statusRequest = StatusRequest.failure;
           }
         },
       );
     } catch (e) {
-      print("Service details error: $e");
+      print("❌ ERROR in _loadServiceDetails: $e");
+
       allServiceItems = [];
+
       filteredServiceItems.clear();
+
       statusRequest = StatusRequest.serverFailure;
     }
 
@@ -390,6 +647,122 @@ class ProductByCarController extends GetxController {
 
       update();
     }
+  }
+
+  Future<void> _loadServiceDetailsFromOffer(
+      {required int subServiceId,
+      int? offerId,
+      int? discountPercentage}) async {
+    try {
+      statusRequest = StatusRequest.loading;
+      update();
+
+      print(
+          "🔍 DEBUG: Loading offer details for sub-service ID: $subServiceId");
+
+      // Step 1: Fetch the sub-service details directly
+      final subServiceDetailsData = ServiceItemsData(Get.find());
+
+      // Call the API to get sub-service details
+      final subServiceResult = await subServiceDetailsData.getSubServiceDetails(
+          subServiceId.toString(), lang);
+
+      subServiceResult.fold((failure) {
+        // Handle failure
+        print("❌ ERROR: Failed to fetch sub-service details: $failure");
+        statusRequest = failure;
+        allServiceItems = [];
+        filteredServiceItems.clear();
+        update();
+      }, (response) async {
+        // Process the successful response
+        print("✅ SUCCESS: Sub-service details API response received");
+
+        if (response['status'] == "success" &&
+            response['sub_services'] != null) {
+          final List subServices = response['sub_services'];
+
+          if (subServices.isNotEmpty) {
+            // Extract the first sub-service to get its service_id
+            final subService = subServices.first;
+            final int parentServiceId = subService['service_id'];
+
+            // Now we have the parent service ID!
+            serviceId = parentServiceId.toString();
+            print(
+                "✅ SUCCESS: Found parent service ID: $serviceId for sub-service ID: $subServiceId");
+
+            // Now load the full service details with all sub-services
+            await _loadServiceDetails(
+                isSpecificSubService: true,
+                targetSubServiceId: subServiceId,
+                discountPercentage: discountPercentage);
+          } else {
+            print("⚠️ WARNING: No sub-services found in response");
+            _createPlaceholderService(subServiceId, discountPercentage);
+          }
+        } else {
+          print("❌ ERROR: Invalid response format or 'status' is not success");
+          _createPlaceholderService(subServiceId, discountPercentage);
+        }
+      });
+    } catch (e) {
+      print("❌ ERROR in _loadServiceDetailsFromOffer: $e");
+      statusRequest = StatusRequest.serverFailure;
+      allServiceItems = [];
+      filteredServiceItems.clear();
+
+      // Show error message
+      Get.snackbar(
+        "Error",
+        "An error occurred while loading the offer",
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
+
+      update();
+    }
+  }
+
+// Helper method to create a placeholder service when no data is available
+  void _createPlaceholderService(int subServiceId, int? discountPercentage) {
+    // Default serviceId if not set yet
+    serviceId = serviceId.isEmpty ? subServiceId.toString() : serviceId;
+
+    // Create a placeholder sub-service
+    SubServiceModel placeholderService = SubServiceModel(
+      subServiceId: subServiceId,
+      serviceId: int.parse(serviceId),
+      name: "Special Offer Service",
+      price: 100.0,
+      status: 1,
+      notes: [],
+    );
+
+    // Apply discount if needed
+    if (discountPercentage != null && discountPercentage > 0) {
+      placeholderService.originalPrice = placeholderService.price;
+      double discountAmount =
+          placeholderService.price * (discountPercentage / 100);
+      placeholderService.price -= discountAmount;
+      placeholderService.discountPercentage = discountPercentage;
+
+      placeholderService.notes.add(ServiceNote(
+        noteId: 9999,
+        subServiceId: placeholderService.subServiceId,
+        content: "special_offer_discount"
+            .tr
+            .replaceAll("{discount}", "$discountPercentage"),
+      ));
+    }
+
+    // Set as selected and add to items
+    placeholderService.isSelected = true;
+    allServiceItems = [placeholderService];
+    filteredServiceItems.value = allServiceItems;
+
+    statusRequest = StatusRequest.success;
+    update();
   }
 
   void _loadLicensePlateFromVehicle(UserCarModel vehicle) {
@@ -797,10 +1170,17 @@ class ProductByCarController extends GetxController {
       update();
 
       // Get the selected service
-      final selectedService = filteredServiceItems.firstWhere(
-        (service) => service.isSelected,
-        orElse: () => filteredServiceItems.first,
-      );
+      SubServiceModel? selectedService;
+      try {
+        selectedService = filteredServiceItems.firstWhere(
+          (service) => service.isSelected,
+        );
+      } catch (e) {
+        showErrorSnackbar('error'.tr, 'please_select_service'.tr);
+        statusRequest = StatusRequest.none;
+        update();
+        return;
+      }
 
       // Get the selected fault type
       final faultTypeController = Get.find<FaultTypeController>();
@@ -813,14 +1193,24 @@ class ProductByCarController extends GetxController {
         return;
       }
 
+      // Determine which vehicle ID to use
+      String vehicleId;
+      if (userVehicles.isNotEmpty && selectedVehicleIndex.value >= 0) {
+        // Use saved vehicle
+        vehicleId =
+            userVehicles[selectedVehicleIndex.value].vehicleId.toString();
+      } else {
+        // No saved vehicle, use "0" to indicate using form data
+        vehicleId = "0";
+      }
+
+      // Navigate to checkout with all the necessary data
       Get.toNamed(
         AppRoute.checkout,
         arguments: {
           'selectedServices': selectedService,
           'orderNotes': notesController.text,
-          'selected_vehicle_id': userVehicles.isNotEmpty
-              ? userVehicles[selectedVehicleIndex.value].vehicleId.toString()
-              : "0",
+          'selected_vehicle_id': vehicleId,
           'fault_type_id': selectedFaultType.faultId.toString(),
           'attachments': attachments,
         },
@@ -830,32 +1220,6 @@ class ProductByCarController extends GetxController {
       update();
     } catch (e) {
       print("Error completing order: $e");
-      statusRequest = StatusRequest.failure;
-      update();
-      showErrorSnackbar('error'.tr, 'failed_to_place_order'.tr);
-    }
-  }
-
-  Future<void> continueAsGuest() async {
-    try {
-      if (!_validateGuestDetails()) {
-        return;
-      }
-
-      statusRequest = StatusRequest.loading;
-      update();
-
-      // TODO: Implement actual guest API call here
-      await Future.delayed(const Duration(seconds: 2));
-
-      statusRequest = StatusRequest.success;
-      update();
-
-      showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
-      _resetForm();
-      Get.back();
-    } catch (e) {
-      print("Error processing guest order: $e");
       statusRequest = StatusRequest.failure;
       update();
       showErrorSnackbar('error'.tr, 'failed_to_place_order'.tr);
@@ -918,15 +1282,6 @@ class ProductByCarController extends GetxController {
     // All validations passed
 
     return true;
-  }
-
-  bool _validateGuestDetails() {
-    if (phoneController.text.isEmpty || phoneController.text.length < 9) {
-      showErrorSnackbar('error'.tr, 'please_enter_valid_phone'.tr);
-      return false;
-    }
-
-    return _validateOrderDetails();
   }
 
   void _resetForm() {

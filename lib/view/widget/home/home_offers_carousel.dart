@@ -4,7 +4,6 @@ import 'package:ecom_modwir/controller/home_offers_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
-import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/data/model/home_offers_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
@@ -27,26 +26,7 @@ class HomeOffersCarousel extends StatelessWidget {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.local_offer_outlined,
-                          color: AppColor.primaryColor,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'special_offers'.tr,
-                          style: MyTextStyle.meduimBold(context).copyWith(
-                            color: AppColor.primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Carousel with adjusted height
                   CarouselSlider.builder(
                     itemCount: controller.offers.length,
                     itemBuilder: (context, index, realIndex) {
@@ -55,9 +35,10 @@ class HomeOffersCarousel extends StatelessWidget {
                           context, offer, controller, isDark);
                     },
                     options: CarouselOptions(
-                      height: 180,
+                      height: 120, // Adjusted from 180 to 120
                       aspectRatio: 16 / 9,
-                      viewportFraction: 0.8,
+                      viewportFraction:
+                          0.9, // Increased from 0.8 for better fit
                       initialPage: 0,
                       enableInfiniteScroll: true,
                       reverse: false,
@@ -70,7 +51,8 @@ class HomeOffersCarousel extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                      height: 8), // Reduced from 16 for better spacing
                 ],
               ),
       ),
@@ -83,8 +65,6 @@ class HomeOffersCarousel extends StatelessWidget {
     HomeOffersController controller,
     bool isDark,
   ) {
-    final lang =
-        controller.myServices.sharedPreferences.getString("lang") ?? "en";
     final title = offer.offerTitle != null ? offer.offerTitle! ?? '' : '';
     final description =
         offer.offerDescription != null ? offer.offerDescription! ?? '' : '';
@@ -94,19 +74,19 @@ class HomeOffersCarousel extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(12),
           color: isDark ? Color(0xFF1E1E1E) : Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               spreadRadius: 1,
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(12),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -142,21 +122,21 @@ class HomeOffersCarousel extends StatelessWidget {
                 ),
               ),
 
-              // Content
+              // Content with reduced padding for smaller height
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(10.0), // Reduced from 16 to 10
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end, // Align to bottom
                   children: [
                     Text(
                       title,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 14, // Reduced from 18 to 14
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2,
+                      maxLines: 1, // Reduced from 2 to 1
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (description.isNotEmpty)
@@ -164,25 +144,25 @@ class HomeOffersCarousel extends StatelessWidget {
                         description,
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 14,
+                          fontSize: 12, // Reduced from 14 to 12
                         ),
-                        maxLines: 2,
+                        maxLines: 1, // Reduced from 2 to 1
                         overflow: TextOverflow.ellipsis,
                       ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4), // Reduced from 8 to 4
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                          horizontal: 8, vertical: 4), // Reduced padding
                       decoration: BoxDecoration(
                         color: AppColor.primaryColor,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         'view_offer'.tr,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 10, // Reduced from 12 to 10
                         ),
                       ),
                     ),

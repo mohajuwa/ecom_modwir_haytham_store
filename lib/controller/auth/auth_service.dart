@@ -566,6 +566,7 @@ class AuthService extends GetxController {
       var response = await loginData.postData(phoneController.text);
 
       if (response['status'] == "success") {
+        myServices.sharedPreferences.setString("step", "2");
         myServices.sharedPreferences
             .setString("userId", response['data']['user_id'].toString());
         myServices.sharedPreferences

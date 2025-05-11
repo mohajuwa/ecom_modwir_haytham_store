@@ -15,4 +15,16 @@ class OrdersPendingData {
         await crud.postData(AppLink.deleteOrder, {"user_id": orderId});
     return response.fold((l) => l, (r) => r);
   }
+
+  makeOrderCanceled(
+    String orderId,
+    String userId,
+  ) async {
+    var response = await crud.postData(AppLink.cancelOrder, {
+      "orderId": orderId,
+      "userId": userId,
+      "orderStatus": "5",
+    });
+    return response.fold((l) => l, (r) => r);
+  }
 }

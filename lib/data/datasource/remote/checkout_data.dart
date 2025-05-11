@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:ecom_modwir/core/class/crud.dart';
-import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/foundation.dart';
 
@@ -47,7 +46,7 @@ class CheckoutData {
 
         // If the response is a Map, just return it
         return responseData;
-      
+
         // If the response has 'raw_data' and contains PHP errors
         if (responseData.containsKey('raw_data') &&
             (responseData['raw_data'].toString().contains('<b>Warning</b>') ||

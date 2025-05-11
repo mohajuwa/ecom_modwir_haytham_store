@@ -21,9 +21,32 @@ class ServiceItemsData {
       return result.fold(
         (left) =>
             Left(left), // In case of failure (left), return the status request
-        (right) => Right(right), // In case of success (right), return the data as a map
+        (right) => Right(
+            right), // In case of success (right), return the data as a map
       );
     } catch (e) {
+      // Catching any exception and returning a server failure status
+      return Left(StatusRequest.serverFailure);
+    }
+  }
+
+  Future<Either<StatusRequest, Map<String, dynamic>>> getSubServiceDetails(
+      String subServiceId, String lang) async {
+    try {
+      print('🔍 DEBUG: Loading sub-service details for ID: $subServiceId');
+      // Making the POST request to the sub-service display API
+      final result = await crud.postData(AppLink.subserviceDisplay, {
+        "subServiceId": subServiceId,
+        "lang": lang,
+      });
+
+      // Handling success or failure via the fold method
+      return result.fold(
+        (left) => Left(left), // In case of failure, return the status request
+        (right) => Right(right), // In case of success, return the data as a map
+      );
+    } catch (e) {
+      print('❌ ERROR: Failed to get sub-service details: $e');
       // Catching any exception and returning a server failure status
       return Left(StatusRequest.serverFailure);
     }
@@ -42,7 +65,8 @@ class ServiceItemsData {
       return result.fold(
         (left) =>
             Left(left), // In case of failure (left), return the status request
-        (right) => Right(right), // In case of success (right), return the data as a map
+        (right) => Right(
+            right), // In case of success (right), return the data as a map
       );
     } catch (e) {
       // Catching any exception and returning a server failure status

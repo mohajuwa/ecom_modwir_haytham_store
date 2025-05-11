@@ -10,7 +10,7 @@ import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
 import 'package:ecom_modwir/view/widget/orders/address_selector.dart';
 import 'package:ecom_modwir/view/widget/orders/enhanced_order_summery.dart';
-import 'package:ecom_modwir/view/widget/orders/order_summery.dart'; // Import the EnhancedOrderSummaryWidget here
+// Import the EnhancedOrderSummaryWidget here
 import 'package:ecom_modwir/view/widget/orders/payment_selector.dart'; // Import PaymentMethodSelector
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

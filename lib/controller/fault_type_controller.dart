@@ -49,7 +49,7 @@ class FaultTypeController extends GetxController {
     }
 
     // Update the service ID
-    this.serviceId = newServiceId;
+    serviceId = newServiceId;
 
     lang = myServices.sharedPreferences.getString("lang") ?? "en";
     statusRequest = StatusRequest.loading;

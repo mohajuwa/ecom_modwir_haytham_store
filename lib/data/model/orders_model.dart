@@ -16,7 +16,7 @@ class OrdersModel {
   String? workshopAmount;
   String? appCommission;
   String? paymentStatus;
-  Null notes;
+  String? notes;
   int? addressId;
   int? addressUserId;
   String? addressName;
@@ -72,7 +72,7 @@ class OrdersModel {
     workshopAmount = json['workshop_amount'];
     appCommission = json['app_commission'];
     paymentStatus = json['payment_status'];
-    notes = json['notes'];
+    notes = json['notes']?.toString();
     addressId = json['address_id'];
     addressUserId = json['address_user_id'];
     addressName = json['address_name'];
@@ -102,7 +102,7 @@ class OrdersModel {
     data['workshop_amount'] = workshopAmount;
     data['app_commission'] = appCommission;
     data['payment_status'] = paymentStatus;
-    data['notes'] = notes;
+    data['notes'] = notes.toString();
     data['address_id'] = addressId;
     data['address_user_id'] = addressUserId;
     data['address_name'] = addressName;

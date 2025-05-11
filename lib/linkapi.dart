@@ -30,6 +30,8 @@ class AppLink {
   static const String linkServices = "$server/services";
   static const String searchitems = "$linkServices/search.php";
   static const String serviceDisplay = "$linkServices/services_display.php";
+  static const String subserviceDisplay =
+      "$linkServices/sub_services_display.php";
   static const String faultType = "$linkServices/fault_type.php";
 
   // ============================ Cars  Links ============================//
@@ -70,6 +72,7 @@ class AppLink {
   static const String detailsOrders = "$ordersLink/details.php";
   static const String orderDetailsView = "$ordersLink/details.php";
   static const String deleteOrder = "$ordersLink/delete.php";
+  static const String cancelOrder = "$ordersLink/cancel.php";
 
   // ============================ Orders Rating Links ============================//
   static const String ratingLink = server;

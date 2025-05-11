@@ -1,6 +1,7 @@
 // lib/view/screen/home.dart (updated)
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/widget/customappbar.dart';
 import 'package:ecom_modwir/view/widget/home/custom_card_home.dart';
@@ -54,9 +55,23 @@ class HomePage extends StatelessWidget {
 
                       Row(
                         children: [
-                          Text(
-                            'services_text'.tr,
-                            style: MyTextStyle.meduimBold(context),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.design_services_outlined,
+                                  color: AppColor.primaryColor,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'services_text'.tr,
+                                  style: MyTextStyle.smallBold(context),
+                                ),
+                              ],
+                            ),
                           ),
                           const Spacer(),
                           if (controller.services.length > 5)
@@ -72,7 +87,24 @@ class HomePage extends StatelessWidget {
                         itemCount: itemCount,
                         showAll: showAll,
                       ),
-
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 8),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.local_offer_outlined,
+                              color: AppColor.primaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'special_offers'.tr,
+                              style: MyTextStyle.smallBold(context),
+                            ),
+                          ],
+                        ),
+                      ),
                       // Add the offers carousel here, after the settings slider
                       const HomeOffersCarousel(),
                     ],
