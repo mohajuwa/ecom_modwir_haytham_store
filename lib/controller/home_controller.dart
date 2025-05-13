@@ -3,21 +3,23 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
+import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/home_data.dart';
-import 'package:ecom_modwir/data/model/services/services_model.dart';
+import 'package:ecom_modwir/data/datasource/remote/home_offers_data.dart';
+import 'package:ecom_modwir/data/model/home_offers_model.dart';
 import 'package:ecom_modwir/data/model/settings_model.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-abstract class HomeController extends SearchMixController {
+abstract class HomeController extends GetxController {
   initialData();
-  getdata();
 }
 
 class HomeControllerImp extends HomeController {
   MyServices myServices = Get.find();
+  HomeOffersData homeOffersData = HomeOffersData(Get.find());
 
+  List<HomeOffersModel> offers = [];
   HomeData homedata = HomeData(Get.find());
   late StatusRequest statusRequest;
   // Change from single SettingsModel to a list of them.
@@ -33,17 +35,17 @@ class HomeControllerImp extends HomeController {
   String delivetTime = "";
 
   List services = [];
-  List offers = [];
   bool showAllCategories = false;
 
-  @override
   initialData() async {
     lang = myServices.sharedPreferences.getString("lang");
     username = myServices.sharedPreferences.getString("username");
     id = myServices.sharedPreferences.getString("id");
+
+    getdata();
+    getOffers();
   }
 
-  @override
   getdata() async {
     settingsModel.clear();
     var language = myServices.sharedPreferences.getString("lang");
@@ -81,6 +83,59 @@ class HomeControllerImp extends HomeController {
     update();
   }
 
+  getOffers() async {
+    statusRequest = StatusRequest.loading;
+
+    update();
+
+    String lang = myServices.sharedPreferences.getString("lang") ?? "en";
+
+    var response = await homeOffersData.getOffers(lang);
+
+    statusRequest = handlingData(response);
+
+    if (StatusRequest.success == statusRequest) {
+      if (response['status'] == "success") {
+        List responsedata = response['data'];
+
+        offers =
+            responsedata.map((item) => HomeOffersModel.fromJson(item)).toList();
+      } else {
+        statusRequest = StatusRequest.failure;
+      }
+    }
+
+    update();
+  }
+
+  void goToOfferDetails(HomeOffersModel offer) {
+    if (offer.subServiceId != null) {
+      try {
+        print(
+            '🔍 DEBUG: Loading offer details for sub-service ID: ${offer.subServiceId}');
+
+        // Navigate to service details screen with both IDs
+        Get.toNamed(
+          AppRoute.servicesDisplay,
+          arguments: {
+            'service_id':
+                '', // We will fetch the parent service ID from the sub-service
+            'sub_service_id': offer.subServiceId.toString(),
+            'is_offer': true,
+            'offer_id': offer.offerId,
+            'discount_percentage': offer.discountPercentage,
+          },
+        );
+      } catch (e) {
+        print('❌ ERROR: Failed to navigate to offer details: $e');
+        showErrorSnackbar('Error', 'Failed to load offer details');
+      }
+    } else {
+      print('❌ ERROR: Invalid offer - missing sub-service ID');
+      showErrorSnackbar('Error', 'Invalid offer details');
+    }
+  }
+
   void toggleShowAllCategories() {
     showAllCategories = !showAllCategories;
     update(); // Refresh UI
@@ -101,48 +156,7 @@ class HomeControllerImp extends HomeController {
 
   @override
   void onInit() {
-    search = TextEditingController();
-    getdata();
     initialData();
     super.onInit();
-  }
-}
-
-class SearchMixController extends GetxController {
-  List<ServicesModel> listdata = [];
-  late StatusRequest statusRequest;
-  HomeData homedata = HomeData(Get.find());
-
-  TextEditingController? search;
-  bool isSearch = false;
-
-  cheackSeach(val) {
-    if (val == "") {
-      statusRequest = StatusRequest.none;
-      isSearch = false;
-    }
-    update();
-  }
-
-  onSearchItems() {
-    isSearch = true;
-    searchData();
-    update();
-  }
-
-  searchData() async {
-    statusRequest = StatusRequest.loading;
-    var response = await homedata.searchData(search!.text);
-    statusRequest = handlingData(response);
-    if (StatusRequest.success == statusRequest) {
-      if (response['status'] == "success") {
-        listdata.clear();
-        List responsedata = response['data'];
-        listdata.addAll(responsedata.map((e) => ServicesModel.fromJson(e)));
-      } else {
-        statusRequest = StatusRequest.failure;
-      }
-      update();
-    }
   }
 }

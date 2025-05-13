@@ -25,91 +25,87 @@ class HomePage extends StatelessWidget {
 
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Container(
-          margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
-          child: ListView(
-            children: [
-              CustomAppBar(
-                mycontroller: controller.search!,
-                titleappbar: "",
-                onPressedSearch: () {
-                  controller.onSearchItems();
-                },
-                onChanged: (val) {
-                  controller.cheackSeach(val);
-                },
-                oeTapIconNotification: () {
-                  //
-                },
-              ),
-              HandlingDataView(
-                  statusRequest: controller.statusRequest,
-                  widget: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Display the slider if settingsModel is not empty.
-                      if (controller.settingsModel.isNotEmpty)
-                        CustomCardHomeSlider(
-                            isArabic: isArabic,
-                            settingsModels: controller.settingsModel),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await controller.initialData();
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+            child: ListView(
+              children: [
+                CustomAppBar(
+                  title: "Amper", // Optional, can be omitted
+                ),
+                HandlingDataView(
+                    statusRequest: controller.statusRequest,
+                    widget: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Display the slider if settingsModel is not empty.
+                        if (controller.settingsModel.isNotEmpty)
+                          CustomCardHomeSlider(
+                              isArabic: isArabic,
+                              settingsModels: controller.settingsModel),
 
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 8),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.design_services_outlined,
-                                  color: AppColor.primaryColor,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'services_text'.tr,
-                                  style: MyTextStyle.smallBold(context),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          if (controller.services.length > 5)
-                            MyTextButton(
-                              text: showAll ? "show_less".tr : "show_more".tr,
-                              ontap: () => controller.toggleShowAllCategories(),
-                              paddinghorizontal: 0,
-                              paddingvertical: 0,
-                            ),
-                        ],
-                      ),
-                      ListCategoriesHome(
-                        itemCount: itemCount,
-                        showAll: showAll,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 8),
-                        child: Row(
+                        Row(
                           children: [
-                            Icon(
-                              Icons.local_offer_outlined,
-                              color: AppColor.primaryColor,
-                              size: 20,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 8),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.design_services_outlined,
+                                    color: AppColor.primaryColor,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'services_text'.tr,
+                                    style: MyTextStyle.smallBold(context),
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'special_offers'.tr,
-                              style: MyTextStyle.smallBold(context),
-                            ),
+                            const Spacer(),
+                            if (controller.services.length > 5)
+                              MyTextButton(
+                                text: showAll ? "show_less".tr : "show_more".tr,
+                                ontap: () =>
+                                    controller.toggleShowAllCategories(),
+                                paddinghorizontal: 0,
+                                paddingvertical: 0,
+                              ),
                           ],
                         ),
-                      ),
-                      // Add the offers carousel here, after the settings slider
-                      const HomeOffersCarousel(),
-                    ],
-                  )),
-            ],
+                        ListCategoriesHome(
+                          itemCount: itemCount,
+                          showAll: showAll,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.local_offer_outlined,
+                                color: AppColor.primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'special_offers'.tr,
+                                style: MyTextStyle.smallBold(context),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Add the offers carousel here, after the settings slider
+                        const HomeOffersCarousel(),
+                      ],
+                    )),
+              ],
+            ),
           ),
         ),
       );

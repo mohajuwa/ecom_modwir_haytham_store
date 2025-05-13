@@ -4,24 +4,21 @@ import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ServiceCardWidget extends StatefulWidget {
+class ServiceCardWidget extends StatelessWidget {
   final SubServiceModel service;
   final int index;
   final Function(int) onSelected;
+  final bool isExpanded;
+  final Function(int) onToggleExpand;
 
   const ServiceCardWidget({
     super.key,
     required this.service,
     required this.index,
     required this.onSelected,
+    required this.isExpanded,
+    required this.onToggleExpand,
   });
-
-  @override
-  State<ServiceCardWidget> createState() => _ServiceCardWidgetState();
-}
-
-class _ServiceCardWidgetState extends State<ServiceCardWidget> {
-  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,7 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
         color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: widget.service.isSelected
+          color: service.isSelected
               ? AppColor.primaryColor
               : isDark
                   ? Colors.grey[700]!
@@ -59,9 +56,9 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(context),
               const SizedBox(height: 12),
-              _buildContent(),
+              _buildContent(context),
             ],
           ),
         ),
@@ -70,30 +67,29 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
   }
 
   void _handleTap() {
-    setState(() => _isExpanded = !_isExpanded);
-    widget.onSelected(widget.index);
+    onToggleExpand(index);
+    onSelected(index);
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(widget.service.name ?? "",
-              style: MyTextStyle.meduimBold(context)),
+          child:
+              Text(service.name ?? "", style: MyTextStyle.meduimBold(context)),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             // If there's an original price (meaning there's a discount), show both prices
-
-            if (widget.service.originalPrice != null &&
-                widget.service.originalPrice! > widget.service.price)
+            if (service.originalPrice != null &&
+                service.originalPrice! > service.price)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "${widget.service.originalPrice} SR",
+                    "${service.originalPrice} SR",
                     style: TextStyle(
                       decoration: TextDecoration.lineThrough,
                       color: Colors.grey,
@@ -103,7 +99,7 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
                   const SizedBox(height: 2),
                   Row(
                     children: [
-                      if (widget.service.discountPercentage != null)
+                      if (service.discountPercentage != null)
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
@@ -112,7 +108,7 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            "-${widget.service.discountPercentage}%",
+                            "-${service.discountPercentage}%",
                             style: const TextStyle(
                               color: Colors.green,
                               fontWeight: FontWeight.bold,
@@ -122,7 +118,7 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
                         ),
                       const SizedBox(width: 5),
                       Text(
-                        "${widget.service.price} SR",
+                        "${service.price} SR",
                         style: const TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
@@ -133,10 +129,10 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
                 ],
               )
             else
-              Text("${widget.service.price} SR",
+              Text("${service.price} SR",
                   style: MyTextStyle.meduimBold(context)),
 
-            if (widget.service.isSelected)
+            if (service.isSelected)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Icon(Icons.check_circle,
@@ -148,36 +144,36 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return AnimatedSize(
       duration: const Duration(milliseconds: 200),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.service.notes.isNotEmpty) ...[
-            _buildNotePreview(),
-            if (_isExpanded) ...[
+          if (service.notes.isNotEmpty) ...[
+            _buildNotePreview(context),
+            if (isExpanded) ...[
               const SizedBox(height: 12),
-              ..._buildAllNotes(),
+              ..._buildAllNotes(context),
             ],
           ],
-          if (_showSeeMoreButton()) _buildSeeMoreButton(),
+          if (_showSeeMoreButton()) _buildSeeMoreButton(context),
         ],
       ),
     );
   }
 
-  Widget _buildNotePreview() {
+  Widget _buildNotePreview(BuildContext context) {
     return Text(
-      widget.service.notes.first.content ?? "",
-      maxLines: _isExpanded ? null : 1,
-      overflow: _isExpanded ? null : TextOverflow.ellipsis,
+      service.notes.first.content ?? "",
+      maxLines: isExpanded ? null : 1,
+      overflow: isExpanded ? null : TextOverflow.ellipsis,
       style: MyTextStyle.bigCapiton(context),
     );
   }
 
-  List<Widget> _buildAllNotes() {
-    return widget.service.notes
+  List<Widget> _buildAllNotes(BuildContext context) {
+    return service.notes
         .sublist(1)
         .map((note) => Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -197,10 +193,10 @@ class _ServiceCardWidgetState extends State<ServiceCardWidget> {
   }
 
   bool _showSeeMoreButton() {
-    return widget.service.notes.length > 1 && !_isExpanded;
+    return service.notes.length > 1 && !isExpanded;
   }
 
-  Widget _buildSeeMoreButton() {
+  Widget _buildSeeMoreButton(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
       child: GestureDetector(

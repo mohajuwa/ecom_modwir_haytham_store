@@ -11,30 +11,36 @@ class MyTextStyle {
 
   static TextStyle animationstyle(BuildContext context) => TextStyle(
         color: Theme.of(context).colorScheme.onPrimary,
-        fontSize: 50,
+        fontSize: 28,
         fontWeight: FontWeight.bold,
       );
 
   static TextStyle bigCapiton(BuildContext context) => TextStyle(
         fontFamily: "El_Messiri",
         color: Theme.of(context).textTheme.bodyMedium?.color,
-        fontSize: 17,
+        fontSize: 14,
       );
 
   static TextStyle smallCapiton(BuildContext context) => TextStyle(
-        color: Theme.of(context).textTheme.bodyMedium?.color,
+        color: Theme.of(context).textTheme.bodySmall?.color,
         fontSize: 12,
+      );
+
+  static TextStyle greySmall(BuildContext context) => TextStyle(
+        color: Colors.blue[90],
+        fontSize: 9,
       );
 
   static TextStyle textButtonTow(BuildContext context) => TextStyle(
         fontFamily: "El_Messiri",
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: FontWeight.normal,
         color: Theme.of(context).colorScheme.primary,
       );
 
   static TextStyle smallBold(BuildContext context) => TextStyle(
         fontWeight: FontWeight.bold,
+        fontSize: 12,
         color: Theme.of(context).textTheme.bodyLarge?.color,
       );
 
@@ -42,11 +48,13 @@ class MyTextStyle {
           {required int letterSpacing}) =>
       TextStyle(
         fontWeight: FontWeight.w300,
+        fontSize: 18,
         color: Theme.of(context).textTheme.bodyLarge?.color,
       );
 
   static TextStyle textbutton(BuildContext context) => TextStyle(
         color: Theme.of(context).textTheme.bodyLarge?.color,
+        fontSize: 12,
       );
 
   static TextStyle meduimBold(BuildContext context) => TextStyle(

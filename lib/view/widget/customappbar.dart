@@ -5,19 +5,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget {
-  final String titleappbar;
-  final void Function()? oeTapIconNotification;
-  final void Function()? onPressedSearch;
-  final void Function(String)? onChanged;
-  final TextEditingController mycontroller;
+  final String? title;
 
   const CustomAppBar({
     super.key,
-    required this.titleappbar,
-    this.onPressedSearch,
-    this.oeTapIconNotification,
-    this.onChanged,
-    required this.mycontroller,
+    this.title,
   });
 
   @override
@@ -39,42 +31,18 @@ class CustomAppBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          InkWell(
-            onTap: onPressedSearch,
-            child: Row(
-              children: [
-                const SizedBox(width: 5),
-                FaIcon(
-                  FontAwesomeIcons.magnifyingGlassLocation,
-                  size: 35,
+          if (title != null && title!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                title!,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: SizedBox(
-                    width: 250, // Adjust width as needed
-                    child: TextFormField(
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      onChanged: onChanged,
-                      controller: mycontroller,
-                      decoration: InputDecoration(
-                        hintText: "search_here".tr,
-                        hintStyle: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.6),
-                        ),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
           const Spacer(),
           NotificationBadge(
             onPressed: () => Get.toNamed(AppRoute.notifications),

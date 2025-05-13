@@ -1,4 +1,4 @@
-import 'package:ecom_modwir/controller/orders/archive_controller.dart';
+import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:flutter/foundation.dart';
@@ -42,7 +42,7 @@ void showDialogRating(BuildContext context, String orderId) {
       // ignore: avoid_print
       onCancelled: () => print('cancelled'),
       onSubmitted: (response) {
-        OrdersArchiveController controller = Get.find();
+        FilteredOrdersController controller = Get.find();
         if (kDebugMode) {
           print(
               '=====rating: ${response.rating}, comment: ${response.comment}');

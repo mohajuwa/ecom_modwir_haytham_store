@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
+import 'package:ecom_modwir/core/functions/checkinternet.dart';
 import 'package:http/http.dart' as http;
 
 class Crud {
@@ -12,10 +13,9 @@ class Crud {
   Future<Either<StatusRequest, Map<String, dynamic>>> postData(
       String linkurl, dynamic data) async {
     try {
-      // Internet connectivity check (uncomment when needed)
-      // if (!await checkinternet()) {
-      //   return const Left(StatusRequest.offlinefailure);
-      // }
+      if (!await checkInternet()) {
+        return const Left(StatusRequest.offlinefailure);
+      }
 
       // Make the HTTP request
       final response = await http

@@ -25,7 +25,7 @@ class YearScrollWheel extends StatelessWidget {
         FixedExtentScrollController(initialItem: currentYear - selectedYear);
 
     return Container(
-      height: 120,
+      height: 130,
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -42,7 +42,7 @@ class YearScrollWheel extends StatelessWidget {
         onSelectedItemChanged: (index) {
           final year = currentYear - index;
           // Add a slight delay to prevent rapid consecutive calls
-          Future.delayed(Duration(milliseconds: 50), () {
+          Future.delayed(Duration(milliseconds: 300), () {
             onYearChanged(year);
           });
         },
@@ -52,7 +52,7 @@ class YearScrollWheel extends StatelessWidget {
             return Center(
               child: Text(
                 year.toString(),
-                style: MyTextStyle.meduimBold(
+                style: MyTextStyle.smallBold(
                   context,
                 ).copyWith(
                   color: year == selectedYear

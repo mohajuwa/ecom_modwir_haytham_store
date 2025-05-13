@@ -328,7 +328,7 @@ class _KSAEmblemSection extends StatelessWidget {
     bool isArabic = language == "ar";
 
     return Container(
-      width: 50,
+      width: 55,
       padding: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         border: isArabic

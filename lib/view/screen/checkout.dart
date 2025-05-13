@@ -43,24 +43,6 @@ class Checkout extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Order summary row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'total'.tr,
-                    style: MyTextStyle.styleBold(context),
-                  ),
-                  Text(
-                    formatCurrency(controller.total),
-                    style: MyTextStyle.styleBold(context).copyWith(
-                      color: AppColor.primaryColor,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
               // Checkout button
               MaterialButton(
                 onPressed: controller.statusRequest == StatusRequest.loading
@@ -80,7 +62,6 @@ class Checkout extends StatelessWidget {
                         "checkout".tr,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
                         ),
                       ),
               ),
@@ -149,7 +130,6 @@ class Checkout extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 16,
         fontWeight: FontWeight.bold,
         color: AppColor.primaryColor,
       ),

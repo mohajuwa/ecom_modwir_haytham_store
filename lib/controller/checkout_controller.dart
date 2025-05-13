@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
@@ -264,6 +265,15 @@ class CheckoutController extends GetxController {
     update();
 
     try {
+      ProductByCarController productByCarController;
+      try {
+        productByCarController = Get.find<ProductByCarController>();
+      } catch (e) {
+        productByCarController = Get.put(ProductByCarController());
+      }
+
+      productByCarController.saveVehicle();
+
       // Prepare order data
       final orderData = {
         "usersid": myServices.sharedPreferences.getString("userId"),

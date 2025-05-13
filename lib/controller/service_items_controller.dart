@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
@@ -41,6 +42,9 @@ class ProductByCarController extends GetxController {
   List<CarMake> carMakes = [];
   RxInt selectedMakeIndex = (-1).obs;
   RxInt selectedModelIndex = (-1).obs;
+  // In your controller class
+  final RxSet<int> expandedCardIndices = <int>{}.obs;
+
   PriceSort currentSort = PriceSort.lowToHigh;
   FixedExtentScrollController? scrollController;
   RxBool isDarkMode = false.obs;
@@ -51,6 +55,7 @@ class ProductByCarController extends GetxController {
   int selectedYear = DateTime.now().year;
   final RxList<File> attachments = <File>[].obs;
   final ImagePicker _imagePicker = ImagePicker();
+  Timer? _yearUpdateTimer;
 
   // Vehicle management
   RxList<UserCarModel> userVehicles = <UserCarModel>[].obs;
@@ -104,6 +109,10 @@ class ProductByCarController extends GetxController {
 
   @override
   void onClose() {
+    // Cancel timer when controller is disposed
+    _yearUpdateTimer?.cancel();
+
+    // Existing disposal code
     notesController.dispose();
     licensePlateController.dispose();
     phoneController.dispose();
@@ -210,6 +219,15 @@ class ProductByCarController extends GetxController {
 
     // Create a new controller
     scrollController = FixedExtentScrollController(initialItem: safeIndex);
+  }
+
+// In your controller class
+  void toggleCardExpansion(int index) {
+    if (expandedCardIndices.contains(index)) {
+      expandedCardIndices.remove(index);
+    } else {
+      expandedCardIndices.add(index);
+    }
   }
 
   void onUserLoggedIn() {
@@ -589,6 +607,7 @@ class ProductByCarController extends GetxController {
         }
       } else {
         // API call failed or returned no data, show all services
+        print("-------------------------------");
         filteredServiceItems.value = allServiceItems;
       }
 
@@ -854,7 +873,7 @@ class ProductByCarController extends GetxController {
           try {
             scrollController!.animateToItem(
               index,
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
             );
           } catch (e) {
@@ -883,7 +902,7 @@ class ProductByCarController extends GetxController {
         try {
           scrollController!.animateToItem(
             index,
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
           );
         } catch (e) {
@@ -891,7 +910,18 @@ class ProductByCarController extends GetxController {
         }
       }
     }
-    _loadProductByCar();
+
+    // Cancel existing timer if it exists
+    if (_yearUpdateTimer?.isActive ?? false) {
+      _yearUpdateTimer?.cancel();
+    }
+
+    // Start a new timer that will trigger _loadProductByCar() after 3 seconds of inactivity
+    _yearUpdateTimer = Timer(const Duration(seconds: 3), () {
+      _loadProductByCar();
+
+      print("Year selection settled, loading products for year: $selectedYear");
+    });
 
     update();
   }
@@ -1235,7 +1265,6 @@ class ProductByCarController extends GetxController {
         // No saved vehicle, use "0" to indicate using form data
         vehicleId = "0";
       }
-
       // Navigate to checkout with all the necessary data
       Get.toNamed(
         AppRoute.checkout,
@@ -1318,6 +1347,7 @@ class ProductByCarController extends GetxController {
 
   void resetForm() {
     initializeData();
+    loadUserVehicles();
     notesController.clear();
     if (!isLoggedIn) {
       licensePlateController.clearAll();

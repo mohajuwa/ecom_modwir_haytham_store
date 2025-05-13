@@ -1,6 +1,6 @@
 // lib/view/widget/home/home_offers_carousel.dart
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecom_modwir/controller/home_offers_controller.dart';
+import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
@@ -16,9 +16,9 @@ class HomeOffersCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    Get.put(HomeOffersController());
+    Get.put(HomeControllerImp());
 
-    return GetBuilder<HomeOffersController>(
+    return GetBuilder<HomeControllerImp>(
       builder: (controller) => HandlingDataView(
         statusRequest: controller.statusRequest,
         widget: controller.offers.isEmpty
@@ -62,7 +62,7 @@ class HomeOffersCarousel extends StatelessWidget {
   Widget _buildOfferCard(
     BuildContext context,
     HomeOffersModel offer,
-    HomeOffersController controller,
+    HomeControllerImp controller,
     bool isDark,
   ) {
     final title = offer.offerTitle != null ? offer.offerTitle! ?? '' : '';

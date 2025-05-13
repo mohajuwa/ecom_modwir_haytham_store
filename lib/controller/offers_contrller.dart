@@ -1,47 +1,81 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
+import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
+import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
-import 'package:ecom_modwir/data/datasource/remote/offers_data.dart';
+import 'package:ecom_modwir/data/datasource/remote/home_offers_data.dart';
+import 'package:ecom_modwir/data/model/home_offers_model.dart';
 import 'package:ecom_modwir/data/model/offers_model.dart';
 import 'package:get/get.dart';
 
 class OfferController extends GetxController {
-  OffersData offersData = OffersData(Get.find());
+  HomeOffersData homeOffersData = HomeOffersData(Get.find());
   final MyServices myServices = Get.find();
 
   List<OffersModel> data = [];
   String lang = "en";
+  List<HomeOffersModel> offers = [];
 
   late StatusRequest statusRequest;
 
-  getData() async {
+  getOffers() async {
     statusRequest = StatusRequest.loading;
-    update();
-    var response = await offersData.getData(lang);
 
-    print("=========Offers Controller $response ");
+    update();
+
+    String lang = myServices.sharedPreferences.getString("lang") ?? "en";
+
+    var response = await homeOffersData.getOffers(lang);
 
     statusRequest = handlingData(response);
 
     if (StatusRequest.success == statusRequest) {
-      // Start backend
       if (response['status'] == "success") {
-        List listData = response['data'];
+        List responsedata = response['data'];
 
-        data.addAll(listData.map((e) => OffersModel.fromJson(e)));
+        offers =
+            responsedata.map((item) => HomeOffersModel.fromJson(item)).toList();
       } else {
         statusRequest = StatusRequest.failure;
       }
-      // End
     }
+
     update();
+  }
+
+  void goToOfferDetails(HomeOffersModel offer) {
+    if (offer.subServiceId != null) {
+      try {
+        print(
+            '🔍 DEBUG: Loading offer details for sub-service ID: ${offer.subServiceId}');
+
+        // Navigate to service details screen with both IDs
+        Get.toNamed(
+          AppRoute.servicesDisplay,
+          arguments: {
+            'service_id':
+                '', // We will fetch the parent service ID from the sub-service
+            'sub_service_id': offer.subServiceId.toString(),
+            'is_offer': true,
+            'offer_id': offer.offerId,
+            'discount_percentage': offer.discountPercentage,
+          },
+        );
+      } catch (e) {
+        print('❌ ERROR: Failed to navigate to offer details: $e');
+        showErrorSnackbar('Error', 'Failed to load offer details');
+      }
+    } else {
+      print('❌ ERROR: Invalid offer - missing sub-service ID');
+      showErrorSnackbar('Error', 'Invalid offer details');
+    }
   }
 
   @override
   void onInit() {
     lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
 
-    getData();
+    getOffers();
     super.onInit();
   }
 }

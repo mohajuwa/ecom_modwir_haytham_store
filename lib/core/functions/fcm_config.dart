@@ -1,4 +1,4 @@
-import 'package:ecom_modwir/controller/orders/pending_controller.dart';
+import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:get/get.dart';
@@ -38,8 +38,8 @@ refreshPageNotification(data) {
   if (Get.currentRoute == "/orders_pending" &&
       data['pagename'] == "refresh_order_pending") {
     print("================Refresh Success");
-    OrdersPendingController controller = Get.find();
+    FilteredOrdersController controller = Get.find();
 
-    controller.refreshOrder();
+    controller.loadOrders();
   }
 }

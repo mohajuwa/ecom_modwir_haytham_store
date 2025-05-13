@@ -138,7 +138,7 @@ class CustomCardHomeSlider extends StatelessWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSecondary,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     height: 1.3,
                                   ),
                                   maxLines: 1,
@@ -150,7 +150,7 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onSecondary,
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 maxLines: 2,

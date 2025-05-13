@@ -64,9 +64,6 @@ class ProfilePage extends GetView<ProfileController> {
                 _buildActionButton(context, 'edit_profile'.tr, Icons.edit,
                     () => Get.toNamed('/edit_profile')),
 
-                _buildActionButton(context, 'change_password'.tr,
-                    Icons.lock_outline, () => Get.toNamed('/change_password')),
-
                 _buildActionButton(
                   context,
                   'logout'.tr,

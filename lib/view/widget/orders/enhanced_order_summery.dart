@@ -76,7 +76,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
               // Subtotal
               _buildSummaryRow(
                 context,
-                "subtotal".tr,
+                "sub_total".tr,
                 formatCurrency(subtotal),
               ),
 
@@ -90,6 +90,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                     context,
                     "delivery_fee".tr,
                     formatDeliveryFee(deliveryFee),
+                    valueStyle: MyTextStyle.greySmall(context),
                   ),
                 ),
 
@@ -112,10 +113,10 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 context,
                 "total".tr,
                 formatCurrency(total),
-                titleStyle: MyTextStyle.styleBold(context),
+                titleStyle: MyTextStyle.meduimBold(context),
                 valueStyle: MyTextStyle.styleBold(context).copyWith(
                   color: AppColor.primaryColor,
-                  fontSize: 18,
+                  fontSize: 14,
                 ),
               ),
             ],

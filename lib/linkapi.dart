@@ -1,8 +1,8 @@
 class AppLink {
   // ============================ Server Link  Links ============================//
 
-  static const String server = "http://10.0.2.2/apis/haytham_store";
-  // static const String server = "http://192.168.129.187/apis/haytham_store";
+  static const String server = "https://modwir.com/haytham_store";
+  // static const String server = "http://10.0.2.2/apis/haytham_store";
 
 // ============================ Images Links  Links ============================//
 
@@ -22,7 +22,7 @@ class AppLink {
 
   // ============================ Home  Links ============================//
   static const String homeLink = server;
-  static const String homePage = "$homeLink/";
+  static const String homePage = "$homeLink/home.php";
   static const String offers = "$homeLink/offers.php";
   static const String homeOffers = "$homeLink/offers.php";
 

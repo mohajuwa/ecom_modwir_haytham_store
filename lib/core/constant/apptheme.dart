@@ -29,7 +29,6 @@ class AppTheme {
         titleTextStyle: TextStyle(
           color: AppColor.primaryColor,
           fontWeight: FontWeight.bold,
-          fontSize: 20,
           fontFamily: "El_Messiri",
         ),
       ),
@@ -43,7 +42,7 @@ class AppTheme {
         ),
         displayMedium: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 20,
+          fontSize: 17,
           color: AppColor.blackColor,
         ),
         bodyLarge: TextStyle(

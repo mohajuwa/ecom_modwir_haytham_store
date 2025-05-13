@@ -239,6 +239,8 @@ class _MainContent extends StatelessWidget {
               service: controller.filteredServiceItems[index],
               index: index,
               onSelected: controller.selectService,
+              isExpanded: controller.expandedCardIndices.contains(index),
+              onToggleExpand: controller.toggleCardExpansion,
             )),
         childCount: controller.filteredServiceItems.length,
       ),

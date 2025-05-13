@@ -11,7 +11,6 @@ import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
 import 'package:ecom_modwir/view/widget/orders/order_summery.dart';
 import 'package:ecom_modwir/view/widget/services/cars/primary_button.dart';
 import 'package:ecom_modwir/view/widget/services/cars/saudi_license_plate.dart';
-import 'package:ecom_modwir/view/widget/services/cars/scroll_year.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +19,6 @@ import 'package:image_picker/image_picker.dart';
 
 class ServiceOrderForm extends StatelessWidget {
   final ProductByCarController controller;
-  final AuthService authService = Get.put(AuthService());
 
   ServiceOrderForm({super.key, required this.controller});
 
@@ -150,7 +148,7 @@ class ServiceOrderForm extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (context) => FractionallySizedBox(
         // Conditional height factor based on user vehicles
-        heightFactor: controller.userVehicles.isNotEmpty ? 0.45 : 0.85,
+        heightFactor: controller.userVehicles.isNotEmpty ? 0.45 : 0.70,
         child: Container(
           decoration: BoxDecoration(
             color: isDark ? Color(0xFF1E1E1E) : Colors.white,
@@ -199,7 +197,7 @@ class _NotesField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller.notesController,
-        maxLines: 4,
+        maxLines: 3,
         style: TextStyle(
           color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
@@ -436,27 +434,9 @@ class _OrderDetailsForm extends StatelessWidget {
           const SizedBox(height: 24),
           ModernSaudiLicensePlate(isDark: isDark),
           const SizedBox(height: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'year'.tr,
-                style: MyTextStyle.meduimBold(context),
-              ),
-              const SizedBox(height: 8),
-              YearScrollWheel(
-                scrollController: controller.scrollController,
-                selectedYear: controller.selectedYear,
-                onYearChanged: controller.updateYear,
-                isDark: isDark,
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
         ],
 
         _buildOrderSummary(context),
-        const SizedBox(height: 32),
         PrimaryButton(
           text: 'checkout'.tr,
           onTap: () {
@@ -464,7 +444,6 @@ class _OrderDetailsForm extends StatelessWidget {
           },
           isLoading: controller.statusRequest == StatusRequest.loading,
         ),
-        const SizedBox(height: 16),
       ],
     );
   }

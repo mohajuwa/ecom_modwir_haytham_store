@@ -114,7 +114,29 @@ class FilteredOrdersController extends GetxController {
     update();
   }
 
-  // Sort orders by date (most recent first)
+  submitRating(String orderId, double rating, String comment) async {
+    archivedOrders.clear();
+
+    statusRequest = StatusRequest.loading;
+
+    update();
+
+    var response =
+        await archiveData.rating(orderId, rating.toString(), comment);
+    print("=============Order Rate Controller $response ");
+    statusRequest = handlingData(response);
+    if (StatusRequest.success == statusRequest) {
+      // Start backend
+      if (response['status'] == "success") {
+        loadOrders();
+      } else {
+        statusRequest = StatusRequest.failure;
+      }
+      // End
+    }
+    update();
+  }
+
   void _sortOrdersByDate() {
     try {
       allOrders.sort((a, b) {
