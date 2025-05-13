@@ -259,6 +259,7 @@ class MyTranslation extends Translations {
           "delivery_fee_definded": "يُحدد بعد اكمال الطلب",
           "select_fault_type": "حدد نوع العطل",
           "special_offer_discount": "تم تطبيق الخصم : {discount}٪",
+          "discount": "الخصم",
           "special_offer_service": "خدمة العرض الخاص",
           "error_loading_offer": "حدث خطأ أثناء تحميل العرض",
           "make_an_order_offer": "إنشاء طلب من العرض",
@@ -279,6 +280,8 @@ class MyTranslation extends Translations {
           "enter_coupon_code": "أدخل رمز القسيمة",
           "apply": "تطبيق",
           "please_select_fault_type": "يرجى اختيار نوع العطل",
+          "edit_info": "تعديل البيانات",
+          "sub_total": "إجمالي فرعي",
         },
         //==================================
 
@@ -543,6 +546,7 @@ class MyTranslation extends Translations {
           "select_fault_type": "Select fault type",
           "special_offer_discount":
               "Special offer: {discount}% discount applied",
+          "discount": "Discount",
           "special_offer_service": "Special Offer Service",
           "error_loading_offer": "An error occurred while loading the offer",
           "make_an_order_offer": "Make an Order from Offer",
@@ -563,6 +567,8 @@ class MyTranslation extends Translations {
           "enter_coupon_code": "Enter coupon code",
           "apply": "Apply",
           "please_select_fault_type": "Please select fault type",
+          "edit_info": "Edit info",
+          "sub_total": "Sub total",
         }
       };
 }
