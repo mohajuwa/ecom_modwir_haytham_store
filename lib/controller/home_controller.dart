@@ -1,5 +1,5 @@
-// ignore_for_file: annotate_overrides, overridden_fields
-
+// lib/controller/home_controller.dart
+import 'dart:async';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
@@ -22,7 +22,6 @@ class HomeControllerImp extends HomeController {
   List<HomeOffersModel> offers = [];
   HomeData homedata = HomeData(Get.find());
   late StatusRequest statusRequest;
-  // Change from single SettingsModel to a list of them.
   List<SettingsModel> settingsModel = [];
 
   String? username;
@@ -37,114 +36,157 @@ class HomeControllerImp extends HomeController {
   List services = [];
   bool showAllCategories = false;
 
+  // Improved initialData method to prevent race conditions
+  @override
   initialData() async {
-    lang = myServices.sharedPreferences.getString("lang");
-    username = myServices.sharedPreferences.getString("username");
-    id = myServices.sharedPreferences.getString("id");
+    try {
+      // Set initial loading state
+      statusRequest = StatusRequest.loading;
+      update();
 
-    getdata();
-    getOffers();
+      // Get language preference
+      lang = myServices.sharedPreferences.getString("lang");
+      username = myServices.sharedPreferences.getString("username");
+      id = myServices.sharedPreferences.getString("id");
+
+      // Load home data first, then offers
+      await getdata();
+      await getOffers();
+
+      // Update final state if still loading
+      if (statusRequest == StatusRequest.loading) {
+        statusRequest = StatusRequest.success;
+      }
+    } catch (e) {
+      print("Error in initialData: $e");
+      statusRequest = StatusRequest.serverFailure;
+    }
+
+    // Final update
+    update();
   }
 
+  // Improved getdata method with better error handling
   getdata() async {
-    settingsModel.clear();
-    var language = myServices.sharedPreferences.getString("lang");
-    lang = myServices.sharedPreferences.getString("lang");
+    try {
+      // Clear previous data
+      settingsModel.clear();
 
-    statusRequest = StatusRequest.loading;
-    var response = await homedata.getData(language.toString());
-    statusRequest = handlingData(response);
+      // Get language preference
+      var language = myServices.sharedPreferences.getString("lang");
 
-    if (StatusRequest.success == statusRequest) {
-      if (response['status'] == "success") {
-        // Parse settings data from the response
-        List settingsData = response['settings'];
-        settingsModel
-            .addAll(settingsData.map((e) => SettingsModel.fromJson(e)));
-        // Use the first slide data for convenience (if needed)
-        if (settingsModel.isNotEmpty) {
-          titleHomeCard = settingsModel[0].settingsTitle ?? "";
-          bodyHomeCard = settingsModel[0].settingsBody ?? "";
-          delivetTime = settingsData[0]['settings_deliverytime'].toString();
-          myServices.sharedPreferences.setString("deliverytime", delivetTime);
+      // Make API call with timeout
+      var response = await homedata
+          .getData(language.toString())
+          .timeout(const Duration(seconds: 15), onTimeout: () {
+        throw TimeoutException("API call timed out");
+      });
+
+      // Handle response
+      statusRequest = handlingData(response);
+
+      if (StatusRequest.success == statusRequest) {
+        if (response['status'] == "success") {
+          // Process settings data
+          if (response.containsKey('settings') &&
+              response['settings'] != null) {
+            List settingsData = response['settings'];
+            settingsModel
+                .addAll(settingsData.map((e) => SettingsModel.fromJson(e)));
+
+            // Extract data from first item if available
+            if (settingsModel.isNotEmpty) {
+              titleHomeCard = settingsModel[0].settingsTitle ?? "";
+              bodyHomeCard = settingsModel[0].settingsBody ?? "";
+
+              // Safely extract deliverytime
+              if (settingsData.isNotEmpty &&
+                  settingsData[0] is Map &&
+                  settingsData[0].containsKey('settings_deliverytime')) {
+                delivetTime =
+                    settingsData[0]['settings_deliverytime'].toString();
+                myServices.sharedPreferences
+                    .setString("deliverytime", delivetTime);
+              }
+            }
+          }
+
+          // Process services data
+          if (response.containsKey('services') &&
+              response['services'] != null) {
+            List servicesData = response['services'];
+            services = servicesData;
+            print("Successfully loaded ${services.length} services");
+          } else {
+            print("No services data found in response");
+            services = [];
+          }
+        } else {
+          print("API returned failure status");
+          statusRequest = StatusRequest.failure;
         }
-
-        // Parse services data as before.
-        List servicesData = response['services'];
-        services = servicesData;
-        print("تم تحميل ${services.length} خدمات بنجاح");
-      } else {
-        print("فشل في تحميل البيانات");
-        statusRequest = StatusRequest.failure;
       }
-    } else {
-      print("خطأ في الاتصال");
+    } catch (e) {
+      print("Error in getdata: $e");
+      statusRequest = StatusRequest.serverFailure;
     }
+
+    // Update UI
     update();
   }
 
+  // Improved getOffers method with better error handling
   getOffers() async {
-    statusRequest = StatusRequest.loading;
+    try {
+      // Get language preference
+      String lang = myServices.sharedPreferences.getString("lang") ?? "en";
 
-    update();
+      // Make API call with timeout
+      var response = await homeOffersData
+          .getOffers(lang)
+          .timeout(const Duration(seconds: 15), onTimeout: () {
+        throw TimeoutException("API call timed out");
+      });
 
-    String lang = myServices.sharedPreferences.getString("lang") ?? "en";
+      // Handle response
+      var tempStatus = handlingData(response);
 
-    var response = await homeOffersData.getOffers(lang);
+      // Only update main status if it's not already in failure state
+      if (statusRequest != StatusRequest.failure) {
+        statusRequest = tempStatus;
+      }
 
-    statusRequest = handlingData(response);
-
-    if (StatusRequest.success == statusRequest) {
-      if (response['status'] == "success") {
-        List responsedata = response['data'];
-
-        offers =
-            responsedata.map((item) => HomeOffersModel.fromJson(item)).toList();
-      } else {
-        statusRequest = StatusRequest.failure;
+      if (tempStatus == StatusRequest.success) {
+        if (response['status'] == "success" && response['data'] != null) {
+          List responsedata = response['data'];
+          offers = responsedata
+              .map((item) => HomeOffersModel.fromJson(item))
+              .toList();
+        } else {
+          print("API returned no offers data");
+          offers = [];
+        }
+      }
+    } catch (e) {
+      print("Error in getOffers: $e");
+      // Don't override status if getdata succeeded
+      if (statusRequest == StatusRequest.loading) {
+        statusRequest = StatusRequest.serverFailure;
       }
     }
 
     update();
-  }
-
-  void goToOfferDetails(HomeOffersModel offer) {
-    if (offer.subServiceId != null) {
-      try {
-        print(
-            '🔍 DEBUG: Loading offer details for sub-service ID: ${offer.subServiceId}');
-
-        // Navigate to service details screen with both IDs
-        Get.toNamed(
-          AppRoute.servicesDisplay,
-          arguments: {
-            'service_id':
-                '', // We will fetch the parent service ID from the sub-service
-            'sub_service_id': offer.subServiceId.toString(),
-            'is_offer': true,
-            'offer_id': offer.offerId,
-            'discount_percentage': offer.discountPercentage,
-          },
-        );
-      } catch (e) {
-        print('❌ ERROR: Failed to navigate to offer details: $e');
-        showErrorSnackbar('Error', 'Failed to load offer details');
-      }
-    } else {
-      print('❌ ERROR: Invalid offer - missing sub-service ID');
-      showErrorSnackbar('Error', 'Invalid offer details');
-    }
   }
 
   void toggleShowAllCategories() {
     showAllCategories = !showAllCategories;
-    update(); // Refresh UI
+    update();
   }
 
-// From previous screen
+  // Method to navigate to service details
   void navigateToServiceDetails(String serviceId) {
     if (serviceId.isEmpty) {
-      Get.snackbar('Error'.tr, 'Invalid service selection'.tr);
+      showErrorSnackbar('Error'.tr, 'Invalid service selection'.tr);
       return;
     }
 
@@ -154,9 +196,47 @@ class HomeControllerImp extends HomeController {
     );
   }
 
-  @override
-  void onInit() {
-    initialData();
-    super.onInit();
+  // Method to handle offer details navigation
+  void goToOfferDetails(HomeOffersModel offer) {
+    if (offer.subServiceId != null) {
+      try {
+        // Navigate to service details screen with offer details
+        Get.toNamed(
+          AppRoute.servicesDisplay,
+          arguments: {
+            'service_id': '',
+            'sub_service_id': offer.subServiceId.toString(),
+            'is_offer': true,
+            'offer_id': offer.offerId,
+            'discount_percentage': offer.discountPercentage,
+          },
+        );
+      } catch (e) {
+        print('Error navigating to offer details: $e');
+        showErrorSnackbar('Error', 'Failed to load offer details');
+      }
+    } else {
+      print('Invalid offer - missing sub-service ID');
+      showErrorSnackbar('Error', 'Invalid offer details');
+    }
+  }
+
+  // Method to allow manual refresh of data
+  Future<void> refreshData() async {
+    statusRequest = StatusRequest.loading;
+    update();
+
+    try {
+      await getdata();
+      await getOffers();
+
+      if (statusRequest == StatusRequest.loading) {
+        statusRequest = StatusRequest.success;
+      }
+    } catch (e) {
+      statusRequest = StatusRequest.serverFailure;
+    }
+
+    update();
   }
 }

@@ -1,4 +1,4 @@
-// lib/core/theme/app_theme.dart
+// lib/core/constant/apptheme.dart
 import 'package:flutter/material.dart';
 import '../constant/color.dart';
 
@@ -9,7 +9,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: AppColor.primaryColor,
-      scaffoldBackgroundColor: AppColor.backgroundColor,
+      scaffoldBackgroundColor: Colors.grey[50],
       fontFamily: "El_Messiri",
 
       // Color scheme
@@ -18,6 +18,11 @@ class AppTheme {
         secondary: AppColor.secondaryColor,
         surface: Colors.white,
         error: AppColor.deleteColor,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: Colors.black87,
+        background: Colors.grey[50]!,
+        onBackground: Colors.black87,
       ),
 
       // App bar theme
@@ -29,6 +34,7 @@ class AppTheme {
         titleTextStyle: TextStyle(
           color: AppColor.primaryColor,
           fontWeight: FontWeight.bold,
+          fontSize: 18,
           fontFamily: "El_Messiri",
         ),
       ),
@@ -38,20 +44,20 @@ class AppTheme {
         displayLarge: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 24,
-          color: AppColor.blackColor,
+          color: Colors.black87,
         ),
         displayMedium: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 17,
-          color: AppColor.blackColor,
+          fontSize: 18,
+          color: Colors.black87,
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
-          color: AppColor.grey2,
+          color: Colors.black87,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
-          color: AppColor.grey,
+          color: Colors.black54,
         ),
       ),
 
@@ -61,13 +67,28 @@ class AppTheme {
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          elevation: 0,
         ),
+      ),
+
+      // Card theme
+      cardTheme: CardTheme(
+        color: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.black.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        clipBehavior: Clip.antiAlias,
       ),
 
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -80,19 +101,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColor.primaryColor),
         ),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-
-      // Card theme
-      cardTheme: CardTheme(
-        color: Colors.white,
-        elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
       ),
     );
   }
@@ -111,8 +122,11 @@ class AppTheme {
         primary: AppColor.primaryColor,
         secondary: AppColor.secondaryColor,
         surface: Color(0xFF1E1E1E),
-        surfaceBright: Color(0xFF443E3E),
+        onSurface: Colors.white,
+        background: Color(0xFF121212),
+        onBackground: Colors.white,
         error: AppColor.deleteColor,
+        surfaceBright: Color(0xFF2A2A2A),
       ),
 
       // App bar theme
@@ -124,7 +138,7 @@ class AppTheme {
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontSize: 20,
+          fontSize: 18,
           fontFamily: "El_Messiri",
         ),
       ),
@@ -138,12 +152,12 @@ class AppTheme {
         ),
         displayMedium: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 20,
+          fontSize: 18,
           color: Colors.white,
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
-          color: Colors.grey[300],
+          color: Colors.white,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
@@ -157,13 +171,28 @@ class AppTheme {
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          elevation: 0,
         ),
+      ),
+
+      // Card theme
+      cardTheme: CardTheme(
+        color: Color(0xFF1E1E1E),
+        elevation: 4,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        clipBehavior: Clip.antiAlias,
       ),
 
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Color(0xFF2A2A2A),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey[700]!),
@@ -176,19 +205,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColor.primaryColor),
         ),
-        filled: true,
-        fillColor: Color(0xFF2A2A2A),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-
-      // Card theme
-      cardTheme: CardTheme(
-        color: Color(0xFF1E1E1E),
-        elevation: 2,
-        shadowColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
       ),
     );
   }
