@@ -201,25 +201,31 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: titleStyle ??
-              TextStyle(
-                color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-              ),
-        ),
-        Text(
-          value,
-          style: valueStyle ??
-              TextStyle(
-                color: valueColor ?? (isDark ? Colors.white : Colors.black87),
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
+    return Padding(
+      padding:
+          const EdgeInsets.symmetric(vertical: 3), // Reduced from typical 4-8
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: titleStyle ??
+                TextStyle(
+                  fontSize: 12, // Reduced font size
+                  color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                ),
+          ),
+          Text(
+            value,
+            style: valueStyle ??
+                TextStyle(
+                  fontSize: 12, // Reduced font size
+                  color: valueColor ?? (isDark ? Colors.white : Colors.black87),
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

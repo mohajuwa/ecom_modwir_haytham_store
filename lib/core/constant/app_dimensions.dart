@@ -3,11 +3,14 @@ import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
 
 class AppDimensions {
-  static const double inputHeight = 48.0;
-  static const double borderRadius = 12.0;
-  static const double smallSpacing = 8.0;
-  static const double mediumSpacing = 16.0;
-  static const double largeSpacing = 24.0;
+  static double getResponsiveHeight(BuildContext context, double baseHeight) {
+    // Similar scaling logic
+    return baseHeight;
+  }
+
+  // Base dimensions still needed
+  static const double inputHeight = 40.0;
+  static const double borderRadius = 8.0;
 }
 
 class AppDecorations {

@@ -442,7 +442,7 @@ class AuthService extends GetxController {
                 'first_name'.tr,
                 style: MyTextStyle.meduimBold(context),
               ),
-              const SizedBox(height: AppDimensions.smallSpacing),
+              SizedBox(height: AppDimensions.smallSpacing),
               Container(
                 height: AppDimensions.inputHeight,
                 decoration: AppDecorations.inputContainer,

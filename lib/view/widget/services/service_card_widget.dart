@@ -26,7 +26,9 @@ class ServiceCardWidget extends StatelessWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 4), // Reduced
+      padding: const EdgeInsets.all(12), // Reduced
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(12),

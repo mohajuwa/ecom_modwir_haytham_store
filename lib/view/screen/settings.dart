@@ -12,8 +12,8 @@ class SettingsPage extends StatelessWidget {
   // Design constants
   static const double kCardRadius = 16.0;
   static const double kIconSize = 24.0;
-  static const double kAvatarSize = 42.0;
-  static const double kHeaderHeight = 200.0;
+  static const double kAvatarSize = 36.0; // Reduced from 42.0
+  static const double kHeaderHeight = 160.0; // Reduced from 200.0
   static const double kSpacing = 16.0;
   static const double kDividerIndent = 70.0;
 

@@ -22,16 +22,14 @@ class ListCategoriesHome extends GetView<HomeControllerImp> {
               child: GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 4), // Reduced from 5
                 itemCount: itemCount,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3 items per row
-
-                  childAspectRatio: 0.9, // Adjust this ratio as needed
-
-                  mainAxisSpacing: 10,
-
-                  crossAxisSpacing: 25,
+                  crossAxisCount: 3,
+                  childAspectRatio: 0.8, // More compact ratio
+                  mainAxisSpacing: 8, // Reduced from 10
+                  crossAxisSpacing: 16, // Reduced from 25
                 ),
                 itemBuilder: (context, index) {
                   if (controller.services.isEmpty) {

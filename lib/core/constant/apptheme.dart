@@ -43,24 +43,23 @@ class AppTheme {
       textTheme: TextTheme(
         displayLarge: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 24,
+          fontSize: 20, // Reduced from 24
           color: Colors.black87,
         ),
         displayMedium: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 18,
+          fontSize: 16, // Reduced from 18
           color: Colors.black87,
         ),
         bodyLarge: TextStyle(
-          fontSize: 16,
+          fontSize: 14, // Reduced from 16
           color: Colors.black87,
         ),
         bodyMedium: TextStyle(
-          fontSize: 14,
+          fontSize: 12, // Reduced from 14
           color: Colors.black54,
         ),
       ),
-
       // Button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -147,24 +146,23 @@ class AppTheme {
       textTheme: TextTheme(
         displayLarge: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 24,
-          color: Colors.white,
+          fontSize: 20, // Reduced from 24
+          color: Colors.black87,
         ),
         displayMedium: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 18,
-          color: Colors.white,
+          fontSize: 16, // Reduced from 18
+          color: Colors.black87,
         ),
         bodyLarge: TextStyle(
-          fontSize: 16,
-          color: Colors.white,
+          fontSize: 14, // Reduced from 16
+          color: Colors.black87,
         ),
         bodyMedium: TextStyle(
-          fontSize: 14,
-          color: Colors.grey[400],
+          fontSize: 12, // Reduced from 14
+          color: Colors.black54,
         ),
       ),
-
       // Button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

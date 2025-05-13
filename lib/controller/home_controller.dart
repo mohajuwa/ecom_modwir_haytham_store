@@ -21,7 +21,10 @@ class HomeControllerImp extends HomeController {
 
   List<HomeOffersModel> offers = [];
   HomeData homedata = HomeData(Get.find());
-  late StatusRequest statusRequest;
+
+  // Initialize with a default value
+  StatusRequest statusRequest = StatusRequest.none;
+
   List<SettingsModel> settingsModel = [];
 
   String? username;
@@ -35,6 +38,12 @@ class HomeControllerImp extends HomeController {
 
   List services = [];
   bool showAllCategories = false;
+
+  @override
+  void onInit() {
+    initialData();
+    super.onInit();
+  }
 
   // Improved initialData method to prevent race conditions
   @override

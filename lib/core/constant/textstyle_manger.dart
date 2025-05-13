@@ -1,46 +1,31 @@
 // lib/core/constant/textstyle_manger.dart
+import 'package:ecom_modwir/core/constant/responosive_text_size.dart';
 import 'package:flutter/material.dart';
 
 class MyTextStyle {
+// lib/core/constant/textstyle_manger.dart - Reduce font sizes
   static TextStyle styleBold(BuildContext context) => TextStyle(
         fontFamily: "El_Messiri",
         fontWeight: FontWeight.bold,
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         color: Theme.of(context).textTheme.displayLarge?.color,
       );
 
-  static TextStyle animationstyle(BuildContext context) => TextStyle(
-        color: Theme.of(context).colorScheme.onPrimary,
-        fontSize: 28,
+  static TextStyle meduimBold(BuildContext context) => TextStyle(
+        fontSize: UIUtils.getResponsiveTextSize(context, 12),
         fontWeight: FontWeight.bold,
+        color: Theme.of(context).textTheme.displayMedium?.color,
       );
 
   static TextStyle bigCapiton(BuildContext context) => TextStyle(
         fontFamily: "El_Messiri",
         color: Theme.of(context).textTheme.bodyMedium?.color,
-        fontSize: 14,
-      );
-
-  static TextStyle smallCapiton(BuildContext context) => TextStyle(
-        color: Theme.of(context).textTheme.bodySmall?.color,
-        fontSize: 12,
-      );
-
-  static TextStyle greySmall(BuildContext context) => TextStyle(
-        color: Colors.blue[90],
-        fontSize: 9,
-      );
-
-  static TextStyle textButtonTow(BuildContext context) => TextStyle(
-        fontFamily: "El_Messiri",
-        fontSize: 12,
-        fontWeight: FontWeight.normal,
-        color: Theme.of(context).colorScheme.primary,
+        fontSize: 12, // Reduced from 14
       );
 
   static TextStyle smallBold(BuildContext context) => TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 12,
+        fontSize: 10, // Reduced from 12
         color: Theme.of(context).textTheme.bodyLarge?.color,
       );
 
@@ -57,10 +42,15 @@ class MyTextStyle {
         fontSize: 12,
       );
 
-  static TextStyle meduimBold(BuildContext context) => TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: Theme.of(context).textTheme.displayMedium?.color,
+  static TextStyle textButtonTow(BuildContext context) => TextStyle(
+        fontFamily: "El_Messiri",
+        fontSize: 12,
+        fontWeight: FontWeight.normal,
+        color: Theme.of(context).colorScheme.primary,
+      );
+  static TextStyle greySmall(BuildContext context) => TextStyle(
+        color: Colors.blue[90],
+        fontSize: 9,
       );
 
   static TextStyle modelbottomsheet(BuildContext context) => TextStyle(
