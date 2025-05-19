@@ -2,8 +2,9 @@
 
 import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,14 +39,13 @@ class FaultTypeSelector extends StatelessWidget {
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(
-                      'select_fault_type'.tr,
-                      style: MyTextStyle.styleBold(context),
+                    child: SectionTitle(
+                      title: 'select_fault_type'.tr,
+                      subTitle: true,
                     ),
                   ),
-                  const SizedBox(height: 8),
                   _buildFaultTypeChips(context, controller),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppDimensions.mediumSpacing),
                 ],
               ),
       ),
@@ -86,7 +86,7 @@ class FaultTypeSelector extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       child: Chip(
         label: Text(
           label,
@@ -97,6 +97,7 @@ class FaultTypeSelector extends StatelessWidget {
                     ? Colors.white
                     : Colors.black87,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 9,
           ),
         ),
         backgroundColor: isSelected
@@ -106,7 +107,7 @@ class FaultTypeSelector extends StatelessWidget {
                 : Colors.grey.shade200,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           side: BorderSide(
             color: isSelected ? AppColor.primaryColor : Colors.transparent,
             width: 1,

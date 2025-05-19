@@ -29,14 +29,12 @@ class CarModel {
   final int modelId;
   final int makeId;
   final Map<String, String> name; // Changed to Map
-  final String year;
   final int status;
 
   CarModel({
     required this.modelId,
     required this.makeId,
     required this.name,
-    required this.year,
     required this.status,
   });
 
@@ -44,7 +42,6 @@ class CarModel {
         modelId: json['model_id'],
         makeId: json['make_id'],
         name: Map<String, String>.from(json['name']), // Map conversion
-        year: json['year'].toString(),
         status: json['status'],
       );
 }

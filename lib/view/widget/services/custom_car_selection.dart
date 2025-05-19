@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
 
@@ -43,14 +44,16 @@ class CustomCarSelectionSlider extends StatelessWidget {
                 onTap: () => onItemSelected(item),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius:
+                        BorderRadius.circular(AppDimensions.borderRadius),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: Container(
                     width: screenWidth,
                     decoration: BoxDecoration(
                       color: backgroundColor,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.borderRadius),
                     ),
                     child: Stack(
                       children: [

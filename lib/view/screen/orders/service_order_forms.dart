@@ -8,6 +8,7 @@ import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:ecom_modwir/view/widget/orders/order_summery.dart';
 import 'package:ecom_modwir/view/widget/services/cars/primary_button.dart';
 import 'package:ecom_modwir/view/widget/services/cars/saudi_license_plate.dart';
@@ -34,13 +35,15 @@ class ServiceOrderForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('additional_requirements'.tr,
-                style: MyTextStyle.styleBold(context)),
-            const SizedBox(height: 12),
+            SectionTitle(
+              title: 'additional_requirements'.tr,
+              subTitle: true,
+            ),
+            SizedBox(height: AppDimensions.smallSpacing),
             _NotesField(controller: controller, isDark: isDark),
-            const SizedBox(height: 16),
+            SizedBox(height: AppDimensions.mediumSpacing),
             _AttachmentSection(controller: controller, isDark: isDark),
-            const SizedBox(height: 24),
+            SizedBox(height: AppDimensions.largeSpacing),
             PrimaryButton(
               text: 'checkout'.tr,
               onTap: () =>
@@ -148,7 +151,7 @@ class ServiceOrderForm extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (context) => FractionallySizedBox(
         // Conditional height factor based on user vehicles
-        heightFactor: controller.userVehicles.isNotEmpty ? 0.45 : 0.70,
+        heightFactor: controller.userVehicles.isNotEmpty ? 0.35 : 0.75,
         child: Container(
           decoration: BoxDecoration(
             color: isDark ? Color(0xFF1E1E1E) : Colors.white,
@@ -205,6 +208,7 @@ class _NotesField extends StatelessWidget {
           hintText: 'additional_notes_hint'.tr,
           hintStyle: TextStyle(
             color: isDark ? Colors.grey[600] : AppColor.grey,
+            fontSize: 12,
           ),
           contentPadding: const EdgeInsets.all(16),
           border: InputBorder.none,
@@ -228,7 +232,10 @@ class _AttachmentSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('attachments'.tr, style: MyTextStyle.styleBold(context)),
+        SectionTitle(
+          title: 'attachments'.tr,
+          subTitle: true,
+        ),
         const SizedBox(height: AppDimensions.smallSpacing),
         Container(
           width: double.infinity,
@@ -243,7 +250,7 @@ class _AttachmentSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Obx(() => _buildAttachmentsList(context)),
-              const SizedBox(height: 16),
+              SizedBox(height: AppDimensions.mediumSpacing),
               _buildAttachButton(context),
             ],
           ),
@@ -277,7 +284,7 @@ class _AttachmentSection extends StatelessWidget {
             child: Row(
               children: [
                 Icon(Icons.insert_drive_file, color: AppColor.primaryColor),
-                const SizedBox(width: 8),
+                SizedBox(height: AppDimensions.smallSpacing),
                 Expanded(
                   child: Text(
                     _getFileName(file),
@@ -324,14 +331,14 @@ class _AttachmentSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           border: Border.all(color: AppColor.primaryColor.withOpacity(0.5)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.attach_file, color: AppColor.primaryColor),
-            const SizedBox(width: 8),
+            SizedBox(height: AppDimensions.smallSpacing),
             Text(
               'attach_files'.tr,
               style: MyTextStyle.smallBold(context),
@@ -423,7 +430,7 @@ class _OrderDetailsForm extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               color: isDark ? Colors.grey[700] : Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
             ),
           ),
         ),
@@ -431,9 +438,9 @@ class _OrderDetailsForm extends StatelessWidget {
         // Conditional rendering based on user vehicles
         if (controller.userVehicles.isEmpty) ...[
           Text('car_details'.tr, style: MyTextStyle.styleBold(context)),
-          const SizedBox(height: 24),
+          SizedBox(height: AppDimensions.largeSpacing),
           ModernSaudiLicensePlate(isDark: isDark),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
         ],
 
         _buildOrderSummary(context),

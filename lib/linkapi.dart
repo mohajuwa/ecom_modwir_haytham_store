@@ -2,9 +2,11 @@ class AppLink {
   // ============================ Server Link  Links ============================//
 
   static const String server = "https://modwir.com/haytham_store";
-  // static const String server = "http://10.0.2.2/apis/haytham_store";
+  // static const String server = "http://10.0.2.2/haytham_store";
 
 // ============================ Images Links  Links ============================//
+  static const String unifonicLink =
+      "https://el.cloud.unifonic.com/rest/SMS/messages";
 
   static const String imageStatic = "$server/upload";
   static const String imageCategories = "$imageStatic/categories";
@@ -73,6 +75,8 @@ class AppLink {
   static const String orderDetailsView = "$ordersLink/details.php";
   static const String deleteOrder = "$ordersLink/delete.php";
   static const String cancelOrder = "$ordersLink/cancel.php";
+  static const String attachmentsUpload =
+      "$ordersLink/save_attachment_files.php";
 
   // ============================ Orders Rating Links ============================//
   static const String ratingLink = server;

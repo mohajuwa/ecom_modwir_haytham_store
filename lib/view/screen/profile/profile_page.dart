@@ -1,5 +1,6 @@
 // lib/view/screen/profile/profile_page.dart
 import 'package:ecom_modwir/controller/profile_controller.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class ProfilePage extends GetView<ProfileController> {
                           color: AppColor.primaryColor,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: AppDimensions.mediumSpacing),
                       Text(
                         controller.username.value,
                         style: MyTextStyle.styleBold(context),
@@ -106,11 +107,11 @@ class ProfilePage extends GetView<ProfileController> {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
             color: Theme.of(context).cardColor,
             boxShadow: [
               BoxShadow(

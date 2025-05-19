@@ -29,7 +29,7 @@ class DeliveryTypeSelector extends StatelessWidget {
               color: AppColor.primaryColor,
               size: 20,
             ),
-            const SizedBox(width: 8),
+            SizedBox(height: AppDimensions.smallSpacing),
             Text(
               "choose_delivery_type".tr,
               style: MyTextStyle.meduimBold(context).copyWith(
@@ -39,7 +39,7 @@ class DeliveryTypeSelector extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.mediumSpacing),
 
         // Delivery options
         Row(
@@ -140,7 +140,7 @@ class DeliveryTypeSelector extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 12),
+            SizedBox(height: AppDimensions.smallSpacing),
 
             // Title
             Text(
@@ -183,7 +183,8 @@ class DeliveryTypeSelector extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: AppColor.primaryColor,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.borderRadius),
                 ),
                 child: Text(
                   "selected".tr,

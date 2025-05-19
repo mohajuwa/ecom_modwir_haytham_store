@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
@@ -6,9 +8,11 @@ import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
 import 'package:ecom_modwir/data/datasource/remote/checkout_data.dart';
+import 'package:ecom_modwir/data/datasource/remote/orders/attachment_data.dart';
 import 'package:ecom_modwir/data/model/address_model.dart';
 import 'package:ecom_modwir/data/model/coupon_model.dart';
 import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
+import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,7 +21,8 @@ class CheckoutController extends GetxController {
   final AddressData addressData = AddressData(Get.find());
   final CheckoutData checkoutData = CheckoutData(Get.find());
   final MyServices myServices = Get.find();
-
+  final AttachmentData attachmentData = AttachmentData(Get.find());
+  final List<File> attachments = Get.arguments['attachments'];
   // State variables
   StatusRequest statusRequest = StatusRequest.none;
   List<AddressModel> dataAddress = [];
@@ -271,8 +276,9 @@ class CheckoutController extends GetxController {
       } catch (e) {
         productByCarController = Get.put(ProductByCarController());
       }
-
-      productByCarController.saveVehicle();
+      if (productByCarController.userVehicles.isEmpty) {
+        productByCarController.saveVehicle();
+      }
 
       // Prepare order data
       final orderData = {
@@ -296,6 +302,12 @@ class CheckoutController extends GetxController {
 
       // Check response
       if (response['status'] == "success") {
+        try {
+          _uploadFileAttachment(response['data']['order_id']);
+        } catch (e) {
+          showErrorSnackbar('error'.tr, 'attachments_upload_error'.tr);
+          return;
+        }
         // Order placed successfully
         Get.offAllNamed(AppRoute.homepage);
         showSuccessSnackbar('success'.tr, 'order_placed_successfully'.tr);
@@ -312,6 +324,31 @@ class CheckoutController extends GetxController {
     }
 
     update();
+  }
+
+  Future<void> _uploadFileAttachment(String orderId) async {
+    try {
+      final response = await attachmentData.crud.uploadFilesWithProgress(
+        AppLink.attachmentsUpload,
+        files: attachments,
+        fieldName: "files",
+        fields: {"order_id": orderId},
+        onProgress: (progress) {
+          print("Upload Progress: ${(progress * 100).toStringAsFixed(2)}%");
+          // أو حدث UI هنا إذا تبي
+        },
+      );
+
+      if (response.isRight()) {
+        // handle success
+      } else {
+        // handle failure
+      }
+    } catch (e) {
+      print("Upload error: $e");
+    } finally {
+      update();
+    }
   }
 
   // Prepare services data for order

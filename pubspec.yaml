@@ -10,65 +10,48 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons:
   get:
   jiffy:
   intl:
   http:
   cached_network_image:
   image_picker:
-  show_up_animation:
-  auto_animated:
-  flutter_polyline_points:
   google_maps_flutter:
   geocoding:
   geolocator:
   firebase_messaging:
   firebase_core:
-  flutter_local_notifications:
-  cloud_firestore:
-  sqflite:
   shared_preferences:
-  qr_flutter:
-  scan:
-  grouped_list:
+  
   url_launcher:
-  dropdown_search:
-  badges:
   font_awesome_flutter:
-  fluttericon:
   dartz:
-  google_sign_in:
-  device_preview:
-  responsive_builder:
-  image_pickers:
-  path:
+
   flutter_svg:
-  flutter_otp_text_field:
   lottie:
-  permission_handler:
   flutter_ringtone_player:
   rating_dialog:
-  firebase_auth: ^5.3.4
-  firebase_storage: ^12.3.7
   hexcolor: ^3.0.1
-  google_fonts: ^6.2.1
-  country_picker: ^2.0.27
-  pinput: ^5.0.1
   carousel_slider: ^5.0.0
   file_picker: ^10.0.0
-  internet_connection_checker: ^3.0.1
-  dio: ^5.8.0+1
+  pin_code_fields: ^8.0.1
+
+ 
 
 dev_dependencies:
-  flutter_launcher_icons: 
+  flutter_launcher_icons: ^0.14.3
   flutter_test:
     sdk: flutter
 
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo.png" # Path to your logo image
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+
 
 flutter:
   uses-material-design: true

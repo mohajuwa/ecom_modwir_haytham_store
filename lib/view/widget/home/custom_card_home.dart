@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/settings_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
@@ -32,14 +33,16 @@ class CustomCardHomeSlider extends StatelessWidget {
             builder: (BuildContext context) {
               return Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.borderRadius),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Container(
                   width: screenWidth,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius:
+                        BorderRadius.circular(AppDimensions.borderRadius),
                   ),
                   child: Stack(
                     children: [

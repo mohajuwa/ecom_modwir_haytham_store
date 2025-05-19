@@ -52,7 +52,7 @@ class CouponInputWidget extends StatelessWidget {
                 color: AppColor.primaryColor,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               Text(
                 "apply_coupon".tr,
                 style: MyTextStyle.meduimBold(context).copyWith(
@@ -62,7 +62,7 @@ class CouponInputWidget extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: AppDimensions.smallSpacing),
 
           // Coupon input and button
           Row(
@@ -119,7 +119,7 @@ class CouponInputWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               _buildActionButton(context),
             ],
           ),

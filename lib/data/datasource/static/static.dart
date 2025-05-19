@@ -4,7 +4,9 @@ import 'package:get/get_utils/get_utils.dart';
 
 List<OnBoardingModel> onBoardingList = [
   OnBoardingModel(
-      title: "2".tr, body: "3".tr, image: AppImageAsset.onBoardingImageOne),
+      title: "show_more".tr,
+      body: "3".tr,
+      image: AppImageAsset.onBoardingImageOne),
   OnBoardingModel(
       title: "4".tr, body: "5".tr, image: AppImageAsset.onBoardingImageTwo),
   OnBoardingModel(

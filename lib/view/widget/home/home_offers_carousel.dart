@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/data/model/home_offers_model.dart';
@@ -74,7 +75,7 @@ class HomeOffersCarousel extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           color: isDark ? Color(0xFF1E1E1E) : Colors.white,
           boxShadow: [
             BoxShadow(
@@ -86,7 +87,7 @@ class HomeOffersCarousel extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -155,7 +156,8 @@ class HomeOffersCarousel extends StatelessWidget {
                           horizontal: 8, vertical: 4), // Reduced padding
                       decoration: BoxDecoration(
                         color: AppColor.primaryColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius:
+                            BorderRadius.circular(AppDimensions.borderRadius),
                       ),
                       child: Text(
                         'view_offer'.tr,

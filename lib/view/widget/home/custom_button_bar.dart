@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,7 +27,7 @@ class CustomButtonAppBar extends StatelessWidget {
           color: active
               ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -36,13 +37,13 @@ class CustomButtonAppBar extends StatelessWidget {
               color: active
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              size: 24,
+              size: 20,
             ),
             const SizedBox(height: 3),
             Text(
               textbutton.tr,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 color: active
                     ? Theme.of(context).colorScheme.primary

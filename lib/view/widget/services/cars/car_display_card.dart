@@ -1,4 +1,5 @@
 import 'package:ecom_modwir/controller/service_items_controller.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 
 import 'package:ecom_modwir/core/constant/color.dart';
 
@@ -91,7 +92,7 @@ class CarInfoWidget extends StatelessWidget {
                   ? 'edit_vehicle'.tr
                   : 'add_new_vehicle'.tr,
               style: MyTextStyle.meduimBold(context)),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           Row(
             children: [
               Expanded(child: _buildMakeSelector(context, isDark)),
@@ -99,7 +100,7 @@ class CarInfoWidget extends StatelessWidget {
               Expanded(child: _buildModelSelector(context, isDark)),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -116,9 +117,9 @@ class CarInfoWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           ModernSaudiLicensePlate(isDark: isDark),
-          const SizedBox(height: 24),
+          SizedBox(height: AppDimensions.largeSpacing),
           PrimaryButton(
             text: controller.isEditingVehicle.value ? 'update'.tr : 'save'.tr,
             onTap: () => _handleSaveCar(context),
@@ -143,7 +144,7 @@ class CarInfoWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isDark ? Color(0xFF2A2A2A) : Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           border:
               Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
           boxShadow: [
@@ -194,7 +195,7 @@ class CarInfoWidget extends StatelessWidget {
           color: hasModels
               ? (isDark ? Color(0xFF2A2A2A) : Colors.white)
               : (isDark ? Color(0xFF1E1E1E) : Colors.grey.shade100),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           border:
               Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
           boxShadow: hasModels
@@ -350,7 +351,7 @@ class VehicleCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
           color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           border: Border.all(
             color: isSelected
                 ? AppColor.primaryColor
@@ -448,7 +449,7 @@ class VehicleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 24),
+          SizedBox(height: AppDimensions.largeSpacing),
           Text(
             '${vehicle.makeName} ${vehicle.modelName}',
             style: MyTextStyle.styleBold(
@@ -532,7 +533,7 @@ class _LicensePlateRow extends StatelessWidget {
         color: isDark ? Color(0xFF2A2A2A) : Colors.white,
         border: Border.all(
             color: isDark ? Colors.grey[600]! : AppColor.blackColor, width: 2),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       child: Row(
         children: [

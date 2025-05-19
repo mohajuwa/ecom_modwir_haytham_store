@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
@@ -26,12 +27,13 @@ class ServiceCardWidget extends StatelessWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 4), // Reduced
-      padding: const EdgeInsets.all(12), // Reduced
+      margin: EdgeInsets.symmetric(
+          horizontal: AppDimensions.smallSpacing + 4,
+          vertical: AppDimensions.smallSpacing / 2),
+      padding: EdgeInsets.all(AppDimensions.smallSpacing + 4),
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         border: Border.all(
           color: service.isSelected
               ? AppColor.primaryColor
@@ -51,7 +53,7 @@ class ServiceCardWidget extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius + 4),
         onTap: _handleTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -107,7 +109,8 @@ class ServiceCardWidget extends StatelessWidget {
                               horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(
+                                AppDimensions.borderRadius),
                           ),
                           child: Text(
                             "-${service.discountPercentage}%",
@@ -183,7 +186,7 @@ class ServiceCardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.circle, size: 8, color: AppColor.primaryColor),
-                  const SizedBox(width: 8),
+                  SizedBox(height: AppDimensions.smallSpacing),
                   Expanded(
                     child: Text(note.content ?? "",
                         style: MyTextStyle.bigCapiton(context)),
@@ -205,8 +208,12 @@ class ServiceCardWidget extends StatelessWidget {
         onTap: _handleTap,
         child: Padding(
           padding: const EdgeInsets.only(top: 8),
-          child:
-              Text('see_more_notes'.tr, style: MyTextStyle.smallBold(context)),
+          child: Text(
+            'see_more_notes'.tr,
+            style: MyTextStyle.smallBold(context).copyWith(
+              color: AppColor.secondaryColor,
+            ),
+          ),
         ),
       ),
     );

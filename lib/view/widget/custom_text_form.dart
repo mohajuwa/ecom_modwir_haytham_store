@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextForm extends StatelessWidget {
@@ -42,8 +43,9 @@ class CustomTextForm extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 9),
                 child: Text(labeltext)),
             suffixIcon: InkWell(onTap: onTapIcon, child: Icon(iconData)),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(30))),
+            border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.circular(AppDimensions.borderRadius))),
       ),
     );
   }

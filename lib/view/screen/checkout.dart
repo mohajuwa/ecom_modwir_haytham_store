@@ -6,7 +6,6 @@ import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
-import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/view/widget/checkout/card_delivery_type.dart';
 import 'package:ecom_modwir/view/widget/orders/address_selector.dart';
 import 'package:ecom_modwir/view/widget/orders/enhanced_order_summery.dart';
@@ -62,6 +61,7 @@ class Checkout extends StatelessWidget {
                         "checkout".tr,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
                       ),
               ),
@@ -79,36 +79,36 @@ class Checkout extends StatelessWidget {
               children: [
                 // Payment Method Section
                 _buildSectionTitle(context, "choose_payment_method".tr),
-                const SizedBox(height: 12),
+                SizedBox(height: AppDimensions.smallSpacing),
                 _buildPaymentMethods(context, controller),
 
-                const SizedBox(height: 24),
+                SizedBox(height: AppDimensions.largeSpacing),
 
                 // Delivery Type Section
                 _buildSectionTitle(context, "choose_delivery_type".tr),
-                const SizedBox(height: 12),
+                SizedBox(height: AppDimensions.smallSpacing),
                 _buildDeliveryTypes(context, controller),
 
                 // Address Section (shown only if delivery is selected)
                 if (controller.deliveryType == "0") ...[
-                  const SizedBox(height: 24),
+                  SizedBox(height: AppDimensions.largeSpacing),
                   _buildSectionTitle(context, "shipping_address".tr),
-                  const SizedBox(height: 12),
+                  SizedBox(height: AppDimensions.smallSpacing),
                   _buildAddressSelection(context, controller),
                 ],
 
-                const SizedBox(height: 24),
+                SizedBox(height: AppDimensions.largeSpacing),
 
                 // Coupon Section
                 _buildSectionTitle(context, "apply_coupon".tr),
-                const SizedBox(height: 12),
+                SizedBox(height: AppDimensions.smallSpacing),
                 _buildCouponSection(context, controller),
 
-                const SizedBox(height: 24),
+                SizedBox(height: AppDimensions.largeSpacing),
 
                 // Order Summary Section
                 _buildSectionTitle(context, "order_summary".tr),
-                const SizedBox(height: 12),
+                SizedBox(height: AppDimensions.smallSpacing),
                 // Use the new EnhancedOrderSummaryWidget instead of building the summary manually
                 EnhancedOrderSummaryWidget(
                   selectedServices: controller.selectedServices,
@@ -187,7 +187,7 @@ class Checkout extends StatelessWidget {
         child: Row(
           children: [
             Icon(Icons.error_outline, color: Colors.red),
-            const SizedBox(width: 8),
+            SizedBox(height: AppDimensions.smallSpacing),
             Expanded(
               child: Text(
                 "please_add_shipping_address".tr,
@@ -240,6 +240,7 @@ class Checkout extends StatelessWidget {
                   controller: controller.couponController,
                   decoration: InputDecoration(
                     hintText: "enter_coupon_code".tr,
+                    hintStyle: MyTextStyle.meduimBold(context),
                     border: OutlineInputBorder(
                       borderRadius:
                           BorderRadius.circular(AppDimensions.borderRadius),
@@ -270,7 +271,8 @@ class Checkout extends StatelessWidget {
                   enabled: !controller.isCouponValid,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
+              SizedBox(width: AppDimensions.smallSpacing),
               if (!controller.isCouponValid)
                 ElevatedButton(
                   onPressed: controller.isCheckingCoupon
@@ -280,8 +282,8 @@ class Checkout extends StatelessWidget {
                     backgroundColor: AppColor.primaryColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                   ),
                   child: Text("apply".tr),

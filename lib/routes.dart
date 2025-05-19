@@ -20,7 +20,7 @@ import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
   GetPage(
-      name: "/", page: () => const HomeScreen(), middlewares: [MyMiddleWare()]),
+      name: "/", page: () => const OnBoarding(), middlewares: [MyMiddleWare()]),
 
   GetPage(
     name: AppRoute.servicesDisplay,

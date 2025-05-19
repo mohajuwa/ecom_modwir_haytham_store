@@ -5,6 +5,7 @@ import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/controller/theme_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
+import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
@@ -211,9 +212,9 @@ class SettingsController extends GetxController {
   }
 
   /// Navigates to profile edit screen
-  void navigateToProfile() {
+  void navigateToProfile(BuildContext context) {
     if (!isAuthenticated()) {
-      _promptLogin();
+      _promptLogin(context);
       return;
     }
 
@@ -222,9 +223,9 @@ class SettingsController extends GetxController {
   }
 
   /// Navigates to addresses screen
-  void navigateToAddresses() {
+  void navigateToAddresses(BuildContext context) {
     if (!isAuthenticated()) {
-      _promptLogin();
+      _promptLogin(context);
       return;
     }
 
@@ -232,21 +233,10 @@ class SettingsController extends GetxController {
     Get.toNamed(AppRoute.addressview);
   }
 
-  /// Navigates to payment methods screen
-  void navigateToPaymentMethods() {
-    if (!isAuthenticated()) {
-      _promptLogin();
-      return;
-    }
-
-    // Navigate to payment methods
-    Get.toNamed('/payment/methods');
-  }
-
   /// Navigates to orders by status
-  void navigateToOrdersByStatus(String status) {
+  void navigateToOrdersByStatus(String status, BuildContext context) {
     if (!isAuthenticated()) {
-      _promptLogin();
+      _promptLogin(context);
       return;
     }
 
@@ -313,6 +303,7 @@ class SettingsController extends GetxController {
       // Restore theme and language
       _myServices.sharedPreferences.setString("theme", themeMode);
       _myServices.sharedPreferences.setString("lang", language);
+      _myServices.sharedPreferences.setString("step", "2");
 
       // Reset user data
       userName.value = 'guest'.tr;
@@ -338,22 +329,34 @@ class SettingsController extends GetxController {
   }
 
   /// Shows login prompt dialog
-  void _promptLogin() {
+  void _promptLogin(BuildContext context) {
     Get.dialog(
       AlertDialog(
-        title: Text('login_required'.tr),
+        title: Text(
+          'login_required'.tr,
+        ),
+        titleTextStyle: MyTextStyle.styleBold(context).copyWith(
+          color: Colors.red.shade200,
+        ),
         content: Text('please_login_to_continue'.tr),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('cancel'.tr),
+            child: Text(
+              'cancel'.tr,
+              style: MyTextStyle.styleBold(context),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
-              Get.back();
-              Get.toNamed('/login');
+              authService.showAuthDialog(context, onSuccess: () {
+                loadData();
+                Get.forceAppUpdate();
+              });
             },
-            child: Text('login'.tr),
+            child: Text(
+              'login'.tr,
+            ),
           ),
         ],
       ),

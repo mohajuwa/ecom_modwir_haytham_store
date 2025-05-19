@@ -52,7 +52,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 color: AppColor.primaryColor,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               Text(
                 "order_summary".tr,
                 style: MyTextStyle.meduimBold(context).copyWith(
@@ -62,7 +62,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
 
           // Services list
           ...selectedServices
@@ -78,6 +78,12 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 context,
                 "sub_total".tr,
                 formatCurrency(subtotal),
+                titleStyle: MyTextStyle.meduimBold(context),
+                valueStyle: MyTextStyle.bigCapiton(context).copyWith(
+                  color: AppColor.primaryColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               const SizedBox(height: 8),
@@ -90,7 +96,9 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                     context,
                     "delivery_fee".tr,
                     formatDeliveryFee(deliveryFee),
-                    valueStyle: MyTextStyle.greySmall(context),
+                    valueStyle: MyTextStyle.greySmall(context).copyWith(
+                      color: AppColor.deepblue,
+                    ),
                   ),
                 ),
 
@@ -113,10 +121,11 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 context,
                 "total".tr,
                 formatCurrency(total),
-                titleStyle: MyTextStyle.meduimBold(context),
-                valueStyle: MyTextStyle.styleBold(context).copyWith(
+                titleStyle: MyTextStyle.styleBold(context),
+                valueStyle: MyTextStyle.bigCapiton(context).copyWith(
                   color: AppColor.primaryColor,
                   fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -181,9 +190,10 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
           ),
           Text(
             formatCurrency(service.price),
-            style: TextStyle(
+            style: MyTextStyle.styleBold(context).copyWith(
+              color: AppColor.primaryColor,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
             ),
           ),
         ],
@@ -212,7 +222,8 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
             style: titleStyle ??
                 TextStyle(
                   fontSize: 12, // Reduced font size
-                  color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                  color: valueColor ?? (isDark ? Colors.white : Colors.black87),
+                  fontWeight: FontWeight.bold,
                 ),
           ),
           Text(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/data/datasource/remote/auth/login.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
@@ -13,17 +14,17 @@ import 'package:ecom_modwir/data/datasource/remote/auth/signup.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ecom_modwir/data/datasource/remote/address_data.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
 class AuthService extends GetxController {
   final MyServices myServices = Get.find();
   final AddressData addressData = AddressData(Get.find());
 
   // Controllers for login/signup
-  SignupData signupData = SignupData(Get.find());
-  LoginData loginData = LoginData(Get.find());
+  final SignupData signupData = SignupData(Get.find());
+  final LoginData loginData = LoginData(Get.find());
 
-  List data = [];
-
+  // Text controllers - initialized lazily
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
@@ -31,7 +32,7 @@ class AuthService extends GetxController {
 
   // Map controllers and properties
   Completer<GoogleMapController>? completercontroller;
-  List<Marker> markers = [];
+  final List<Marker> markers = [];
   CameraPosition? cameraPosition;
   Position? position;
 
@@ -43,12 +44,12 @@ class AuthService extends GetxController {
   String? street;
 
   // States
-  RxBool isLoading = false.obs;
-  RxBool isLoginMode = true.obs;
-  RxBool isLoginFor = true.obs;
-  RxBool isVerifying = false.obs;
-  RxBool needsAddress = false.obs;
-  RxBool editingInfo = false.obs;
+  final RxBool isLoading = false.obs;
+  final RxBool isLoginMode = true.obs;
+  final RxBool isLoginFor = true.obs;
+  final RxBool isVerifying = false.obs;
+  final RxBool needsAddress = false.obs;
+  final RxBool editingInfo = false.obs;
 
   // Store the current context to handle dialog dismissal properly
   BuildContext? _dialogContext;
@@ -57,36 +58,16 @@ class AuthService extends GetxController {
   Function? onAuthSuccess;
   Timer? _loadingTimer;
 
-  final int _loadingTimeoutSeconds = 30; // 30 seconds timeout
+  final int _loadingTimeoutSeconds = 15; // 15 second timeout
+
+  @override
+  void onInit() {
+    super.onInit();
+  }
 
   @override
   void onClose() {
     _loadingTimer?.cancel();
-
-    // Safely dispose controllers
-    try {
-      phoneController.dispose();
-    } catch (e) {
-      // Controller may already be disposed
-    }
-
-    try {
-      firstNameController.dispose();
-    } catch (e) {
-      // Controller may already be disposed
-    }
-
-    try {
-      lastNameController.dispose();
-    } catch (e) {
-      // Controller may already be disposed
-    }
-
-    try {
-      otpController.dispose();
-    } catch (e) {
-      // Controller may already be disposed
-    }
 
     super.onClose();
   }
@@ -97,7 +78,6 @@ class AuthService extends GetxController {
     _loadingTimer = Timer(Duration(seconds: _loadingTimeoutSeconds), () {
       if (isLoading.value) {
         isLoading.value = false;
-
         showErrorSnackbar('error'.tr, 'request_timed_out'.tr);
       }
     });
@@ -113,21 +93,24 @@ class AuthService extends GetxController {
     needsAddress.value = false;
     editingInfo.value = false;
     isLoading.value = false;
+
+    // Clear controllers
+    phoneController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
     otpController.clear();
   }
 
   // Show auth dialog with a callback for after completion
   void showAuthDialog(BuildContext context, {Function? onSuccess}) {
-    // Reset state
     _resetState();
     onAuthSuccess = onSuccess;
-    _dialogContext = context;
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) {
-        _dialogContext = context; // Store the context for later dismissal
+      builder: (dialogContext) {
+        _dialogContext = dialogContext; // Store the context for later dismissal
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
@@ -145,7 +128,7 @@ class AuthService extends GetxController {
                         IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.pop(dialogContext);
                             _dialogContext = null;
                           },
                         ),
@@ -154,15 +137,15 @@ class AuthService extends GetxController {
                   ),
                   Obx(() {
                     if (isVerifying.value) {
-                      return _buildOtpVerification(context);
+                      return _buildOtpVerification(dialogContext);
                     } else if (needsAddress.value) {
-                      return _buildAddressCollection(context);
-                    } else if (editingInfo.value) {
-                      return _buildEditSignupInfo(context);
+                      return _buildAddressCollection(dialogContext);
+                    } else if (editingInfo.value && !isLoginMode.value) {
+                      return _buildEditSignupInfo(dialogContext);
                     } else {
                       return isLoginMode.value
-                          ? _buildLoginForm(context)
-                          : _buildSignupForm(context);
+                          ? _buildLoginForm(dialogContext)
+                          : _buildSignupForm(dialogContext);
                     }
                   }),
                 ],
@@ -195,15 +178,15 @@ class AuthService extends GetxController {
             style: MyTextStyle.styleBold(context),
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: AppDimensions.largeSpacing),
         _buildPhoneField(context),
-        const SizedBox(height: 24),
-        PrimaryButton(
-          text: 'login'.tr,
-          onTap: () => _handleLoginSubmit(),
-          isLoading: isLoading.value,
-        ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.largeSpacing),
+        Obx(() => PrimaryButton(
+              text: 'login'.tr,
+              onTap: () => _handleLoginSubmit(),
+              isLoading: isLoading.value,
+            )),
+        SizedBox(height: AppDimensions.mediumSpacing),
         Center(
           child: TextButton(
             onPressed: toggleMode,
@@ -231,15 +214,15 @@ class AuthService extends GetxController {
         ),
         const SizedBox(height: 20),
         _buildNameFields(context),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.mediumSpacing),
         _buildPhoneField(context),
-        const SizedBox(height: 24),
-        PrimaryButton(
-          text: 'sign_up'.tr,
-          onTap: () => _handleSignupSubmit(),
-          isLoading: isLoading.value,
-        ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.largeSpacing),
+        Obx(() => PrimaryButton(
+              text: 'sign_up'.tr,
+              onTap: () => _handleSignupSubmit(),
+              isLoading: isLoading.value,
+            )),
+        SizedBox(height: AppDimensions.mediumSpacing),
         Center(
           child: TextButton(
             onPressed: toggleMode,
@@ -265,20 +248,20 @@ class AuthService extends GetxController {
             style: MyTextStyle.styleBold(context),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.mediumSpacing),
         Text(
           '${'code_sent_to'.tr} ${phoneController.text}',
           style: MyTextStyle.meduimBold(context),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: AppDimensions.largeSpacing),
         _buildOtpField(context),
-        const SizedBox(height: 24),
-        PrimaryButton(
-          text: 'verify'.tr,
-          onTap: () => _verifyOtp(),
-          isLoading: isLoading.value,
-        ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.largeSpacing),
+        Obx(() => PrimaryButton(
+              text: 'verify'.tr,
+              onTap: () => _verifyOtp(),
+              isLoading: isLoading.value,
+            )),
+        SizedBox(height: AppDimensions.mediumSpacing),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -293,6 +276,7 @@ class AuthService extends GetxController {
             TextButton(
               onPressed: () {
                 editingInfo.value = true;
+                isLoginMode.value = true;
                 isVerifying.value = false;
               },
               child: Text(
@@ -320,15 +304,15 @@ class AuthService extends GetxController {
         ),
         const SizedBox(height: 20),
         _buildNameFields(context),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.mediumSpacing),
         _buildPhoneField(context),
-        const SizedBox(height: 24),
-        PrimaryButton(
-          text: 'update_info'.tr,
-          onTap: () => _updateSignupInfo(),
-          isLoading: isLoading.value,
-        ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.largeSpacing),
+        Obx(() => PrimaryButton(
+              text: 'update_info'.tr,
+              onTap: () => _updateSignupInfo(),
+              isLoading: isLoading.value,
+            )),
+        SizedBox(height: AppDimensions.mediumSpacing),
         Center(
           child: TextButton(
             onPressed: () {
@@ -357,7 +341,7 @@ class AuthService extends GetxController {
             style: MyTextStyle.styleBold(context),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.mediumSpacing),
         Text(
           'we_need_your_address'.tr,
           style: MyTextStyle.meduimBold(context),
@@ -395,17 +379,15 @@ class AuthService extends GetxController {
               ],
             ),
           ),
-        const SizedBox(height: 24),
-        PrimaryButton(
-          text: 'use_my_location'.tr,
-          onTap: () => _getCurrentLocation(),
-          isLoading: isLoading.value,
-        ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.largeSpacing),
+        Obx(() => PrimaryButton(
+              text: 'use_my_location'.tr,
+              onTap: () => _getCurrentLocation(),
+              isLoading: isLoading.value,
+            )),
+        SizedBox(height: AppDimensions.mediumSpacing),
         OutlinedButton(
-          onPressed: () => _showManualAddressDialog(
-              context), // Pass the function reference instead of calling it immediately
-
+          onPressed: () => _showManualAddressDialog(context),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(double.infinity, 48),
             shape: RoundedRectangleBorder(
@@ -495,9 +477,9 @@ class AuthService extends GetxController {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'phone_number'.tr,
-          style: MyTextStyle.meduimBold(context),
+        SectionTitle(
+          title: 'phone_number'.tr,
+          subTitle: true,
         ),
         const SizedBox(height: AppDimensions.smallSpacing),
         Container(
@@ -526,26 +508,56 @@ class AuthService extends GetxController {
   }
 
   Widget _buildOtpField(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'verification_code'.tr,
-          style: MyTextStyle.meduimBold(context),
+          style: MyTextStyle.meduimBold(context).copyWith(fontSize: 18),
         ),
         const SizedBox(height: AppDimensions.smallSpacing),
-        Container(
-          height: AppDimensions.inputHeight,
-          decoration: AppDecorations.inputContainer,
-          child: TextField(
-            controller: otpController,
-            keyboardType: TextInputType.number,
-            style: MyTextStyle.meduimBold(context),
-            decoration: InputDecoration(
-              hintText: '000000',
-              hintStyle: MyTextStyle.bigCapiton(context),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+          ),
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.mediumSpacing,
+              vertical: AppDimensions.smallSpacing,
+            ),
+            child: PinCodeTextField(
+              appContext: context,
+              length: 4,
+              controller: otpController,
+              autoDisposeControllers: false,
+              keyboardType: TextInputType.number,
+              animationType: AnimationType.fade,
+              enableActiveFill: true,
+              cursorColor: AppColor.primaryColor,
+              textStyle: MyTextStyle.meduimBold(context).copyWith(fontSize: 20),
+              pinTheme: PinTheme(
+                shape: PinCodeFieldShape.box,
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+                fieldHeight: 60,
+                fieldWidth: 50,
+                activeFillColor: Theme.of(context).brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.secondary,
+                inactiveFillColor: Colors.grey.shade100,
+                selectedFillColor:
+                    theme.colorScheme.onPrimary.withOpacity(0.05),
+                activeColor: AppColor.primaryColor,
+                selectedColor: AppColor.primaryColor,
+                inactiveColor: Colors.grey,
+              ),
+              onChanged: (_) {},
+              onCompleted: (code) {
+                // you can auto‑verify here:
+                // _verifyOtp();
+              },
             ),
           ),
         ),
@@ -583,7 +595,6 @@ class AuthService extends GetxController {
       showErrorSnackbar('error'.tr, 'failed_to_send_code'.tr);
     } finally {
       _loadingTimer?.cancel();
-
       isLoading.value = false;
     }
   }
@@ -727,9 +738,6 @@ class AuthService extends GetxController {
 
       if (permission == LocationPermission.deniedForever) {
         showErrorSnackbar('error'.tr, 'location_permission_denied'.tr);
-        _loadingTimer?.cancel();
-
-        isLoading.value = false;
         return;
       }
 
@@ -803,7 +811,7 @@ class AuthService extends GetxController {
                 'enter_address'.tr,
                 style: MyTextStyle.styleBold(context),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AppDimensions.mediumSpacing),
 
               // City field
               Text(
@@ -827,7 +835,7 @@ class AuthService extends GetxController {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppDimensions.smallSpacing),
 
               // Street field
               Text(
@@ -851,7 +859,7 @@ class AuthService extends GetxController {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppDimensions.smallSpacing),
 
               // Full address field
               Text('full_address'.tr, style: MyTextStyle.meduimBold(context)),
@@ -873,7 +881,8 @@ class AuthService extends GetxController {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppDimensions.largeSpacing),
+
               PrimaryButton(
                 text: 'save'.tr,
                 onTap: () {
@@ -887,6 +896,7 @@ class AuthService extends GetxController {
                     latitude = latitude ?? 0.0;
                     longitude = longitude ?? 0.0;
                     update();
+
                     Get.back();
                   } else {
                     showErrorSnackbar('error'.tr, 'please_complete_address'.tr);

@@ -1,5 +1,6 @@
 import 'package:ecom_modwir/controller/orders/notification_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/data/model/orders_model.dart';
@@ -65,7 +66,7 @@ class NotificationsView extends StatelessWidget {
             color:
                 Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             'no_notifications'.tr,
             style: Theme.of(context).textTheme.bodyLarge,
@@ -93,11 +94,11 @@ class NotificationsView extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(

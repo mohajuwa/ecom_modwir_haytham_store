@@ -1,4 +1,5 @@
 // lib/bindings/intialbindings.dart
+import 'package:ecom_modwir/controller/auth/auth_service.dart';
 import 'package:ecom_modwir/controller/theme_controller.dart';
 import 'package:ecom_modwir/core/class/crud.dart';
 import 'package:ecom_modwir/core/localization/changelocal.dart';
@@ -12,5 +13,6 @@ class InitialBindings extends Bindings {
     Get.put(Crud());
     Get.put(LocaleController());
     Get.put(ThemeController());
+    Get.lazyPut(() => AuthService(), fenix: true);
   }
 }

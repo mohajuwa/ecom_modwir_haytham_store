@@ -1,6 +1,7 @@
 // lib/view/screen/orders/filtered_orders_view.dart
 import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/view/widget/orders/order_card.dart';
@@ -141,7 +142,7 @@ class FilteredOrdersView extends StatelessWidget {
             color:
                 Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             message,
             style: Theme.of(context).textTheme.bodyLarge,
@@ -175,14 +176,14 @@ class OrderFilterTabs extends GetView<FilteredOrdersController> {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
-            _buildFilterTab(context, 'recent', 'Recent', Icons.history),
-            _buildFilterTab(context, 'all', 'All', Icons.list_alt),
+            _buildFilterTab(context, 'recent', 'recent'.tr, Icons.history),
+            _buildFilterTab(context, 'all', 'all'.tr, Icons.list_alt),
             _buildFilterTab(
-                context, 'pending', 'Pending', Icons.pending_actions),
+                context, 'pending', 'pending'.tr, Icons.pending_actions),
             _buildFilterTab(
-                context, 'archived', 'Archived', Icons.archive_outlined),
+                context, 'archived', 'archived'.tr, Icons.archive_outlined),
             _buildFilterTab(
-                context, 'canceled', 'Canceled', Icons.cancel_outlined),
+                context, 'canceled', 'canceled'.tr, Icons.cancel_outlined),
           ],
         ),
       ),
@@ -196,16 +197,16 @@ class OrderFilterTabs extends GetView<FilteredOrdersController> {
     return GestureDetector(
       onTap: () => controller.changeFilter(filter),
       child: Container(
-        margin: const EdgeInsets.only(right: 10),
+        margin: const EdgeInsets.only(top: 2, bottom: 5, right: 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color:
               isSelected ? AppColor.primaryColor : Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 2,
               offset: const Offset(0, 2),
             ),
           ],

@@ -1,4 +1,5 @@
 // lib/core/constant/apptheme.dart
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../constant/color.dart';
 
@@ -21,8 +22,6 @@ class AppTheme {
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: Colors.black87,
-        background: Colors.grey[50]!,
-        onBackground: Colors.black87,
       ),
 
       // App bar theme
@@ -37,6 +36,7 @@ class AppTheme {
           fontSize: 18,
           fontFamily: "El_Messiri",
         ),
+        shadowColor: AppColor.blackColor,
       ),
 
       // Text theme
@@ -66,7 +66,7 @@ class AppTheme {
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           elevation: 0,
@@ -79,7 +79,7 @@ class AppTheme {
         elevation: 2,
         shadowColor: Colors.black.withOpacity(0.1),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         ),
         clipBehavior: Clip.antiAlias,
       ),
@@ -89,15 +89,15 @@ class AppTheme {
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           borderSide: BorderSide(color: AppColor.primaryColor),
         ),
         contentPadding:
@@ -122,8 +122,6 @@ class AppTheme {
         secondary: AppColor.secondaryColor,
         surface: Color(0xFF1E1E1E),
         onSurface: Colors.white,
-        background: Color(0xFF121212),
-        onBackground: Colors.white,
         error: AppColor.deleteColor,
         surfaceBright: Color(0xFF2A2A2A),
       ),
@@ -140,6 +138,7 @@ class AppTheme {
           fontSize: 18,
           fontFamily: "El_Messiri",
         ),
+        shadowColor: AppColor.blackColor,
       ),
 
       // Text theme
@@ -147,20 +146,20 @@ class AppTheme {
         displayLarge: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20, // Reduced from 24
-          color: Colors.black87,
+          color: Colors.white,
         ),
         displayMedium: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16, // Reduced from 18
-          color: Colors.black87,
+          color: Colors.white,
         ),
         bodyLarge: TextStyle(
           fontSize: 14, // Reduced from 16
-          color: Colors.black87,
+          color: Colors.white,
         ),
         bodyMedium: TextStyle(
           fontSize: 12, // Reduced from 14
-          color: Colors.black54,
+          color: Colors.white,
         ),
       ),
       // Button theme
@@ -169,7 +168,7 @@ class AppTheme {
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           elevation: 0,
@@ -182,7 +181,7 @@ class AppTheme {
         elevation: 4,
         shadowColor: Colors.black,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         ),
         clipBehavior: Clip.antiAlias,
       ),
@@ -192,15 +191,15 @@ class AppTheme {
         filled: true,
         fillColor: Color(0xFF2A2A2A),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           borderSide: BorderSide(color: Colors.grey[700]!),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           borderSide: BorderSide(color: Colors.grey[700]!),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           borderSide: BorderSide(color: AppColor.primaryColor),
         ),
         contentPadding:

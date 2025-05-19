@@ -95,11 +95,6 @@ class ProductByCarController extends GetxController {
       await loadCarMakes();
       _setDefaultSelections();
       _initScrollController();
-
-      // Check for product_by_car data after loading initial data
-      if (selectedMakeIndex.value >= 0 && selectedModelIndex.value >= 0) {
-        await _loadProductByCar();
-      }
     } catch (e) {
       print("Initialization error: $e");
       statusRequest = StatusRequest.failure;
@@ -370,18 +365,19 @@ class ProductByCarController extends GetxController {
           print(
               "📋 DEBUG: Service details API response status: ${response['status']}");
 
-          if (response['sub_services'] != null) {
+          if (response['services_display_file'] != null) {
             print(
-                "📋 DEBUG: Number of sub-services returned: ${(response['sub_services'] as List).length}");
+                "📋 DEBUG: Number of sub-services returned: ${(response['services_display_file'] as List).length}");
           } else {
-            print("⚠️ WARNING: 'sub_services' field is null in response");
+            print(
+                "⚠️ WARNING: 'services_display_file' field is null in response");
           }
 
           try {
             // Extract all sub-services
 
             List<SubServiceModel> allSubServices =
-                (response['sub_services'] as List? ?? [])
+                (response['services_display_file'] as List? ?? [])
                     .map((x) => SubServiceModel.fromJson(x))
                     .whereType<SubServiceModel>()
                     .toList();
@@ -730,8 +726,8 @@ class ProductByCarController extends GetxController {
         print("✅ SUCCESS: Sub-service details API response received");
 
         if (response['status'] == "success" &&
-            response['sub_services'] != null) {
-          final List subServices = response['sub_services'];
+            response['sub_services_dis'] != null) {
+          final List subServices = response['sub_services_dis'];
 
           if (subServices.isNotEmpty) {
             // Extract the first sub-service to get its service_id
@@ -1201,7 +1197,28 @@ class ProductByCarController extends GetxController {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'],
+        allowedExtensions: [
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'svg',
+          'pdf',
+          'doc',
+          'docx',
+          'xls',
+          'xlsx',
+          'txt',
+          'mp3',
+          'mp4',
+          'wav',
+          'avi',
+          'csv',
+          'ppt',
+          'pptx',
+          'zip',
+          'rar'
+        ],
       );
 
       if (result != null &&
@@ -1265,6 +1282,9 @@ class ProductByCarController extends GetxController {
         // No saved vehicle, use "0" to indicate using form data
         vehicleId = "0";
       }
+
+      // save attachments
+
       // Navigate to checkout with all the necessary data
       Get.toNamed(
         AppRoute.checkout,
@@ -1273,7 +1293,7 @@ class ProductByCarController extends GetxController {
           'orderNotes': notesController.text,
           'selected_vehicle_id': vehicleId,
           'fault_type_id': selectedFaultType.faultId.toString(),
-          'attachments': attachments,
+          'attachments': attachments.toList(), // <-- safer
         },
       );
 
@@ -1293,11 +1313,17 @@ class ProductByCarController extends GetxController {
     final licensePlateData = licensePlateController.getLicensePlateJson();
 
     if (licensePlateData == '[{"en":"-","ar":"-"}]') {
-      showErrorSnackbar('Error', 'Please enter license plate');
+      showErrorSnackbar('error'.tr, 'please_enter_license_plate');
 
       return false;
     }
-
+    if (userVehicles.isEmpty) {
+      showErrorSnackbar(
+        'error'.tr,
+        'please_select_vehicle'.tr,
+      );
+      return false;
+    }
     // Check if any service is selected
 
     bool isServiceSelected =

@@ -1,5 +1,7 @@
 // lib/view/widget/offers/custom_items_offer.dart
-import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
+import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/data/model/home_offers_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +24,12 @@ class CustomListItemsOffer extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       elevation: 2,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Row(
           children: [
             // Offer image
@@ -36,19 +38,28 @@ class CustomListItemsOffer extends StatelessWidget {
                 topLeft: Radius.circular(12),
                 bottomLeft: Radius.circular(12),
               ),
-              child: Image.network(
-                "${AppLink.offerImgLink}/${offer.offerImg}",
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 120,
-                  height: 120,
-                  color: Colors.grey[300],
-                  child:
-                      Icon(Icons.image_not_supported, color: Colors.grey[600]),
-                ),
-              ),
+              child: offer.offerImg != null
+                  ? CachedNetworkImage(
+                      imageUrl: "${AppLink.offerImgLink}/${offer.offerImg}",
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) => Image.asset(
+                        AppImageAsset.logo,
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  : Image.asset(
+                      AppImageAsset.logo,
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.contain,
+                    ),
             ),
 
             // Offer details
@@ -62,7 +73,7 @@ class CustomListItemsOffer extends StatelessWidget {
                       offer.offerTitle ?? 'Special Offer',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 12,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -72,7 +83,7 @@ class CustomListItemsOffer extends StatelessWidget {
                       offer.offerDescription ?? '',
                       style: TextStyle(
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        fontSize: 14,
+                        fontSize: 10,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -86,7 +97,8 @@ class CustomListItemsOffer extends StatelessWidget {
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius:
+                              BorderRadius.circular(AppDimensions.borderRadius),
                         ),
                         child: Text(
                           '${offer.discountPercentage}% ${'discount'.tr}',

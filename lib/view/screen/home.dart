@@ -1,8 +1,8 @@
 // lib/view/screen/home.dart (updated)
 import 'package:ecom_modwir/controller/home_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
-import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:ecom_modwir/view/widget/customappbar.dart';
 import 'package:ecom_modwir/view/widget/home/custom_card_home.dart';
 import 'package:ecom_modwir/view/widget/home/home_offers_carousel.dart'; // Import the new offers carousel
@@ -19,7 +19,6 @@ class HomePage extends StatelessWidget {
     Get.put(HomeControllerImp());
     return GetBuilder<HomeControllerImp>(builder: (controller) {
       bool showAll = controller.showAllCategories;
-      int itemCount = showAll ? controller.services.length : 5;
       String language = controller.lang.toString();
       bool isArabic = language == "ar";
 
@@ -54,21 +53,16 @@ class HomePage extends StatelessWidget {
                                   horizontal: 10, vertical: 8),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.design_services_outlined,
-                                    color: AppColor.primaryColor,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'services_text'.tr,
-                                    style: MyTextStyle.smallBold(context),
+                                  SizedBox(height: AppDimensions.smallSpacing),
+                                  SectionTitle(
+                                    title: 'services_text'.tr,
+                                    subTitle: false,
                                   ),
                                 ],
                               ),
                             ),
                             const Spacer(),
-                            if (controller.services.length > 5)
+                            if (controller.services.length > 15)
                               MyTextButton(
                                 text: showAll ? "show_less".tr : "show_more".tr,
                                 ontap: () =>
@@ -79,7 +73,7 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                         ListCategoriesHome(
-                          itemCount: itemCount,
+                          itemCount: controller.services.length,
                           showAll: showAll,
                         ),
                         Padding(
@@ -87,15 +81,10 @@ class HomePage extends StatelessWidget {
                               horizontal: 10, vertical: 8),
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.local_offer_outlined,
-                                color: AppColor.primaryColor,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'special_offers'.tr,
-                                style: MyTextStyle.smallBold(context),
+                              SizedBox(height: AppDimensions.smallSpacing),
+                              SectionTitle(
+                                title: 'special_offers'.tr,
+                                subTitle: false,
                               ),
                             ],
                           ),

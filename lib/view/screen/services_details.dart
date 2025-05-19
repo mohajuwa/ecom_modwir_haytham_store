@@ -3,10 +3,12 @@ import 'package:ecom_modwir/controller/fault_type_controller.dart';
 import 'package:ecom_modwir/controller/service_items_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/keys.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/view/screen/orders/service_order_forms.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:ecom_modwir/view/widget/services/cars/car_display_card.dart';
 import 'package:ecom_modwir/view/widget/services/cars/car_selection_widgets.dart';
 import 'package:ecom_modwir/view/widget/services/cars/input_sections.dart';
@@ -104,7 +106,6 @@ class _MainContent extends StatelessWidget {
             },
           ),
         ),
-
         _buildServicesHeader(context),
 
         _buildServicesList(),
@@ -123,14 +124,10 @@ class _MainContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              isOffer ? 'special_offer'.tr : 'make_an_order'.tr,
-              style: MyTextStyle.styleBold(context),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'select_your_car'.tr,
-              style: MyTextStyle.bigCapiton(context),
+            const SizedBox(height: AppDimensions.mediumSpacing),
+            SectionTitle(
+              title: 'select_your_car'.tr,
+              subTitle: true,
             ),
           ],
         ),
@@ -152,7 +149,6 @@ class _MainContent extends StatelessWidget {
                 if (controller.selectedMakeIndex.value != -1 &&
                     controller.selectedModels.isNotEmpty)
                   CarModelSlider(controller: controller),
-
                 // Add year selection after model selection
                 if (controller.selectedMakeIndex.value != -1 &&
                     controller.selectedModelIndex.value != -1)
@@ -162,9 +158,9 @@ class _MainContent extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'year'.tr,
-                          style: MyTextStyle.meduimBold(context),
+                        SectionTitle(
+                          title: 'year'.tr,
+                          subTitle: true,
                         ),
                         const SizedBox(height: 8),
                         YearScrollWheel(
@@ -188,9 +184,9 @@ class _MainContent extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'available_services'.tr,
-              style: MyTextStyle.styleBold(context),
+            SectionTitle(
+              title: 'available_services'.tr,
+              subTitle: true,
             ),
             _buildSortDropdown(),
           ],
@@ -203,7 +199,7 @@ class _MainContent extends StatelessWidget {
     return PopupMenuButton<PriceSort>(
       icon: Icon(Icons.filter_list_rounded, color: AppColor.primaryColor),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       onSelected: (sort) => controller.sortServicesByPrice(sort),
       itemBuilder: (context) => [
@@ -212,7 +208,7 @@ class _MainContent extends StatelessWidget {
           child: Row(
             children: [
               Icon(Icons.arrow_upward_rounded, size: 18, color: AppColor.grey2),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               Text('low_to_high'.tr, style: MyTextStyle.smallBold(context)),
             ],
           ),
@@ -223,7 +219,7 @@ class _MainContent extends StatelessWidget {
             children: [
               Icon(Icons.arrow_downward_rounded,
                   size: 18, color: AppColor.grey2),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               Text('high_to_low'.tr, style: MyTextStyle.smallBold(context)),
             ],
           ),

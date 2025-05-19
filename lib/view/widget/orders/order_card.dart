@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/orders_model.dart';
@@ -30,11 +31,11 @@ class OrderCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -44,7 +45,7 @@ class OrderCard extends StatelessWidget {
               Row(
                 children: [
                   _buildStatusIndicator(context),
-                  const SizedBox(width: 8),
+                  SizedBox(height: AppDimensions.smallSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +107,7 @@ class OrderCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: AppDimensions.mediumSpacing),
 
               // Total and actions
               Row(

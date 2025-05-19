@@ -4,10 +4,13 @@ import 'package:ecom_modwir/linkapi.dart';
 class SignupData {
   Crud crud;
   SignupData(this.crud);
+  final code = "0000";
+
   postData(String fullName, String phone) async {
     var response = await crud.postData(AppLink.signUp, {
       "fullName": fullName,
       "phone": phone,
+      "verfiyCode": code,
     });
     return response.fold((l) => l, (r) => r);
   }
@@ -33,6 +36,7 @@ class SignupData {
   resendCode(String phone) async {
     var response = await crud.postData(AppLink.resendverfiyCode, {
       "phone": phone,
+      "verfiyCode": code,
     });
     return response.fold((l) => l, (r) => r);
   }

@@ -48,7 +48,7 @@ class AddressSelectorWidget extends StatelessWidget {
                 color: AppColor.primaryColor,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               Text(
                 "shipping_address".tr,
                 style: MyTextStyle.meduimBold(context).copyWith(
@@ -58,7 +58,7 @@ class AddressSelectorWidget extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: onAddAddress,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
                 child: Padding(
                   padding: const EdgeInsets.all(4),
                   child: Row(
@@ -84,7 +84,7 @@ class AddressSelectorWidget extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
 
           // Address list or empty state
           addresses.isEmpty
@@ -118,7 +118,7 @@ class AddressSelectorWidget extends StatelessWidget {
             color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
             size: 48,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             "no_shipping_addresses".tr,
             style: TextStyle(
@@ -136,7 +136,7 @@ class AddressSelectorWidget extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           ElevatedButton.icon(
             onPressed: onAddAddress,
             icon: const Icon(Icons.add_location_alt_outlined),
@@ -145,7 +145,7 @@ class AddressSelectorWidget extends StatelessWidget {
               backgroundColor: AppColor.primaryColor,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,

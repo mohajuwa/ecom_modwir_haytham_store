@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
@@ -125,7 +126,7 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: widget.isDark ? Colors.grey[700] : Colors.grey[300],
-          borderRadius: BorderRadius.circular(2),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         ),
       ),
     );
@@ -173,21 +174,24 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
                 filled: true,
                 fillColor: widget.isDark ? Color(0xFF2A2A2A) : Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.borderRadius),
                   borderSide: BorderSide(
                       color: widget.isDark
                           ? Colors.grey[700]!
                           : Colors.grey[300]!),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.borderRadius),
                   borderSide: BorderSide(
                       color: widget.isDark
                           ? Colors.grey[700]!
                           : Colors.grey[300]!),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.borderRadius),
                   borderSide: BorderSide(color: AppColor.primaryColor),
                 ),
               ),
@@ -207,9 +211,9 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 0.85,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+        childAspectRatio: 1,
+        mainAxisSpacing: 15,
+        crossAxisSpacing: 15,
       ),
       itemCount: filteredItems.length,
       itemBuilder: (context, index) =>
@@ -239,11 +243,11 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
       onTap: () => widget.onSelect(originalIndex),
       child: Container(
         decoration: BoxDecoration(
-          color: widget.isDark ? Color(0xFF2A2A2A) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           boxShadow: [
             BoxShadow(
-              color: widget.isDark
+              color: !widget.isDark
                   ? Colors.black.withOpacity(0.3)
                   : Colors.grey.withOpacity(0.1),
               spreadRadius: 1,
@@ -260,8 +264,8 @@ class _SelectionModalState<T> extends State<SelectionModal<T>> {
                 child: make.logo.isNotEmpty
                     ? Image.network(
                         "${AppLink.carMakeLogo}/${make.logo}",
-                        width: 60,
-                        height: 60,
+                        width: 80,
+                        height: 80,
                         errorBuilder: (_, __, ___) => Icon(
                           Icons.directions_car,
                           size: 40,

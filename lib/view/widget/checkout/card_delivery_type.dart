@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class CardDeliveryTypeChecout extends StatelessWidget {
         children: [
           Image.asset(
             imageName,
-            width: 60,
+            width: AppDimensions.getResponsiveWidth(context, 80),
             color: isActive ? Colors.white : null,
           ),
           Text(

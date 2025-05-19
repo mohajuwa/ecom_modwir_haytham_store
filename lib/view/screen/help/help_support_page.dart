@@ -1,5 +1,6 @@
 // lib/view/screen/help/help_support_page.dart
 import 'package:ecom_modwir/controller/help_support_controller.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class HelpSupportPage extends GetView<HelpSupportController> {
               ],
             ),
 
-            const SizedBox(height: 24),
+            SizedBox(height: AppDimensions.largeSpacing),
 
             // FAQs
             _buildSection(
@@ -93,7 +94,7 @@ class HelpSupportPage extends GetView<HelpSupportController> {
               ],
             ),
 
-            const SizedBox(height: 24),
+            SizedBox(height: AppDimensions.largeSpacing),
 
             // Additional help options
             _buildSection(
@@ -140,7 +141,7 @@ class HelpSupportPage extends GetView<HelpSupportController> {
             color: AppColor.primaryColor,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppDimensions.mediumSpacing),
         ...children,
       ],
     );
@@ -156,11 +157,11 @@ class HelpSupportPage extends GetView<HelpSupportController> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(

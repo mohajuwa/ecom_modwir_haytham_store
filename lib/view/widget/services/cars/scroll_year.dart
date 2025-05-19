@@ -1,4 +1,5 @@
 // lib/view/widget/services/scroll_year.dart
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class YearScrollWheel extends StatelessWidget {
       height: 120,
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF2A2A2A) : Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         border:
             Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
       ),

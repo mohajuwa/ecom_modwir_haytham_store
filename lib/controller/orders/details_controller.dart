@@ -1,5 +1,6 @@
 // lib/controller/orders/details_controller.dart
 import 'dart:async';
+import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
@@ -12,20 +13,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class OrdersDetailsController extends GetxController {
   OrdersDetailsData ordersDetailsData = OrdersDetailsData(Get.find());
   final MyServices myServices = Get.find();
-
+  FilteredOrdersController filteredOrdersController = Get.find();
   String lang = "ar";
 
   EnhancedOrderModel? enhancedOrder;
   late OrdersModel ordersModel;
   late StatusRequest statusRequest;
-
+  String orderId = "";
   Completer<GoogleMapController>? completercontroller;
   List<Marker> markers = [];
   CameraPosition? cameraPosition;
 
   intailData() {
     lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
-
     if (ordersModel.orderType == 0) {
       cameraPosition = CameraPosition(
         target:
@@ -56,6 +56,9 @@ class OrdersDetailsController extends GetxController {
         if (response['data'] is List && response['data'].isNotEmpty) {
           enhancedOrder = EnhancedOrderModel.fromJson(response['data'][0]);
 
+          // Debug the order status
+          print("Order Status: ${enhancedOrder?.orderStatus}");
+
           // Update map if we have coordinates
           if (enhancedOrder?.addressLatitude != null &&
               enhancedOrder?.addressLongitude != null) {
@@ -72,8 +75,6 @@ class OrdersDetailsController extends GetxController {
             ));
           }
         }
-      } else {
-        statusRequest = StatusRequest.failure;
       }
     }
     update();

@@ -1,4 +1,5 @@
 import 'package:ecom_modwir/controller/home_controller.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/sizes_manger.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/data/model/services/services_model.dart';
@@ -63,21 +64,24 @@ class Services extends GetView<HomeControllerImp> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: AppSizes.getHight(context, 5)),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+        border: Border.all(
+          color: Theme.of(context).primaryColor.withOpacity(0.1),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          )
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           onTap: () {
             final serviceId = serviceModel.serviceId.toString();
             controller.navigateToServiceDetails(serviceId);
@@ -107,7 +111,7 @@ class Services extends GetView<HomeControllerImp> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: AppDimensions.smallSpacing),
                 Text(
                   "${serviceModel.serviceName}",
                   style: MyTextStyle.smallBold(context),

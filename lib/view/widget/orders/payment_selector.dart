@@ -42,7 +42,7 @@ class PaymentMethodSelector extends StatelessWidget {
                 color: AppColor.primaryColor,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(height: AppDimensions.smallSpacing),
               Text(
                 "choose_payment_method".tr,
                 style: MyTextStyle.meduimBold(context).copyWith(
@@ -52,7 +52,7 @@ class PaymentMethodSelector extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
 
           // Cash payment option
           _buildPaymentOption(
@@ -68,7 +68,7 @@ class PaymentMethodSelector extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: AppDimensions.smallSpacing),
 
           // Card payment option
           _buildPaymentOption(
@@ -189,7 +189,7 @@ class PaymentMethodSelector extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 14,
                       color: isSelected
                           ? AppColor.primaryColor
                           : isDark

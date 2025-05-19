@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/view/widget/notification_badge.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CustomAppBar extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.1),
@@ -50,7 +51,7 @@ class CustomAppBar extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
               ),
               child: FaIcon(
                 FontAwesomeIcons.bell,

@@ -60,7 +60,7 @@ class OrderSummaryWidget extends StatelessWidget {
             'order_summary'.tr,
             style: MyTextStyle.styleBold(context),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AppDimensions.smallSpacing),
 
           // Service details
           if (selectedService != null)

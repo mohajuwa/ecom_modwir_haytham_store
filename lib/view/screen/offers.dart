@@ -1,9 +1,11 @@
 // lib/view/screen/offers.dart - corrected type handling
 import 'package:ecom_modwir/controller/offers_contrller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/home_offers_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:ecom_modwir/view/widget/offers/custom_items_offer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,17 +64,23 @@ class OffersView extends StatelessWidget {
                             children: [
                               // Featured offers section
                               if (controller.offers.isNotEmpty) ...[
-                                _SectionTitle(title: 'featured_offers'.tr),
+                                SectionTitle(
+                                  title: 'featured_offers'.tr,
+                                  subTitle: false,
+                                ),
                                 _FeatureOfferCard(
                                   offer: controller.offers[0],
                                   onTap: () => controller
                                       .goToOfferDetails(controller.offers[0]),
                                 ),
-                                const SizedBox(height: 24),
+                                SizedBox(height: AppDimensions.largeSpacing),
                               ],
 
                               // All offers section
-                              _SectionTitle(title: 'all_offers'.tr),
+                              SectionTitle(
+                                title: 'all_offers'.tr,
+                                subTitle: false,
+                              ),
                               ListView.builder(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -107,7 +115,7 @@ class OffersView extends StatelessWidget {
             size: 80,
             color: Colors.grey[400],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             'no_offers_available'.tr,
             style: TextStyle(
@@ -144,15 +152,15 @@ class _FeatureOfferCard extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         child: Container(
           height: 200,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
             image: DecorationImage(
               image: NetworkImage("${AppLink.offerImgLink}/${offer.offerImg}"),
               fit: BoxFit.cover,
@@ -167,7 +175,8 @@ class _FeatureOfferCard extends StatelessWidget {
               // Gradient overlay for better text visibility
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.borderRadius),
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -190,7 +199,6 @@ class _FeatureOfferCard extends StatelessWidget {
                       offer.offerTitle ?? 'Special Offer',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -204,14 +212,15 @@ class _FeatureOfferCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.mediumSpacing),
                     if (offer.discountPercentage != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.green,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius:
+                              BorderRadius.circular(AppDimensions.borderRadius),
                         ),
                         child: Text(
                           '${offer.discountPercentage}% ${'discount'.tr}',
@@ -228,39 +237,6 @@ class _FeatureOfferCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String title;
-
-  const _SectionTitle({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        children: [
-          Container(
-            width: 4,
-            height: 20,
-            decoration: BoxDecoration(
-              color: AppColor.primaryColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-        ],
       ),
     );
   }

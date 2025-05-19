@@ -1,3 +1,4 @@
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
@@ -91,7 +92,7 @@ class _LicensePlateContainer extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF2A2A2A) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         border: Border.all(
             color: isDark ? Colors.grey[600]! : AppColor.blackColor, width: 3),
         boxShadow: [
@@ -361,7 +362,7 @@ class _KSAEmblemSection extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(
                     color: isDark ? Colors.grey[600]! : AppColor.blackColor),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
               ),
               child: Icon(
                 Icons.image_not_supported_outlined,

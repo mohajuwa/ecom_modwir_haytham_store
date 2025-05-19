@@ -1,2 +1,627 @@
-ok , see the project and make filter for FilteredOrdersView , I mean sort by date , up and down 
-and other sorts if its neccessery
+when I select car make from showSelectionModal it selects fine , but in the page it is not display after I select ,
+I want it to display after I select it from showSelectionModal to display as CarMakeItem :
+
+here are the codes : 
+[
+  import 'package:ecom_modwir/controller/service_items_controller.dart';
+import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+import 'package:ecom_modwir/data/model/cars/make_model.dart';
+import 'package:ecom_modwir/linkapi.dart';
+import 'package:ecom_modwir/view/widget/mytextbutton.dart';
+import 'package:ecom_modwir/view/widget/services/cars/selection_modal.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+// Car Make Slider
+class CarMakeSlider extends StatelessWidget {
+  final ProductByCarController controller;
+
+  const CarMakeSlider({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      children: [
+        SectionHeader(
+          title: 'make'.tr,
+          showAllButton: controller.carMakes.length > 10,
+          onShowAll: () => showSelectionModal(
+            context,
+            'all_makes'.tr,
+            controller.carMakes,
+            controller.selectCarMake,
+          ),
+        ),
+        SizedBox(
+          height: 80,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.carMakes.take(10).length,
+            itemBuilder: (context, index) => Obx(() => CarMakeItem(
+                  make: controller.carMakes[index],
+                  isSelected: controller.selectedMakeIndex.value == index,
+                  onTap: () => controller.selectCarMake(index),
+                  isDark: isDark,
+                )),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Car Model Slider
+class CarModelSlider extends StatelessWidget {
+  final ProductByCarController controller;
+
+  const CarModelSlider({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SectionHeader(
+          title: 'model'.tr,
+          showAllButton: controller.selectedModels.length > 10,
+          onShowAll: () => showSelectionModal(
+            context,
+            'all_models'.tr,
+            controller.selectedModels,
+            controller.selectCarModel,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: 35,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.selectedModels.take(10).length,
+              itemBuilder: (context, index) => Obx(() => CarModelItem(
+                    model: controller.selectedModels[index],
+                    isSelected: controller.selectedModelIndex.value == index,
+                    onTap: () => controller.selectCarModel(index),
+                    lang: controller.lang,
+                  )),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Shared Widgets
+class SectionHeader extends StatelessWidget {
+  final String title;
+  final bool showAllButton;
+  final VoidCallback onShowAll;
+
+  const SectionHeader({
+    super.key,
+    required this.title,
+    required this.showAllButton,
+    required this.onShowAll,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Text(title, style: MyTextStyle.smallBold(context)),
+          const Spacer(),
+          if (showAllButton)
+            MyTextButton(
+              text: 'show_more'.tr,
+              ontap: onShowAll,
+              paddinghorizontal: 0,
+              paddingvertical: 0,
+              textStyle: MyTextStyle.textButtonTow(context),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class CarMakeItem extends StatelessWidget {
+  final CarMake make;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const CarMakeItem({
+    super.key,
+    required this.make,
+    required this.isSelected,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: 85,
+        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColor.primaryColor.withOpacity(0.15)
+              : isDark
+                  ? Color(0xFF2A2A2A)
+                  : Colors.white,
+          border: Border.all(
+            color: isSelected ? AppColor.primaryColor : Colors.transparent,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+          boxShadow: [
+            if (!isSelected)
+              BoxShadow(
+                color: isDark
+                    ? Colors.black.withOpacity(0.2)
+                    : Colors.black.withOpacity(0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+              ),
+              child: make.logo.isEmpty ?? true
+                  ? MakeName(name: make.name)
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+                      child: Image.network(
+                        "${AppLink.carMakeLogo}/${make.logo}",
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => MakeName(name: make.name),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CarModelItem extends StatelessWidget {
+  final CarModel model;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final String lang;
+
+  const CarModelItem({
+    super.key,
+    required this.model,
+    required this.isSelected,
+    required this.onTap,
+    required this.lang,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        margin: const EdgeInsets.symmetric(horizontal: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColor.secondaryColor.withOpacity(0.1)
+              : isDark
+                  ? Color(0xFF2A2A2A)
+                  : Colors.white,
+          border: Border.all(
+            color: isSelected
+                ? AppColor.secondaryColor
+                : isDark
+                    ? Colors.grey[700]!
+                    : Colors.grey[300]!,
+          ),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.elliptical(10, 10),
+            topRight: Radius.circular(8),
+            bottomLeft: Radius.circular(8),
+            bottomRight: Radius.circular(8),
+          ),
+        ),
+        child: Text(
+          model.name[lang] ?? '',
+          style: MyTextStyle.smallBold(context).copyWith(
+            color: isSelected
+                ? AppColor.secondaryColor
+                : Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MakeName extends StatelessWidget {
+  final Map<String, String> name;
+
+  const MakeName({super.key, required this.name});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            name['en'] ?? 'N/A',
+            style: MyTextStyle.smallBold(context),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (name.containsKey('ar'))
+            Text(
+              name['ar']!,
+              style: MyTextStyle.smallBold(context),
+              textDirection: TextDirection.rtl,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+    );
+  }
+}
+import 'package:ecom_modwir/core/constant/color.dart';
+
+import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+
+import 'package:ecom_modwir/data/model/cars/make_model.dart';
+
+import 'package:ecom_modwir/linkapi.dart';
+
+import 'package:flutter/material.dart';
+
+import 'package:get/get.dart';
+
+void showSelectionModal<T>(
+  BuildContext context,
+  String title,
+  List<T> items,
+  Function(int) onSelect,
+) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.9,
+      snap: true,
+      snapSizes: const [0.5, 0.7, 0.9],
+      builder: (context, scrollController) => Container(
+        margin: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + kToolbarHeight,
+        ),
+        decoration: BoxDecoration(
+          color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: SelectionModal(
+          title: title,
+          items: items,
+          onSelect: (index) {
+            onSelect(index);
+
+            Navigator.pop(context);
+          },
+          scrollController: scrollController,
+          isDark: isDark,
+        ),
+      ),
+    ),
+  );
+}
+
+class SelectionModal<T> extends StatefulWidget {
+  final String title;
+
+  final List<T> items;
+
+  final Function(int) onSelect;
+
+  final ScrollController? scrollController;
+
+  final bool isDark;
+
+  const SelectionModal({
+    super.key,
+    required this.title,
+    required this.items,
+    required this.onSelect,
+    required this.isDark,
+    this.scrollController,
+  });
+
+  @override
+  State<SelectionModal<T>> createState() => _SelectionModalState<T>();
+}
+
+class _SelectionModalState<T> extends State<SelectionModal<T>> {
+  late List<T> filteredItems;
+
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    filteredItems = widget.items;
+
+    _searchController.addListener(_filterItems);
+  }
+
+  void _filterItems() {
+    final query = _searchController.text.toLowerCase();
+
+    setState(() {
+      filteredItems = widget.items.where((item) {
+        if (item is CarMake) {
+          return (item.name['en']?.toLowerCase().contains(query) ?? false) ||
+              (item.name['ar']?.toLowerCase().contains(query) ?? false);
+        }
+
+        if (item is CarModel) {
+          return (item.name['en']?.toLowerCase().contains(query) ?? false) ||
+              (item.name['ar']?.toLowerCase().contains(query) ?? false);
+        }
+
+        return false;
+      }).toList();
+    });
+  }
+
+  bool _isMakeSelection() {
+    return filteredItems.isNotEmpty && filteredItems.first is CarMake;
+  }
+
+  Widget _buildDragHandle() {
+    return Center(
+      child: Container(
+        width: 40,
+        height: 4,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: widget.isDark ? Colors.grey[700] : Colors.grey[300],
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        children: [
+          _buildDragHandle(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(widget.title, style: MyTextStyle.styleBold(context)),
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: widget.isDark ? Colors.white : Colors.black87,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _searchController,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+              decoration: InputDecoration(
+                hintText: 'search_here'.tr,
+                hintStyle: TextStyle(
+                  color: widget.isDark ? Colors.grey[600] : AppColor.grey,
+                ),
+                prefixIcon: Icon(Icons.search,
+                    color: widget.isDark ? Colors.grey[400] : AppColor.grey),
+                filled: true,
+                fillColor: widget.isDark ? Color(0xFF2A2A2A) : Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+                  borderSide: BorderSide(
+                      color: widget.isDark
+                          ? Colors.grey[700]!
+                          : Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+                  borderSide: BorderSide(
+                      color: widget.isDark
+                          ? Colors.grey[700]!
+                          : Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+                  borderSide: BorderSide(color: AppColor.primaryColor),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _isMakeSelection() ? _buildMakeGrid() : _buildModelList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMakeGrid() {
+    return GridView.builder(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 0.85,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+      ),
+      itemCount: filteredItems.length,
+      itemBuilder: (context, index) =>
+          _buildMakeItem(filteredItems[index] as CarMake, index),
+    );
+  }
+
+  Widget _buildModelList() {
+    return ListView.separated(
+      controller: widget.scrollController,
+      itemCount: filteredItems.length,
+      separatorBuilder: (_, __) => Divider(
+        color: widget.isDark ? Colors.grey[800] : AppColor.grey,
+        height: 1,
+        thickness: 1,
+      ),
+      itemBuilder: (context, index) =>
+          _buildModelItem(filteredItems[index] as CarModel, index),
+    );
+  }
+
+  Widget _buildMakeItem(CarMake make, int index) {
+    int originalIndex = widget.items
+        .indexWhere((item) => item is CarMake && item.makeId == make.makeId);
+
+    return InkWell(
+      onTap: () => widget.onSelect(originalIndex),
+      child: Container(
+        decoration: BoxDecoration(
+          color: widget.isDark ? Color(0xFF2A2A2A) : Colors.white,
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: widget.isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: make.logo.isNotEmpty
+                    ? Image.network(
+                        "${AppLink.carMakeLogo}/${make.logo}",
+                        width: 60,
+                        height: 60,
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.directions_car,
+                          size: 40,
+                          color:
+                              widget.isDark ? Colors.grey[400] : AppColor.grey2,
+                        ),
+                      )
+                    : Icon(
+                        Icons.directions_car,
+                        size: 40,
+                        color:
+                            widget.isDark ? Colors.grey[400] : AppColor.grey2,
+                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Column(
+                children: [
+                  Text(
+                    make.name['en'] ?? 'N/A',
+                    style: MyTextStyle.smallBold(context),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    make.name['ar'] ?? 'N/A',
+                    style: MyTextStyle.smallBold(context),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModelItem(CarModel model, int index) {
+    int originalIndex = widget.items.indexWhere(
+        (item) => item is CarModel && item.modelId == model.modelId);
+
+    return InkWell(
+      onTap: () => widget.onSelect(originalIndex),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                model.name['ar'] ?? 'N/A',
+                style: MyTextStyle.meduimBold(context),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                model.name['en'] ?? 'N/A',
+                style: MyTextStyle.meduimBold(context),
+                textAlign: TextAlign.end,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+]

@@ -1,4 +1,6 @@
 // lib/view/screen/orders/details.dart
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
+import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/order_details_model.dart';
 import 'package:ecom_modwir/view/widget/offers/order_rating_dialog.dart';
@@ -36,33 +38,33 @@ class OrdersDetails extends StatelessWidget {
                       // Order number and date
                       _buildOrderHeader(context, controller),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: AppDimensions.largeSpacing),
 
                       // Vehicle information
                       if (controller.enhancedOrder?.vehicleId != null) ...[
                         _buildSectionTitle(context, 'vehicle_information'.tr),
                         _buildVehicleInfo(context, controller),
-                        const SizedBox(height: 24),
+                        SizedBox(height: AppDimensions.largeSpacing),
                       ],
 
                       // Services
                       _buildSectionTitle(context, 'services_text'.tr),
                       _buildServicesInfo(context, controller),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: AppDimensions.largeSpacing),
 
                       // Delivery information (if delivery order)
                       if (controller.enhancedOrder?.orderType == 0) ...[
                         _buildSectionTitle(context, 'delivery_information'.tr),
                         _buildDeliveryInfo(context, controller),
-                        const SizedBox(height: 24),
+                        SizedBox(height: AppDimensions.largeSpacing),
                       ],
 
                       // Vendor information
                       if (controller.enhancedOrder?.vendorId != null) ...[
                         _buildSectionTitle(context, 'service_provider'.tr),
                         _buildVendorInfo(context, controller),
-                        const SizedBox(height: 24),
+                        SizedBox(height: AppDimensions.largeSpacing),
                       ],
 
                       // Payment information
@@ -74,7 +76,7 @@ class OrdersDetails extends StatelessWidget {
                       // Actions
                       _buildActionsButton(context, controller),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: AppDimensions.largeSpacing),
                     ],
                   ),
                 ),
@@ -102,27 +104,30 @@ class OrdersDetails extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       color: statusColor.withOpacity(0.1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Row(
               children: [
-                Text(
-                  '${'order_number'.tr}#${enhancedOrder.orderNumber}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
+                Text('${'order_number'.tr}#${enhancedOrder.orderNumber}',
+                    style:
+                        MyTextStyle.notBold(context, letterSpacing: 2).copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.grey,
+                    )),
                 const Spacer(),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius:
+                        BorderRadius.circular(AppDimensions.borderRadius),
                   ),
                   child: Text(
                     orderStatus.tr,
@@ -220,7 +225,7 @@ class OrdersDetails extends StatelessWidget {
                     '${enhancedOrder.makeName ?? ''} ${enhancedOrder.modelName ?? ''}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
                 ),
@@ -275,7 +280,7 @@ class OrdersDetails extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
           child: Column(
             children: [
@@ -341,7 +346,7 @@ class OrdersDetails extends StatelessWidget {
                       color: AppColor.primaryColor,
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(height: AppDimensions.smallSpacing),
                     Expanded(
                       child: Text(
                         enhancedOrder.serviceName!,
@@ -367,7 +372,7 @@ class OrdersDetails extends StatelessWidget {
                         color: AppColor.primaryColor,
                         size: 16,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(height: AppDimensions.smallSpacing),
                       Expanded(
                         child: Text(
                           serviceName,
@@ -394,7 +399,7 @@ class OrdersDetails extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${'currency'.tr}  ${enhancedOrder.servicesTotalPrice ?? '0.00'}',
+                  '${'currency_symbol'.tr}  ${enhancedOrder.servicesTotalPrice ?? '0.00'}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColor.primaryColor,
@@ -413,7 +418,7 @@ class OrdersDetails extends StatelessWidget {
                     color: AppColor.primaryColor,
                     size: 20,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(height: AppDimensions.smallSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,7 +460,7 @@ class OrdersDetails extends StatelessWidget {
                   Icons.location_on_outlined,
                   color: AppColor.primaryColor,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(height: AppDimensions.smallSpacing),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -473,11 +478,11 @@ class OrdersDetails extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppDimensions.mediumSpacing),
             if (enhancedOrder.addressLatitude != null &&
                 enhancedOrder.addressLongitude != null)
               ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
                 child: SizedBox(
                   height: 200,
                   child: GoogleMap(
@@ -603,7 +608,7 @@ class OrdersDetails extends StatelessWidget {
             const Divider(height: 16),
             _buildInfoRow(
               'payment_status'.tr,
-              enhancedOrder.paymentStatus ?? 'pending'.tr,
+              "${enhancedOrder.paymentStatus}".tr,
               valueColor: _getPaymentStatusColor(enhancedOrder.paymentStatus),
             ),
           ],
@@ -616,9 +621,13 @@ class OrdersDetails extends StatelessWidget {
       BuildContext context, OrdersDetailsController controller) {
     final enhancedOrder = controller.enhancedOrder!;
 
-    if (enhancedOrder.orderStatus == '0') {
+    if (enhancedOrder.orderStatus == 0) {
       return ElevatedButton.icon(
-        onPressed: () => Get.back(),
+        onPressed: () {
+          controller.filteredOrdersController
+              .cancelOrder(enhancedOrder.orderId.toString());
+          Get.back();
+        },
         icon: Icon(Icons.cancel_outlined),
         label: Text('cancel_order'.tr),
         style: ElevatedButton.styleFrom(
@@ -626,11 +635,11 @@ class OrdersDetails extends StatelessWidget {
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
         ),
       );
-    } else if (enhancedOrder.orderStatus == '2') {
+    } else if (enhancedOrder.orderStatus == 2) {
       return ElevatedButton.icon(
         onPressed: () => Get.toNamed(
           '/orders_tracking',
@@ -643,11 +652,11 @@ class OrdersDetails extends StatelessWidget {
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
         ),
       );
-    } else if (enhancedOrder.orderStatus == '3') {
+    } else if (enhancedOrder.orderStatus == 4) {
       return ElevatedButton.icon(
         onPressed: () =>
             showDialogRating(Get.context!, enhancedOrder.orderId.toString()),
@@ -658,7 +667,7 @@ class OrdersDetails extends StatelessWidget {
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
         ),
       );
@@ -672,7 +681,7 @@ class OrdersDetails extends StatelessWidget {
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
         ),
       );

@@ -61,8 +61,8 @@ class FaultTypeController extends GetxController {
 
       if (StatusRequest.success == statusRequest) {
         if (response['status'] == "success" &&
-            response['sub_services'] != null) {
-          List faultTypesData = response['sub_services'];
+            response['sub_services_fault_type'] != null) {
+          List faultTypesData = response['sub_services_fault_type'];
 
           // Clear previous fault types and reset selection
           faultTypes.clear();

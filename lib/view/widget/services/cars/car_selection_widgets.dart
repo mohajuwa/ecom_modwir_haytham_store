@@ -1,4 +1,5 @@
 import 'package:ecom_modwir/controller/service_items_controller.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/data/model/cars/make_model.dart';
@@ -27,20 +28,48 @@ class CarMakeSlider extends StatelessWidget {
             context,
             'all_makes'.tr,
             controller.carMakes,
-            controller.selectCarMake,
+            (index) {
+              // Rearrange the list to show selected item first
+              final selectedMake = controller.carMakes[index];
+              controller.selectCarMake(index);
+
+              // Store the original list before reordering
+              final originalMakes = List<CarMake>.from(controller.carMakes);
+
+              // Create a new list with selected make first, followed by all others
+              final reorderedMakes = <CarMake>[selectedMake];
+              for (var make in originalMakes) {
+                if (make.makeId != selectedMake.makeId) {
+                  reorderedMakes.add(make);
+                }
+              }
+
+              // Update the controller's carMakes list with reordered list
+              controller.carMakes.clear();
+              controller.carMakes.addAll(reorderedMakes);
+
+              // Force rebuild with the new order
+              controller.selectedMakeIndex.value = 0;
+              controller.update();
+            },
           ),
         ),
         SizedBox(
           height: 80,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: controller.carMakes.take(10).length,
-            itemBuilder: (context, index) => Obx(() => CarMakeItem(
-                  make: controller.carMakes[index],
-                  isSelected: controller.selectedMakeIndex.value == index,
-                  onTap: () => controller.selectCarMake(index),
+          child: GetBuilder<ProductByCarController>(
+            init: controller,
+            builder: (ctrl) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: ctrl.carMakes.take(10).length,
+                itemBuilder: (context, index) => CarMakeItem(
+                  make: ctrl.carMakes[index],
+                  isSelected: ctrl.selectedMakeIndex.value == index,
+                  onTap: () => ctrl.selectCarMake(index),
                   isDark: isDark,
-                )),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -65,22 +94,51 @@ class CarModelSlider extends StatelessWidget {
             context,
             'all_models'.tr,
             controller.selectedModels,
-            controller.selectCarModel,
+            (index) {
+              // Rearrange the list to show selected item first
+              final selectedModel = controller.selectedModels[index];
+              controller.selectCarModel(index);
+
+              // Store the original list before reordering
+              final originalModels =
+                  List<CarModel>.from(controller.selectedModels);
+
+              // Create a new list with selected model first, followed by all others
+              final reorderedModels = <CarModel>[selectedModel];
+              for (var model in originalModels) {
+                if (model.modelId != selectedModel.modelId) {
+                  reorderedModels.add(model);
+                }
+              }
+
+              // Update the controller's selectedModels list with reordered list
+              controller.selectedModels.clear();
+              controller.selectedModels.addAll(reorderedModels);
+
+              // Force rebuild with the new order
+              controller.selectedModelIndex.value = 0;
+              controller.update();
+            },
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             height: 35,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.selectedModels.take(10).length,
-              itemBuilder: (context, index) => Obx(() => CarModelItem(
-                    model: controller.selectedModels[index],
-                    isSelected: controller.selectedModelIndex.value == index,
-                    onTap: () => controller.selectCarModel(index),
-                    lang: controller.lang,
-                  )),
+            child: GetBuilder<ProductByCarController>(
+              init: controller,
+              builder: (ctrl) {
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: ctrl.selectedModels.take(10).length,
+                  itemBuilder: (context, index) => CarModelItem(
+                    model: ctrl.selectedModels[index],
+                    isSelected: ctrl.selectedModelIndex.value == index,
+                    onTap: () => ctrl.selectCarModel(index),
+                    lang: ctrl.lang,
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -149,20 +207,18 @@ class CarMakeItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColor.primaryColor.withOpacity(0.15)
-              : isDark
-                  ? Color(0xFF2A2A2A)
-                  : Colors.white,
+              : Colors.white,
           border: Border.all(
             color: isSelected ? AppColor.primaryColor : Colors.transparent,
             width: 2,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           boxShadow: [
             if (!isSelected)
               BoxShadow(
                 color: isDark
                     ? Colors.black.withOpacity(0.2)
-                    : Colors.black.withOpacity(0.05),
+                    : Colors.black.withOpacity(0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -175,13 +231,14 @@ class CarMakeItem extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
               ),
               child: make.logo.isEmpty ?? true
                   ? MakeName(name: make.name)
                   : ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.borderRadius),
                       child: Image.network(
                         "${AppLink.carMakeLogo}/${make.logo}",
                         fit: BoxFit.contain,

@@ -1,4 +1,5 @@
 import 'package:ecom_modwir/controller/onboarding_controller.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/datasource/static/static.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,10 @@ class CustomDotControllerOnBoarding extends StatelessWidget {
                           width: controller.currentPage == index ? 20 : 5,
                           height: 6,
                           decoration: BoxDecoration(
-                              color: AppColor.primaryColor,
-                              borderRadius: BorderRadius.circular(10)),
+                            color: AppColor.primaryColor,
+                            borderRadius: BorderRadius.circular(
+                                AppDimensions.borderRadius),
+                          ),
                         ))
               ],
             ));
