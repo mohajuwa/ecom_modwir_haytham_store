@@ -22,7 +22,20 @@ class CustomButtonAppBar extends StatelessWidget {
       onTap: onPressed,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: EdgeInsets.symmetric(
+          vertical: AppDimensions.getResponsiveHeight(
+            context,
+            10,
+            minHeight: 8,
+            maxHeight: 14,
+          ),
+          horizontal: AppDimensions.getResponsiveWidth(
+            context,
+            20,
+            minWidth: 12,
+            maxWidth: 28,
+          ),
+        ),
         decoration: BoxDecoration(
           color: active
               ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
@@ -37,18 +50,39 @@ class CustomButtonAppBar extends StatelessWidget {
               color: active
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              size: 20,
+              size: AppDimensions.getResponsiveWidth(
+                context,
+                AppDimensions.defaultIconSize,
+                minWidth: AppDimensions.smallButtonIconSize,
+                maxWidth: AppDimensions.iconSize,
+              ),
             ),
-            const SizedBox(height: 3),
+            SizedBox(
+              height: AppDimensions.getResponsiveHeight(
+                context,
+                3,
+                minHeight: 2,
+                maxHeight: 5,
+              ),
+            ),
             Text(
               textbutton.tr,
               style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
+                fontSize: AppDimensions.getResponsiveWidth(
+                  context,
+                  10,
+                  minWidth: 8,
+                  maxWidth: 12,
+                ),
+                fontWeight: FontWeight.normal,
+                fontFamily: 'Khebrat',
                 color: active
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

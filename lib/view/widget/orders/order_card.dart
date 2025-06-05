@@ -1,15 +1,19 @@
+// lib/view/widget/orders/order_card.dart (or your chosen file path)
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/core/constant/color.dart'; // Assuming AppColor is defined here
 import 'package:ecom_modwir/core/functions/format_currency.dart';
-import 'package:ecom_modwir/data/model/orders_model.dart';
+import 'package:ecom_modwir/data/model/orders_model.dart'; // Using the provided OrdersModel
+import 'package:ecom_modwir/view/widget/orders/scheduled_order_info_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
+import 'package:jiffy/jiffy.dart'; // For relative time formatting
+
+// Import the reusable banner widget
 
 class OrderCard extends StatelessWidget {
   final OrdersModel orderModel;
-  final VoidCallback onTap;
-  final VoidCallback? onAction;
+  final VoidCallback onTap; // Callback for when the card itself is tapped
+  final VoidCallback? onAction; // Callback for the specific action button
   final bool showActions;
 
   const OrderCard({
@@ -17,111 +21,143 @@ class OrderCard extends StatelessWidget {
     required this.orderModel,
     required this.onTap,
     this.onAction,
-    this.showActions = true,
+    this.showActions = true, // By default, show action buttons
   });
 
   @override
   Widget build(BuildContext context) {
-    double servicesTotalPrice = 0.0;
-    if (orderModel.totalAmount != null) {
-      servicesTotalPrice =
-          double.tryParse(orderModel.totalAmount.toString()) ?? 0.0;
+    final theme = Theme.of(context);
+    final textColor = theme.textTheme.bodyMedium?.color
+        ?.withOpacity(0.7); // Softer text color
+    final orderStatus = orderModel.orderStatus ?? -1; // Default to -1 if null
+
+    String orderPlacedDate = 'unknown_date'.tr;
+    if (orderModel.orderDate != null && orderModel.orderDate!.isNotEmpty) {
+      try {
+        Jiffy.setLocale(Get.locale?.languageCode ?? 'en');
+        orderPlacedDate = Jiffy.parse(orderModel.orderDate!).fromNow();
+      } catch (e) {
+        print(
+            "Error parsing orderDate with Jiffy: ${orderModel.orderDate} - $e");
+        orderPlacedDate = orderModel.orderDate!; // Fallback to raw date
+      }
     }
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
+      elevation: 2.5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
       ),
+      shadowColor: AppColor.blackColor.withOpacity(0.1), // Using AppColor
+      margin: const EdgeInsets.only(bottom: AppDimensions.mediumSpacing - 2),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
+        splashColor: AppColor.primaryColor.withOpacity(0.1),
+        highlightColor: AppColor.primaryColor.withOpacity(0.05),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(AppDimensions.mediumSpacing),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header row
+              // Section 1: Order Number, Status, and Placed Date
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStatusIndicator(context),
-                  SizedBox(height: AppDimensions.smallSpacing),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3.0),
+                    child: _buildStatusDot(orderStatus),
+                  ),
+                  const SizedBox(width: AppDimensions.smallSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${'order_number'.tr}#${orderModel.orderNumber}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                          '${'order_number'.tr} # ${orderModel.orderNumber ?? 'N/A'}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Khebrat',
+                            color: theme.textTheme.bodyLarge?.color,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Text(
-                          _getStatusText().tr,
+                          _statusText(orderStatus).tr,
                           style: TextStyle(
-                            color: _getStatusColor(context),
-                            fontWeight: FontWeight.bold,
                             fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: _statusColor(
+                                orderStatus), // Uses updated _statusColor
+                            fontFamily: 'Khebrat',
                           ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: AppDimensions.smallSpacing),
                   Text(
-                    Jiffy.parse(orderModel.orderDate ?? '').fromNow(),
+                    orderPlacedDate,
                     style: TextStyle(
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.color
-                          ?.withOpacity(0.6),
-                      fontSize: 12,
+                      fontSize: 11,
+                      fontFamily: 'Khebrat',
+                      color: textColor,
                     ),
                   ),
                 ],
               ),
 
-              const Divider(height: 24),
+              // Section 2: Scheduled Information (if applicable)
+              if (orderModel.isScheduled == 1 &&
+                  orderModel.scheduledDatetime != null &&
+                  orderModel.scheduledDatetime!.isNotEmpty) ...[
+                const SizedBox(height: AppDimensions.smallSpacing + 2),
+                ScheduledOrderInfoBanner(
+                  isScheduled: orderModel.isScheduled,
+                  scheduledDatetime: orderModel.scheduledDatetime,
+                ),
+              ],
 
-              // Order details
+              const Divider(
+                  height: AppDimensions.largeSpacing - 4, thickness: 0.7),
+
+              // Section 3: Order Type & Payment Method
               Row(
                 children: [
-                  Expanded(
-                    child: _buildDetailItem(
-                      context,
-                      'order_type'.tr,
-                      _getOrderType().tr,
-                      Icons.local_shipping_outlined,
-                    ),
+                  _buildDetail(
+                    context: context,
+                    icon: Icons.local_shipping_outlined,
+                    label: 'order_type'.tr,
+                    value: _orderType(orderModel.orderType).tr,
                   ),
-                  Expanded(
-                    child: _buildDetailItem(
-                      context,
-                      'payment_method'.tr,
-                      _getPaymentMethod().tr,
-                      Icons.payment_outlined,
-                    ),
+                  const SizedBox(width: AppDimensions.mediumSpacing),
+                  _buildDetail(
+                    context: context,
+                    icon: Icons.payment_outlined,
+                    label: 'payment_method'.tr,
+                    value: _paymentMethod(orderModel.ordersPaymentmethod).tr,
                   ),
                 ],
               ),
+              const SizedBox(height: AppDimensions.mediumSpacing),
 
-              SizedBox(height: AppDimensions.mediumSpacing),
-
-              // Total and actions
+              // Section 4: Total Price & Action Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    formatCurrency(servicesTotalPrice),
+                    formatCurrency(
+                        double.tryParse(orderModel.totalAmount ?? '0') ?? 0.0),
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      color: AppColor.greenColor,
                       fontSize: 16,
-                      color: AppColor.primaryColor,
+                      fontFamily: 'Khebrat',
                     ),
                   ),
-                  if (showActions) _buildActionButton(context),
+                  if (showActions && onAction != null)
+                    _buildAction(context, orderStatus),
                 ],
               ),
             ],
@@ -131,155 +167,176 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIndicator(BuildContext context) {
-    return Container(
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: _getStatusColor(context),
+  Widget _buildStatusDot(int status) => Container(
+        width: 10,
+        height: 10,
+        margin: const EdgeInsets.only(top: 1),
+        decoration: BoxDecoration(
+          color: _statusColor(status), // Uses updated _statusColor
+          shape: BoxShape.circle,
+        ),
+      );
+
+  Widget _buildDetail({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String value,
+    Color? color,
+  }) {
+    final theme = Theme.of(context);
+    final defaultTextColor =
+        theme.textTheme.bodyMedium?.color?.withOpacity(0.7);
+
+    return Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, size: 17, color: color ?? defaultTextColor),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'Khebrat',
+                      color: color ?? defaultTextColor,
+                    )),
+                const SizedBox(height: 1),
+                Text(value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'Khebrat',
+                      fontWeight: FontWeight.w500,
+                      color: theme.textTheme.bodyLarge?.color?.withOpacity(0.9),
+                    )),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildDetailItem(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-  ) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 16,
-          color:
-              Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+  Widget _buildAction(BuildContext context, int status) {
+    IconData iconData;
+    String labelKey;
+    Color actionColor;
+    VoidCallback? effectiveOnAction = onAction;
+
+    switch (status) {
+      case 0: // Pending
+        iconData = Icons.cancel_outlined;
+        labelKey = 'cancel_order_short';
+        actionColor = AppColor.deleteColor; // Using AppColor
+        break;
+      case 2: // On The Way
+        iconData = Icons.track_changes_outlined;
+        labelKey = 'track_order_short';
+        actionColor = AppColor.primaryColor; // Using AppColor
+        break;
+      case 4: // Completed/Archived
+        iconData = Icons.star_border_outlined;
+        labelKey = 'rate_order_short';
+        actionColor = AppColor.accentColor; // Using AppColor for rating
+        break;
+      default:
+        iconData = Icons.read_more_outlined;
+        labelKey = 'view_details_short';
+        actionColor = AppColor.grey; // Using AppColor
+        effectiveOnAction = onTap;
+        break;
+    }
+
+    if (effectiveOnAction == null) return const SizedBox.shrink();
+
+    return OutlinedButton.icon(
+      onPressed: effectiveOnAction,
+      icon: Icon(iconData, size: 16),
+      label: Text(
+        labelKey.tr,
+        style: const TextStyle(
+          fontSize: 12,
+          fontFamily: 'Khebrat',
         ),
-        const SizedBox(width: 4),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.color
-                    ?.withOpacity(0.6),
-              ),
-            ),
-            Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+      ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: actionColor,
+        side: BorderSide(color: actionColor.withOpacity(0.6), width: 1.2),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        minimumSize: const Size(0, 32),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.smallSpacing),
         ),
-      ],
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
     );
   }
 
-  Widget _buildActionButton(BuildContext context) {
-    if (orderModel.orderStatus == 0) {
-      return OutlinedButton.icon(
-        onPressed: onAction,
-        icon: const Icon(Icons.delete_outline, size: 16),
-        label: Text('cancel'.tr),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.redAccent,
-          side: const BorderSide(color: Colors.redAccent),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-          minimumSize: const Size(0, 36),
-        ),
-      );
-    } else if (orderModel.orderStatus == 2) {
-      return OutlinedButton.icon(
-        onPressed: onAction,
-        icon: const Icon(Icons.map_outlined, size: 16),
-        label: Text('track'.tr),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColor.primaryColor,
-          side: BorderSide(color: AppColor.primaryColor),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-          minimumSize: const Size(0, 36),
-        ),
-      );
-    } else {
-      return OutlinedButton.icon(
-        onPressed: onTap,
-        icon: const Icon(Icons.visibility_outlined, size: 16),
-        label: Text('details'.tr),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColor.primaryColor,
-          side: BorderSide(color: AppColor.primaryColor),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-          minimumSize: const Size(0, 36),
-        ),
-      );
-    }
-  }
-
-  String _getOrderType() {
-    switch (orderModel.orderType) {
+  String _orderType(int? type) {
+    switch (type) {
       case 0:
-        return 'delivery'.tr;
+        return 'delivery';
       case 1:
-        return 'pickup'.tr;
+        return 'pickup';
       default:
-        return 'unknown'.tr;
+        return 'unknown_type';
     }
   }
 
-  String _getPaymentMethod() {
-    switch (orderModel.ordersPaymentmethod) {
+  String _paymentMethod(int? method) {
+    switch (method) {
       case 0:
-        return 'cash'.tr;
+        return 'cash_on_delivery_short';
       case 1:
-        return 'card'.tr;
+        return 'card_payment_short';
       default:
-        return 'unknown'.tr;
+        return 'unknown_payment';
     }
   }
 
-  String _getStatusText() {
-    switch (orderModel.orderStatus) {
+  String _statusText(int status) {
+    switch (status) {
       case 0:
-        return 'order_status_pending'.tr;
+        return 'order_status_pending';
       case 1:
-        return 'order_status_preparing'.tr;
+        return 'order_status_approved';
       case 2:
-        return 'order_status_on_the_way'.tr;
+        return 'order_status_on_the_way';
       case 3:
-        return 'order_status_delivered'.tr;
+        return 'order_status_delivered';
       case 4:
-        return 'order_status_archived'.tr;
+        return 'order_status_completed';
       case 5:
-        return 'order_status_canceled'.tr;
+        return 'order_status_canceled';
+      case 6:
+        return 'order_status_scheduled';
       default:
-        return 'unknown'.tr;
+        return 'unknown_status';
     }
   }
 
-  Color _getStatusColor(BuildContext context) {
-    switch (orderModel.orderStatus) {
+  Color _statusColor(int status) {
+    switch (status) {
       case 0:
-        return Colors.amber;
+        return AppColor.accentColor; // Pending (using accentColor - yellow)
       case 1:
-        return Colors.blue;
+        return AppColor.fourthColor; // Approved (using fourthColor - a blue)
       case 2:
-        return Colors.purple;
+        return AppColor.deepblue; // On the way (using deepblue)
       case 3:
-        return Colors.grey;
+        return AppColor.greenColor; // Delivered (using greenColor)
       case 4:
-        return Colors.green;
+        return AppColor
+            .secondaryColor; // Completed/Archived (using secondaryColor - a beige/brown)
       case 5:
-        return Colors.red;
+        return AppColor.deleteColor; // Canceled (using deleteColor - red)
+      case 6:
+        return AppColor.thirdColor; // Scheduled (using thirdColor - light blue)
       default:
-        return Colors.grey;
+        return AppColor.grey; // Default
     }
   }
 }

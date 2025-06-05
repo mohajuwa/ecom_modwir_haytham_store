@@ -1,5 +1,4 @@
-// lib/controller/fault_type_controller.dart
-
+// Updated FaultTypeController with proper handling for services without fault types
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
@@ -20,6 +19,9 @@ class FaultTypeController extends GetxController {
 
   // Track if fault types are already loaded to prevent unnecessary reloads
   bool isLoaded = false;
+
+  // NEW: Track if this service actually has fault types available
+  bool hasFaultTypesAvailable = false;
 
   FaultTypeModel? get selectedFaultType {
     if (selectedFaultTypeIndex.value >= 0 &&
@@ -44,7 +46,7 @@ class FaultTypeController extends GetxController {
 
   Future<void> loadFaultTypes(String newServiceId) async {
     // Skip loading if the service ID is the same and already loaded
-    if (newServiceId == serviceId && isLoaded && faultTypes.isNotEmpty) {
+    if (newServiceId == serviceId && isLoaded) {
       return;
     }
 
@@ -60,30 +62,65 @@ class FaultTypeController extends GetxController {
       statusRequest = handlingData(response);
 
       if (StatusRequest.success == statusRequest) {
-        if (response['status'] == "success" &&
-            response['sub_services_fault_type'] != null) {
-          List faultTypesData = response['sub_services_fault_type'];
-
+        if (response['status'] == "success") {
           // Clear previous fault types and reset selection
           faultTypes.clear();
           selectedFaultTypeIndex.value = -1;
 
-          // Load new fault types
-          faultTypes = faultTypesData
-              .map((item) => FaultTypeModel.fromJson(item))
-              .toList();
+          // Check if fault types data exists
+          if (response['sub_services_fault_type'] != null) {
+            List faultTypesData = response['sub_services_fault_type'];
 
-          isLoaded = true;
+            if (faultTypesData.isNotEmpty) {
+              // Load fault types - this service HAS fault types
+              faultTypes = faultTypesData
+                  .map((item) => FaultTypeModel.fromJson(item))
+                  .toList();
+
+              hasFaultTypesAvailable = true;
+              isLoaded = true;
+              statusRequest = StatusRequest.success;
+
+              print(
+                  "✅ Loaded ${faultTypes.length} fault types for service $serviceId");
+            } else {
+              // Empty fault types array - this service doesn't have fault types
+              hasFaultTypesAvailable = false;
+              isLoaded = true;
+              statusRequest =
+                  StatusRequest.success; // Important: still success!
+
+              print(
+                  "ℹ️ Service $serviceId has no fault types - this is normal for some services");
+            }
+          } else {
+            // No fault types field in response - this service doesn't support fault types
+            hasFaultTypesAvailable = false;
+            isLoaded = true;
+            statusRequest = StatusRequest.success; // Important: still success!
+
+            print("ℹ️ Service $serviceId doesn't support fault types");
+          }
         } else {
+          // API returned error status
           statusRequest = StatusRequest.failure;
+          hasFaultTypesAvailable = false;
           isLoaded = false;
+
+          print(
+              "❌ API error loading fault types for service $serviceId: ${response['message'] ?? 'Unknown error'}");
         }
       } else {
+        // Network or other error
+        hasFaultTypesAvailable = false;
         isLoaded = false;
+
+        print("❌ Network error loading fault types for service $serviceId");
       }
     } catch (e) {
-      print("Error loading fault types: $e");
+      print("❌ Exception loading fault types for service $serviceId: $e");
       statusRequest = StatusRequest.failure;
+      hasFaultTypesAvailable = false;
       isLoaded = false;
     }
 
@@ -121,5 +158,15 @@ class FaultTypeController extends GetxController {
     if (newServiceId != serviceId) {
       loadFaultTypes(newServiceId);
     }
+  }
+
+  // NEW: Helper method to check if fault types are required for this service
+  bool areFaultTypesRequired() {
+    return hasFaultTypesAvailable && faultTypes.isNotEmpty;
+  }
+
+  // NEW: Helper method to check if fault types are available but none selected
+  bool areFaultTypesRequiredButNotSelected() {
+    return areFaultTypesRequired() && selectedFaultTypeIndex.value < 0;
   }
 }

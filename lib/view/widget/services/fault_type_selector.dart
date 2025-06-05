@@ -45,7 +45,7 @@ class FaultTypeSelector extends StatelessWidget {
                     ),
                   ),
                   _buildFaultTypeChips(context, controller),
-                  SizedBox(height: AppDimensions.mediumSpacing),
+                  const SizedBox(height: AppDimensions.mediumSpacing),
                 ],
               ),
       ),
@@ -96,7 +96,7 @@ class FaultTypeSelector extends StatelessWidget {
                 : isDark
                     ? Colors.white
                     : Colors.black87,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: isSelected ? FontWeight.normal : FontWeight.normal,
             fontSize: 9,
           ),
         ),

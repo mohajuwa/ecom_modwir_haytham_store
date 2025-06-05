@@ -1,7 +1,7 @@
 // lib/view/widget/home/home_offers_carousel.dart
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_modwir/controller/home_controller.dart';
-import 'package:ecom_modwir/core/class/handlingdataview.dart';
+import 'package:ecom_modwir/core/class/handling_dkelton.dart';
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
@@ -20,7 +20,7 @@ class HomeOffersCarousel extends StatelessWidget {
     Get.put(HomeControllerImp());
 
     return GetBuilder<HomeControllerImp>(
-      builder: (controller) => HandlingDataView(
+      builder: (controller) => HandlingSkeletonView(
         statusRequest: controller.statusRequest,
         widget: controller.offers.isEmpty
             ? const SizedBox.shrink()
@@ -135,7 +135,8 @@ class HomeOffersCarousel extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14, // Reduced from 18 to 14
-                        fontWeight: FontWeight.bold,
+                        fontFamily: "Khebrat",
+                        fontWeight: FontWeight.normal,
                       ),
                       maxLines: 1, // Reduced from 2 to 1
                       overflow: TextOverflow.ellipsis,
@@ -145,7 +146,7 @@ class HomeOffersCarousel extends StatelessWidget {
                         description,
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 12, // Reduced from 14 to 12
+                          fontSize: 9, // Reduced from 14 to 12
                         ),
                         maxLines: 1, // Reduced from 2 to 1
                         overflow: TextOverflow.ellipsis,
@@ -163,8 +164,9 @@ class HomeOffersCarousel extends StatelessWidget {
                         'view_offer'.tr,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
                           fontSize: 10, // Reduced from 12 to 10
+                          fontFamily: "Khebrat",
+                          fontWeight: FontWeight.normal,
                         ),
                       ),
                     ),

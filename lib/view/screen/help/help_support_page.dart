@@ -141,7 +141,7 @@ class HelpSupportPage extends GetView<HelpSupportController> {
             color: AppColor.primaryColor,
           ),
         ),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         ...children,
       ],
     );

@@ -66,12 +66,12 @@ class NotificationsView extends StatelessWidget {
             color:
                 Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             'no_notifications'.tr,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.smallSpacing),
           Text(
             'notifications_will_appear_here'.tr,
             style: Theme.of(context).textTheme.bodyMedium,
@@ -89,7 +89,7 @@ class NotificationsView extends StatelessWidget {
   ) {
     final relativeTime =
         Jiffy.parse(notification['notification_datetime'] ?? '').fromNow();
-    final bool isUnread = notification['notification_read'] == '0';
+    final bool isUnread = notification['notification_read'].toString() == '0';
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -157,7 +157,7 @@ class NotificationsView extends StatelessWidget {
                         color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppDimensions.smallSpacing),
                     Text(
                       relativeTime,
                       style: TextStyle(
@@ -199,18 +199,22 @@ class NotificationsView extends StatelessWidget {
 
   void _handleNotificationTap(
       BuildContext context, Map<String, dynamic> notification) {
-    // Extract order ID from notification data if available
+    final controller = Get.find<NotificationController>();
+
+    // ✅ تأكد أن الإشعار غير مقروء
+    if (notification['notification_read'].toString() == '0') {
+      final String notificationId = notification['notification_id'].toString();
+      controller.markAsRead(notificationId);
+    }
+
+    // 👇 هذا الجزء كما هو منطقك تمامًا
     final orderIdStr = notification['notification_order_id'];
 
     if (orderIdStr != null) {
-      // Convert to int
       final orderId = int.tryParse(orderIdStr.toString());
 
       if (orderId != null) {
-        // Create a minimal OrdersModel with just the ID
         final order = OrdersModel(orderId: orderId);
-
-        // Navigate to order details
         Get.toNamed(
           AppRoute.detailsOrders,
           arguments: {"ordersmodel": order},

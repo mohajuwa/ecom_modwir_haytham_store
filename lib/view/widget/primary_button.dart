@@ -37,7 +37,8 @@ class PrimaryButton extends StatelessWidget {
         height: 50,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: backgroundColor ?? AppColor.primaryColor,
+          color: backgroundColor ??
+              (isDark ? AppColor.primaryColor : AppColor.blackColor),
           borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           boxShadow: [
             BoxShadow(
@@ -60,7 +61,12 @@ class PrimaryButton extends StatelessWidget {
                     ),
                   ),
                 )
-              : Text(text, style: MyTextStyle.meduimBold(context)),
+              : Text(text,
+                  style: MyTextStyle.meduimBold(context).copyWith(
+                      fontFamily: "Khebrat",
+                      fontWeight: FontWeight.normal,
+                      color: AppColor.white,
+                      fontSize: 14)),
         ),
       ),
     );

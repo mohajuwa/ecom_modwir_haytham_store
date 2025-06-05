@@ -15,28 +15,20 @@ class NotificationBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Try to find the NotificationController if it exists
-    NotificationController? controller;
-    try {
-      controller = Get.find<NotificationController>();
-    } catch (e) {
-      // Controller not found, no problem
-    }
+    return GetBuilder<NotificationController>(
+      builder: (controller) {
+        if (!Get.isRegistered<NotificationController>()) {
+          return child;
+        }
 
-    // If controller exists, show badge with count
-    if (controller != null) {
-      return GetBuilder<NotificationController>(
-        builder: (ctrl) => Stack(
-          clipBehavior: Clip.none, // Allow overflow
+        return Stack(
+          clipBehavior: Clip.none,
           children: [
-            // The main child widget (typically an icon)
             GestureDetector(
               onTap: onPressed,
               child: child,
             ),
-
-            // The badge (only shown if there are unread notifications)
-            if (ctrl.unreadCount > 0)
+            if (controller.unreadCount > 0)
               Positioned(
                 right: -5,
                 top: -5,
@@ -51,25 +43,21 @@ class NotificationBadge extends StatelessWidget {
                     minHeight: 18,
                   ),
                   child: Text(
-                    ctrl.unreadCount > 9 ? '9+' : ctrl.unreadCount.toString(),
+                    controller.unreadCount > 9
+                        ? '9+'
+                        : controller.unreadCount.toString(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.normal,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
           ],
-        ),
-      );
-    } else {
-      // Just return the child without badge if controller not found
-      return GestureDetector(
-        onTap: onPressed,
-        child: child,
-      );
-    }
+        );
+      },
+    );
   }
 }

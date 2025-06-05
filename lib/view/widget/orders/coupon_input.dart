@@ -145,7 +145,7 @@ class CouponInputWidget extends StatelessWidget {
                 discountText!,
                 style: TextStyle(
                   color: Colors.green,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   fontSize: 13,
                 ),
               ),
@@ -179,7 +179,7 @@ class CouponInputWidget extends StatelessWidget {
                   "remove".tr,
                   style: TextStyle(
                     color: isDark ? Colors.white : Colors.red,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ),
@@ -209,7 +209,7 @@ class CouponInputWidget extends StatelessWidget {
                   "apply".tr,
                   style: TextStyle(
                     color: isDark ? Colors.white : AppColor.primaryColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ),

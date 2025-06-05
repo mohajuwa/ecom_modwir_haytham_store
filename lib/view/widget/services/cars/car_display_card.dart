@@ -8,9 +8,9 @@ import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/data/model/cars/user_cars.dart';
 
 import 'package:ecom_modwir/linkapi.dart';
-import 'package:ecom_modwir/view/widget/services/cars/primary_button.dart';
+import 'package:ecom_modwir/view/widget/services/cars/input_sections.dart';
+import 'package:ecom_modwir/view/widget/primary_button.dart';
 import 'package:ecom_modwir/view/widget/services/cars/saudi_license_plate.dart';
-import 'package:ecom_modwir/view/widget/services/cars/scroll_year.dart';
 import 'package:ecom_modwir/view/widget/services/cars/selection_modal.dart';
 
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CarInfoWidget extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
 
   const CarInfoWidget({super.key, required this.controller});
 
@@ -36,7 +36,7 @@ class CarInfoWidget extends StatelessWidget {
                 children: [
                   Text(
                     'your_vehicles'.tr,
-                    style: MyTextStyle.styleBold(context),
+                    style: MyTextStyle.meduimBold(context),
                   ),
                   TextButton.icon(
                     onPressed: controller.toggleAddCarForm,
@@ -92,7 +92,7 @@ class CarInfoWidget extends StatelessWidget {
                   ? 'edit_vehicle'.tr
                   : 'add_new_vehicle'.tr,
               style: MyTextStyle.meduimBold(context)),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           Row(
             children: [
               Expanded(child: _buildMakeSelector(context, isDark)),
@@ -100,7 +100,7 @@ class CarInfoWidget extends StatelessWidget {
               Expanded(child: _buildModelSelector(context, isDark)),
             ],
           ),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -108,7 +108,7 @@ class CarInfoWidget extends StatelessWidget {
                 'year'.tr,
                 style: MyTextStyle.meduimBold(context),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimensions.smallSpacing),
               YearScrollWheel(
                 scrollController: controller.scrollController,
                 selectedYear: controller.selectedYear,
@@ -117,7 +117,7 @@ class CarInfoWidget extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           ModernSaudiLicensePlate(isDark: isDark),
           SizedBox(height: AppDimensions.largeSpacing),
           PrimaryButton(
@@ -452,7 +452,7 @@ class VehicleCard extends StatelessWidget {
           SizedBox(height: AppDimensions.largeSpacing),
           Text(
             '${vehicle.makeName} ${vehicle.modelName}',
-            style: MyTextStyle.styleBold(
+            style: MyTextStyle.meduimBold(
               context,
             ),
             maxLines: 2,
@@ -543,7 +543,7 @@ class _LicensePlateRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
                 letters.trim(),
-                style: MyTextStyle.styleBold(context),
+                style: MyTextStyle.meduimBold(context),
                 textAlign: TextAlign.right,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -562,7 +562,7 @@ class _LicensePlateRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
                 numbers.trim(),
-                style: MyTextStyle.styleBold(context),
+                style: MyTextStyle.meduimBold(context),
                 textAlign: TextAlign.left,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

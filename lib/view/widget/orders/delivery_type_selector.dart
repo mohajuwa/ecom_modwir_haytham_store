@@ -39,7 +39,7 @@ class DeliveryTypeSelector extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
 
         // Delivery options
         Row(
@@ -147,7 +147,7 @@ class DeliveryTypeSelector extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
                 color: isSelected
                     ? isDark
                         ? AppColor.primaryColor
@@ -172,7 +172,7 @@ class DeliveryTypeSelector extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppDimensions.smallSpacing),
 
             // Selection indicator
             if (isSelected)
@@ -191,7 +191,7 @@ class DeliveryTypeSelector extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ),

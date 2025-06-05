@@ -10,7 +10,7 @@ import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
 import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:ecom_modwir/view/widget/orders/order_summery.dart';
-import 'package:ecom_modwir/view/widget/services/cars/primary_button.dart';
+import 'package:ecom_modwir/view/widget/primary_button.dart';
 import 'package:ecom_modwir/view/widget/services/cars/saudi_license_plate.dart';
 
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class ServiceOrderForm extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
 
   ServiceOrderForm({super.key, required this.controller});
 
@@ -29,7 +29,7 @@ class ServiceOrderForm extends StatelessWidget {
     // Get the fault type controller to access selected fault type
     final faultTypeController = Get.find<FaultTypeController>();
 
-    return GetBuilder<ProductByCarController>(
+    return GetBuilder<SubServicesController>(
       builder: (controller) => Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -41,7 +41,7 @@ class ServiceOrderForm extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.smallSpacing),
             _NotesField(controller: controller, isDark: isDark),
-            SizedBox(height: AppDimensions.mediumSpacing),
+            const SizedBox(height: AppDimensions.mediumSpacing),
             _AttachmentSection(controller: controller, isDark: isDark),
             SizedBox(height: AppDimensions.largeSpacing),
             PrimaryButton(
@@ -56,7 +56,7 @@ class ServiceOrderForm extends StatelessWidget {
     );
   }
 
-  void _handleSubmit(BuildContext context, ProductByCarController controller,
+  void _handleSubmit(BuildContext context, SubServicesController controller,
       FaultTypeController faultTypeController) {
     // Check if any service is selected
 
@@ -74,12 +74,12 @@ class ServiceOrderForm extends StatelessWidget {
 
     // Check if fault type is selected
 
-    if (faultTypeController.selectedFaultTypeIndex.value < 0) {
+    if (faultTypeController.hasFaultTypesAvailable &&
+        faultTypeController.selectedFaultTypeIndex.value < 0) {
       showErrorSnackbar(
         'error'.tr,
         'please_select_fault_type'.tr,
       );
-
       return;
     }
 
@@ -141,7 +141,7 @@ class ServiceOrderForm extends StatelessWidget {
 
   void _showOrderDetailsSheet(
       BuildContext context,
-      ProductByCarController controller,
+      SubServicesController controller,
       FaultTypeController faultTypeController) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -172,7 +172,7 @@ class ServiceOrderForm extends StatelessWidget {
 }
 
 class _NotesField extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
   final bool isDark;
 
   const _NotesField({
@@ -219,7 +219,7 @@ class _NotesField extends StatelessWidget {
 }
 
 class _AttachmentSection extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
   final bool isDark;
 
   const _AttachmentSection({
@@ -250,7 +250,7 @@ class _AttachmentSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Obx(() => _buildAttachmentsList(context)),
-              SizedBox(height: AppDimensions.mediumSpacing),
+              const SizedBox(height: AppDimensions.mediumSpacing),
               _buildAttachButton(context),
             ],
           ),
@@ -407,7 +407,7 @@ class _AttachmentSection extends StatelessWidget {
 }
 
 class _OrderDetailsForm extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
   final FaultTypeController faultTypeController;
   final bool isDark;
 
@@ -440,7 +440,7 @@ class _OrderDetailsForm extends StatelessWidget {
           Text('car_details'.tr, style: MyTextStyle.styleBold(context)),
           SizedBox(height: AppDimensions.largeSpacing),
           ModernSaudiLicensePlate(isDark: isDark),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
         ],
 
         _buildOrderSummary(context),

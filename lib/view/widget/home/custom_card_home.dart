@@ -4,6 +4,7 @@ import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/settings_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CustomCardHomeSlider extends StatelessWidget {
   final bool? isArabic;
@@ -40,13 +41,14 @@ class CustomCardHomeSlider extends StatelessWidget {
                 child: Container(
                   width: screenWidth,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: AppColor.blackColor,
                     borderRadius:
                         BorderRadius.circular(AppDimensions.borderRadius),
                   ),
                   child: Stack(
                     children: [
                       // Common decorative circle
+
                       Positioned(
                         top: -20,
                         left: isArabic! ? -20 : null,
@@ -62,46 +64,45 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 height: 150,
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceBright,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                               ),
-                              // 2. طبقة اللون الأساسي (لـ AMPER)
+
+                              // Layer 2: base color
                               ColorFiltered(
                                 colorFilter: ColorFilter.mode(
                                   AppColor.accentColor,
-                                  BlendMode
-                                      .srcIn, // يطبق اللون على المناطق البيضاء فقط
+                                  BlendMode.srcIn,
                                 ),
-                                child: Image.asset(
-                                  "assets/images/logo.png",
+                                child: SvgPicture.asset(
+                                  "assets/images/logo.svg",
                                   fit: BoxFit.contain,
                                 ),
                               ),
 
-                              // 3. طبقة الرموز السوداء (+/-)
+                              // Layer 3: gold overlay
                               ColorFiltered(
                                 colorFilter: ColorFilter.mode(
-                                  AppColor.accentColor,
-                                  BlendMode.dstIn, // يدمج مع الطبقة السابقة
+                                  AppColor.goldColor,
+                                  BlendMode.srcIn,
                                 ),
-                                child: Image.asset(
-                                  "assets/images/logo.png",
+                                child: SvgPicture.asset(
+                                  "assets/images/logo.svg",
                                   fit: BoxFit.contain,
                                 ),
                               ),
 
-                              // 4. طبقة النص الأبيض (For Car Batteries)
+                              // Layer 4: white text mask
                               ColorFiltered(
                                 colorFilter: ColorFilter.mode(
                                   AppColor.accentColor,
-                                  BlendMode.dstIn, // يضيء المناطق الداكنة
+                                  BlendMode.dstIn,
                                 ),
-                                child: Image.asset(
-                                  "assets/images/logo.png",
+                                child: SvgPicture.asset(
+                                  "assets/images/logo.svg",
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -138,10 +139,9 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 child: Text(
                                   settingsModel.settingsTitle!,
                                   style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary,
+                                    color: AppColor.goldColor,
                                     fontSize: 18,
+                                    fontFamily: 'Khebrat',
                                     height: 1.3,
                                   ),
                                   maxLines: 1,
@@ -151,10 +151,9 @@ class CustomCardHomeSlider extends StatelessWidget {
                               Text(
                                 settingsModel.settingsBody!,
                                 style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSecondary,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.goldColor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
                                 ),
                                 maxLines: 2,
                               ),

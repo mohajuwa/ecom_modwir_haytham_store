@@ -15,7 +15,13 @@ class AddressView extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('address'),
+          title: Text(
+            "addressess".tr,
+            style: TextStyle(
+              fontFamily: 'Khebrat',
+            ),
+          ),
+          centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {

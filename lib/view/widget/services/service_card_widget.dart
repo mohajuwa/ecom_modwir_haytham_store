@@ -1,6 +1,7 @@
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/services/sub_services_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -80,8 +81,10 @@ class ServiceCardWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child:
-              Text(service.name ?? "", style: MyTextStyle.meduimBold(context)),
+          child: Text(service.name ?? "",
+              style: MyTextStyle.meduimBold(context).copyWith(
+                fontFamily: "Khebrat",
+              )),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -93,7 +96,7 @@ class ServiceCardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "${service.originalPrice} SR",
+                    formatCurrency(service.originalPrice!.toDouble()),
                     style: TextStyle(
                       decoration: TextDecoration.lineThrough,
                       color: Colors.grey,
@@ -116,14 +119,14 @@ class ServiceCardWidget extends StatelessWidget {
                             "-${service.discountPercentage}%",
                             style: const TextStyle(
                               color: Colors.green,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               fontSize: 10,
                             ),
                           ),
                         ),
                       const SizedBox(width: 5),
                       Text(
-                        "${service.price} SR",
+                        formatCurrency(service.price),
                         style: const TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
@@ -134,14 +137,18 @@ class ServiceCardWidget extends StatelessWidget {
                 ],
               )
             else
-              Text("${service.price} SR",
-                  style: MyTextStyle.meduimBold(context)),
+              Text(
+                formatCurrency(service.price),
+                style: MyTextStyle.meduimBold(context).copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
             if (service.isSelected)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Icon(Icons.check_circle,
-                    size: 18, color: AppColor.primaryColor),
+                    size: 18, color: AppColor.greenColor),
               ),
           ],
         ),
@@ -173,7 +180,7 @@ class ServiceCardWidget extends StatelessWidget {
       service.notes.first.content ?? "",
       maxLines: isExpanded ? null : 1,
       overflow: isExpanded ? null : TextOverflow.ellipsis,
-      style: MyTextStyle.bigCapiton(context),
+      style: MyTextStyle.greySmall(context),
     );
   }
 
@@ -189,7 +196,7 @@ class ServiceCardWidget extends StatelessWidget {
                   SizedBox(height: AppDimensions.smallSpacing),
                   Expanded(
                     child: Text(note.content ?? "",
-                        style: MyTextStyle.bigCapiton(context)),
+                        style: MyTextStyle.greySmall(context)),
                   ),
                 ],
               ),
@@ -198,7 +205,7 @@ class ServiceCardWidget extends StatelessWidget {
   }
 
   bool _showSeeMoreButton() {
-    return service.notes.length > 1 && !isExpanded;
+    return service.notes.length > 0 && !isExpanded;
   }
 
   Widget _buildSeeMoreButton(BuildContext context) {
@@ -209,7 +216,7 @@ class ServiceCardWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Text(
-            'see_more_notes'.tr,
+            'show_more'.tr,
             style: MyTextStyle.smallBold(context).copyWith(
               color: AppColor.secondaryColor,
             ),

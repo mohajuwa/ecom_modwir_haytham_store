@@ -1,7 +1,8 @@
 import 'package:ecom_modwir/controller/address/adddetails_controller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
-import 'package:ecom_modwir/core/shared/custombutton.dart';
+import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/view/widget/custom_text_form.dart';
+import 'package:ecom_modwir/view/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,12 @@ class AddressAddPartDetails extends StatelessWidget {
         Get.put(AddAddressDetailsController());
     return Scaffold(
       appBar: AppBar(
-        title: const Text('add details address'),
+        title: Text(
+          'add_details_address'.tr,
+          style: TextStyle(
+            fontFamily: 'Khebrat',
+          ),
+        ),
       ),
       body: Container(
           padding: EdgeInsets.all(15),
@@ -24,8 +30,8 @@ class AddressAddPartDetails extends StatelessWidget {
               widget: ListView(
                 children: [
                   CustomTextForm(
-                    hinttext: "city",
-                    labeltext: "city",
+                    hinttext: "city".tr,
+                    labeltext: "city".tr,
                     iconData: Icons.location_city,
                     mycontroller: controllerpage.city,
                     valid: (val) {
@@ -34,8 +40,8 @@ class AddressAddPartDetails extends StatelessWidget {
                     isNumber: false,
                   ),
                   CustomTextForm(
-                    hinttext: "street",
-                    labeltext: "street",
+                    hinttext: "street".tr,
+                    labeltext: "street".tr,
                     iconData: Icons.streetview,
                     mycontroller: controllerpage.street,
                     valid: (val) {
@@ -44,8 +50,8 @@ class AddressAddPartDetails extends StatelessWidget {
                     isNumber: false,
                   ),
                   CustomTextForm(
-                    hinttext: "name",
-                    labeltext: "name",
+                    hinttext: "name".tr,
+                    labeltext: "name".tr,
                     iconData: Icons.near_me,
                     mycontroller: controllerpage.name,
                     valid: (val) {
@@ -53,12 +59,14 @@ class AddressAddPartDetails extends StatelessWidget {
                     },
                     isNumber: false,
                   ),
-                  CustomButton(
-                    text: "Add",
-                    onPressed: () {
+                  PrimaryButton(
+                    text: 'done'.tr,
+                    onTap: () {
                       controller.addAddress();
                     },
-                  )
+                    isLoading:
+                        controller.statusRequest == StatusRequest.loading,
+                  ),
                 ],
               ),
             ),

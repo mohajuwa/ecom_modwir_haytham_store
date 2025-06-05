@@ -23,7 +23,10 @@ class HomePage extends StatelessWidget {
       bool isArabic = language == "ar";
 
       return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        // backgroundColor: Theme.of(context).splashColor,
+        appBar: CustomAppBar(
+          title: "Amper", // Optional, can be omitted
+        ),
         body: RefreshIndicator(
           onRefresh: () async {
             await controller.initialData();
@@ -32,9 +35,6 @@ class HomePage extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
             child: ListView(
               children: [
-                CustomAppBar(
-                  title: "Amper", // Optional, can be omitted
-                ),
                 HandlingDataView(
                     statusRequest: controller.statusRequest,
                     widget: Column(

@@ -24,9 +24,9 @@ List<GetPage<dynamic>>? routes = [
 
   GetPage(
     name: AppRoute.servicesDisplay,
-    page: () => const ProductByCarScreen(),
+    page: () => const SubServicesScreen(),
     binding: BindingsBuilder(() {
-      Get.lazyPut<ProductByCarController>(() => ProductByCarController());
+      Get.lazyPut<SubServicesController>(() => SubServicesController());
     }),
   ),
 

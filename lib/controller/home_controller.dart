@@ -85,12 +85,7 @@ class HomeControllerImp extends HomeController {
       var language = myServices.sharedPreferences.getString("lang");
 
       // Make API call with timeout
-      var response = await homedata
-          .getData(language.toString())
-          .timeout(const Duration(seconds: 15), onTimeout: () {
-        throw TimeoutException("API call timed out");
-      });
-
+      var response = await homedata.getData(language.toString());
       // Handle response
       statusRequest = handlingData(response);
 
@@ -151,11 +146,7 @@ class HomeControllerImp extends HomeController {
       String lang = myServices.sharedPreferences.getString("lang") ?? "en";
 
       // Make API call with timeout
-      var response = await homeOffersData
-          .getOffers(lang)
-          .timeout(const Duration(seconds: 15), onTimeout: () {
-        throw TimeoutException("API call timed out");
-      });
+      var response = await homeOffersData.getOffers(lang);
 
       // Handle response
       var tempStatus = handlingData(response);

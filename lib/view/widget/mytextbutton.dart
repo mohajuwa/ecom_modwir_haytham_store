@@ -27,8 +27,12 @@ class MyTextButton extends StatelessWidget {
           horizontal: paddinghorizontal,
           vertical: paddingvertical,
         ),
-        child:
-            Text(text, style: textStyle ?? MyTextStyle.textButtonTow(context)),
+        child: Text(text,
+            style: textStyle ??
+                MyTextStyle.textButtonTow(context).copyWith(
+                  fontFamily: "Khebrat",
+                  fontWeight: FontWeight.normal,
+                )),
       ),
     );
   }

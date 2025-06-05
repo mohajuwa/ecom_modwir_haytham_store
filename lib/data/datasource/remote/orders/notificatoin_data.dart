@@ -12,9 +12,11 @@ class NotificationData {
     return response.fold((l) => l, (r) => r);
   }
 
-  markAsRead(String notificationId) async {
-    var response = await crud
-        .postData(AppLink.markNotiRead, {"notification_id": notificationId});
+  markAsRead(String notificationId, String userId) async {
+    var response = await crud.postData(AppLink.markNotiRead, {
+      "notificationId": notificationId,
+      "userId": userId,
+    });
     return response.fold((l) => l, (r) => r);
   }
 
@@ -22,7 +24,7 @@ class NotificationData {
 //
   markAllAsRead(String notificationId) async {
     var response = await crud
-        .postData(AppLink.markAllNotiRead, {"notification_id": notificationId});
+        .postData(AppLink.markAllNotiRead, {"notificationId": notificationId});
     return response.fold((l) => l, (r) => r);
   }
 }

@@ -2,7 +2,7 @@ class AppLink {
   // ============================ Server Link  Links ============================//
 
   static const String server = "https://modwir.com/haytham_store";
-  // static const String server = "http://10.0.2.2/haytham_store";
+  // static const String server = "http://192.168.167.187/haytham_store";
 
 // ============================ Images Links  Links ============================//
   static const String unifonicLink =

@@ -9,40 +9,44 @@ class CustomSliderOnBoarding extends GetView<OnBoardingControllerImp> {
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-        controller: controller.pageController,
-        onPageChanged: (val) {
-          controller.onPageChanged(val);
-        },
-        itemCount: onBoardingList.length,
-        itemBuilder: (context, i) => Column(
-              children: [
-                Image.asset(
-                  onBoardingList[i].image!,
-                  // width: ,
-                  height: Get.width / 1.3,
-                  fit: BoxFit.fill,
+    return Obx(() => PageView.builder(
+          controller: controller.pageController,
+          onPageChanged: controller.onPageChanged,
+          itemCount: appStaticData.onBoardingList.length,
+          itemBuilder: (context, i) => Column(
+            children: [
+              Image.asset(
+                appStaticData.onBoardingList[i].image!,
+                height: Get.width / 1.3,
+                fit: BoxFit.fill,
+              ),
+              const SizedBox(height: 60),
+              Text(
+                appStaticData.onBoardingList[i].title!,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontFamily: "Khebrat",
+                  fontSize: 22,
+                  color: AppColor.blackColor,
                 ),
-                const SizedBox(height: 60),
-                Text(onBoardingList[i].title!,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        color: AppColor.blackColor)),
-                const SizedBox(height: 20),
-                Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: Text(
-                      onBoardingList[i].body!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          height: 2,
-                          color: AppColor.grey,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14),
-                    )),
-              ],
-            ));
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Text(
+                  appStaticData.onBoardingList[i].body!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    height: 2,
+                    color: AppColor.grey,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }

@@ -6,7 +6,7 @@ checkInternet() async {
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       return true;
     }
-  }on SocketException catch (_) {
+  } on SocketException catch (_) {
     return false;
   }
 }

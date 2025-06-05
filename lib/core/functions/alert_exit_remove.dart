@@ -8,7 +8,7 @@ Future<bool> alertExitApp(BuildContext context) async {
           return AlertDialog(
             title: Text("alert".tr,
                 style: TextStyle(
-                    color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                    color: Colors.redAccent, fontWeight: FontWeight.normal)),
             content: Text("question_exit_from_app".tr),
             actions: [
               TextButton(

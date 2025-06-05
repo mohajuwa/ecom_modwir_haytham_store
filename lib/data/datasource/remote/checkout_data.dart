@@ -46,26 +46,6 @@ class CheckoutData {
 
         // If the response is a Map, just return it
         return responseData;
-
-        // If the response has 'raw_data' and contains PHP errors
-        if (responseData.containsKey('raw_data') &&
-            (responseData['raw_data'].toString().contains('<b>Warning</b>') ||
-                responseData['raw_data']
-                    .toString()
-                    .contains('<b>Fatal error</b>'))) {
-          if (kDebugMode) {
-            print("PHP Error: ${responseData['raw_data']}");
-          }
-
-          return <String, dynamic>{
-            'status': 'error',
-            'message': 'Backend error: Please contact administrator',
-            'debug_info': responseData['raw_data']
-          };
-        }
-
-        // Default case - just return what we got
-        return Map<String, dynamic>.from(responseData);
       });
     } catch (e) {
       if (kDebugMode) {

@@ -17,12 +17,12 @@ import 'package:ecom_modwir/view/widget/services/service_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProductByCarScreen extends StatelessWidget {
-  const ProductByCarScreen({super.key});
+class SubServicesScreen extends StatelessWidget {
+  const SubServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ProductByCarController());
+    final controller = Get.put(SubServicesController());
     final bool isOffer = Get.arguments?['is_offer'] ?? false;
     final String serviceId = Get.arguments?['service_id'] ?? "";
     final int? offerId = Get.arguments?['offer_id'];
@@ -43,7 +43,7 @@ class ProductByCarScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: GetBuilder<ProductByCarController>(
+      body: GetBuilder<SubServicesController>(
         builder: (controller) => HandlingDataView(
           statusRequest: controller.statusRequest,
           widget: _MainContent(
@@ -59,7 +59,7 @@ class ProductByCarScreen extends StatelessWidget {
 }
 
 class _MainContent extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
   final String serviceId;
   final bool isOffer;
   final int? offerId;
@@ -85,7 +85,7 @@ class _MainContent extends StatelessWidget {
             : _buildCarSelectionSection(context),
 
         SliverToBoxAdapter(
-          child: GetBuilder<ProductByCarController>(
+          child: GetBuilder<SubServicesController>(
             builder: (controller) {
               // This ensures both controllers are properly initialized
 
@@ -162,7 +162,7 @@ class _MainContent extends StatelessWidget {
                           title: 'year'.tr,
                           subTitle: true,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppDimensions.smallSpacing),
                         YearScrollWheel(
                           scrollController: controller.scrollController,
                           selectedYear: controller.selectedYear,

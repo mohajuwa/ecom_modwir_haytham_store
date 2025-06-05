@@ -29,7 +29,7 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.secondary,
         backgroundColor: Theme.of(context).colorScheme.surface,
         strokeWidth: 2.5,
         onRefresh: () async {
@@ -55,22 +55,19 @@ class SettingsPage extends StatelessWidget {
       expandedHeight: kHeaderHeight,
       pinned: true,
       elevation: 0,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      surfaceTintColor: Theme.of(context).colorScheme.onSecondary,
+      backgroundColor: Theme.of(context).colorScheme.scrim,
+      surfaceTintColor: Theme.of(context).colorScheme.scrim,
       scrolledUnderElevation: 4,
       shadowColor: Theme.of(context).shadowColor.withOpacity(0.3),
       stretch: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          'settings'.tr,
-          style: TextStyle(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context).colorScheme.onSurface
-                : Theme.of(context).colorScheme.onPrimary,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
+        title: Text('settings'.tr,
+            style: MyTextStyle.styleBold(context).copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Khebrat',
+              color: Colors.white,
+            )),
         background: _buildProfileHeader(context, controller),
         titlePadding: const EdgeInsets.only(left: 24, bottom: 5),
         expandedTitleScale: 1.8,
@@ -88,7 +85,7 @@ class SettingsPage extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.scrim,
             Theme.of(context).colorScheme.primaryContainer,
           ],
           stops: const [0.4, 1.0],
@@ -160,7 +157,7 @@ class SettingsPage extends StatelessWidget {
                                           : Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.normal,
                                       letterSpacing: -0.5,
                                     ),
                                 maxLines: 1,
@@ -191,7 +188,7 @@ class SettingsPage extends StatelessWidget {
                                           ),
                                     ),
                             )),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppDimensions.smallSpacing),
                         if (!controller.isAuthenticated())
                           _buildLoginButton(context, controller)
                       ],
@@ -331,6 +328,7 @@ class SettingsPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.2,
+                  fontFamily: "Khebrat",
                 ),
           ),
         ],
@@ -600,6 +598,7 @@ class SettingsPage extends StatelessWidget {
               language,
               style: TextStyle(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                fontFamily: 'Khebrat',
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurface,
@@ -632,20 +631,6 @@ class SettingsPage extends StatelessWidget {
     return _buildSettingsCard(
       context,
       children: [
-        _buildListTile(
-          context,
-          title: 'notifications'.tr,
-          icon: Icons.notifications_outlined,
-          trailing: Obx(() => _buildAnimatedSwitch(
-                context,
-                value: controller.notificationsEnabled.value,
-                onChanged: (value) {
-                  HapticFeedback.selectionClick();
-                  controller.toggleNotifications(value);
-                },
-              )),
-        ),
-        _buildAnimatedDivider(),
         _buildListTile(
           context,
           title: 'help_support'.tr,
@@ -706,7 +691,7 @@ class SettingsPage extends StatelessWidget {
           Text(
             'ModWir',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   letterSpacing: 0.5,
                 ),
           ),
@@ -808,6 +793,7 @@ class SettingsPage extends StatelessWidget {
             style: TextStyle(
               color: textColor ?? Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w500,
+              fontFamily: "Khebrat",
             ),
           ),
           trailing: trailing,
@@ -858,7 +844,7 @@ class SettingsPage extends StatelessWidget {
         count.toString(),
         style: TextStyle(
           color: color,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 13,
         ),
       ),
@@ -896,7 +882,7 @@ class SettingsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('app_description'.tr),
-            SizedBox(height: AppDimensions.mediumSpacing),
+            const SizedBox(height: AppDimensions.mediumSpacing),
             Text('${'version'.tr}: 1.0.0'),
             Text('${'developed_by'.tr}: ModWir Team'),
           ],

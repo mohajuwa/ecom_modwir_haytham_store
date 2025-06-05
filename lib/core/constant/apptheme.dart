@@ -11,7 +11,7 @@ class AppTheme {
       brightness: Brightness.light,
       primaryColor: AppColor.primaryColor,
       scaffoldBackgroundColor: Colors.grey[50],
-      fontFamily: "El_Messiri",
+      fontFamily: "Cairo",
 
       // Color scheme
       colorScheme: ColorScheme.light(
@@ -32,9 +32,9 @@ class AppTheme {
         iconTheme: IconThemeData(color: AppColor.primaryColor),
         titleTextStyle: TextStyle(
           color: AppColor.primaryColor,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 18,
-          fontFamily: "El_Messiri",
+          fontFamily: "Cairo",
         ),
         shadowColor: AppColor.blackColor,
       ),
@@ -42,12 +42,12 @@ class AppTheme {
       // Text theme
       textTheme: TextTheme(
         displayLarge: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 20, // Reduced from 24
           color: Colors.black87,
         ),
         displayMedium: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 16, // Reduced from 18
           color: Colors.black87,
         ),
@@ -114,7 +114,7 @@ class AppTheme {
       brightness: Brightness.dark,
       primaryColor: AppColor.primaryColor,
       scaffoldBackgroundColor: Color(0xFF121212),
-      fontFamily: "El_Messiri",
+      fontFamily: "Cairo",
 
       // Color scheme
       colorScheme: ColorScheme.dark(
@@ -134,9 +134,9 @@ class AppTheme {
         iconTheme: IconThemeData(color: AppColor.primaryColor),
         titleTextStyle: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 18,
-          fontFamily: "El_Messiri",
+          fontFamily: "Cairo",
         ),
         shadowColor: AppColor.blackColor,
       ),
@@ -144,12 +144,12 @@ class AppTheme {
       // Text theme
       textTheme: TextTheme(
         displayLarge: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 20, // Reduced from 24
           color: Colors.white,
         ),
         displayMedium: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           fontSize: 16, // Reduced from 18
           color: Colors.white,
         ),

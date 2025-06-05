@@ -34,7 +34,7 @@ class ModernSaudiLicensePlate extends StatelessWidget {
               _ClearButton(controller: controller, isDark: isDark),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.smallSpacing),
           _LicensePlateContainer(controller: controller, isDark: isDark),
           const SizedBox(height: 4),
         ],
@@ -356,6 +356,7 @@ class _KSAEmblemSection extends StatelessWidget {
             height: 25,
             width: 25,
             fit: BoxFit.contain,
+            color: isDark ? AppColor.greenColor : AppColor.white,
             errorBuilder: (context, error, stackTrace) => Container(
               height: 25,
               width: 25,
@@ -380,9 +381,9 @@ class _KSAEmblemSection extends StatelessWidget {
             'السعودية',
             style: TextStyle(
               fontFamily: 'Cairo',
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               fontSize: 9,
-              color: isDark ? Colors.grey[300] : AppColor.blackColor,
+              color: isDark ? AppColor.accentColor : AppColor.white,
             ),
           ),
 
@@ -394,24 +395,24 @@ class _KSAEmblemSection extends StatelessWidget {
             children: [
               Text('K',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.grey[300] : AppColor.blackColor,
+                      fontWeight: FontWeight.normal,
+                      color: isDark ? AppColor.greenColor : AppColor.white,
                       fontSize: 18)),
               Text('S',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.grey[300] : AppColor.blackColor,
+                      fontWeight: FontWeight.normal,
+                      color: isDark ? AppColor.greenColor : AppColor.white,
                       fontSize: 18)),
               Text('A',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.grey[300] : AppColor.blackColor,
+                      fontWeight: FontWeight.normal,
+                      color: isDark ? AppColor.greenColor : AppColor.white,
                       fontSize: 18)),
               SizedBox(height: 4),
               CircleAvatar(
-                  radius: 6,
-                  backgroundColor:
-                      isDark ? Colors.grey[400] : AppColor.blackColor),
+                radius: 6,
+                backgroundColor: isDark ? AppColor.accentColor : AppColor.white,
+              ),
             ],
           ),
         ],

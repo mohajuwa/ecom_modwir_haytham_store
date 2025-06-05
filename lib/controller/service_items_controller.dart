@@ -22,7 +22,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class ProductByCarController extends GetxController {
+class SubServicesController extends GetxController {
   // Services initialization
   final MyServices myServices = Get.find();
   final ServiceItemsData serviceItemsData = ServiceItemsData(Get.find());
@@ -117,7 +117,6 @@ class ProductByCarController extends GetxController {
     super.onClose();
   }
 
-  // Initialize data and services
   Future<void> initializeData() async {
     try {
       isLoggedIn = myServices.sharedPreferences.getBool("isLogin") ?? false;
@@ -169,21 +168,9 @@ class ProductByCarController extends GetxController {
 
         lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
 
-        // Initialize FaultTypeController with the correct serviceId
+        // Initialize FaultTypeController with safe error handling
 
-        FaultTypeController faultTypeController;
-
-        try {
-          faultTypeController = Get.find<FaultTypeController>();
-
-          if (faultTypeController.serviceId != serviceId) {
-            faultTypeController.loadFaultTypes(serviceId);
-          }
-        } catch (e) {
-          faultTypeController = Get.put(FaultTypeController());
-
-          faultTypeController.loadFaultTypes(serviceId);
-        }
+        await _initializeFaultTypeController(serviceId);
 
         await _loadServiceDetails();
       }
@@ -195,6 +182,83 @@ class ProductByCarController extends GetxController {
       update();
 
       Get.back();
+    }
+  }
+
+// New method to safely initialize FaultTypeController
+
+  Future<void> _initializeFaultTypeController(String serviceId) async {
+    try {
+      FaultTypeController faultTypeController;
+
+      // Try to find existing controller
+
+      try {
+        faultTypeController = Get.find<FaultTypeController>();
+
+        print("Found existing FaultTypeController");
+      } catch (e) {
+        // Create new controller if not found
+
+        faultTypeController = Get.put(FaultTypeController());
+
+        print("Created new FaultTypeController");
+      }
+
+      // Only load fault types if serviceId is valid and controller is ready
+
+      if (serviceId.isNotEmpty) {
+        try {
+          // Check if this is the same service or if we need to reload
+
+          if (faultTypeController.serviceId != serviceId) {
+            print("Loading fault types for service: $serviceId");
+
+            // Call loadFaultTypes with proper error handling
+
+            await faultTypeController.loadFaultTypes(serviceId);
+
+            // Wait a moment for the loading to complete
+
+            await Future.delayed(Duration(milliseconds: 100));
+
+            if (faultTypeController.faultTypes.isNotEmpty) {
+              print(
+                  "Successfully loaded ${faultTypeController.faultTypes.length} fault types for service: $serviceId");
+            } else {
+              print(
+                  "No fault types found for service: $serviceId - this service may not require fault types");
+            }
+          } else {
+            print("Fault types already loaded for service: $serviceId");
+          }
+        } catch (loadError) {
+          // Handle the case where loadFaultTypes fails
+
+          print(
+              "Warning: Failed to load fault types for service $serviceId: $loadError");
+
+          print(
+              "This service may not have fault types available - continuing without them");
+
+          // Ensure the controller is in a clean state
+
+          faultTypeController.faultTypes.clear();
+
+          faultTypeController.statusRequest =
+              StatusRequest.success; // Don't treat as failure
+
+          faultTypeController.update();
+        }
+      } else {
+        print("Warning: Invalid serviceId or controller not available");
+      }
+    } catch (e) {
+      // Log the error but don't fail the entire initialization
+
+      print("Warning: Error initializing FaultTypeController: $e");
+
+      print("Continuing initialization without fault types");
     }
   }
 
@@ -383,7 +447,6 @@ class ProductByCarController extends GetxController {
                     .toList();
 
             print("📋 DEBUG: Parsed ${allSubServices.length} sub-services");
-
             // Apply discount if needed
 
             if (discountPercentage != null && discountPercentage > 0) {
@@ -501,28 +564,6 @@ class ProductByCarController extends GetxController {
             }
 
             // Initialize fault type controller with the correct service ID
-
-            try {
-              FaultTypeController faultTypeController =
-                  Get.find<FaultTypeController>();
-
-              if (faultTypeController.serviceId != serviceId) {
-                print(
-                    "📋 DEBUG: Updating fault type controller with service ID: $serviceId");
-
-                faultTypeController.loadFaultTypes(serviceId);
-              }
-            } catch (e) {
-              // If controller doesn't exist, create it
-
-              print(
-                  "📋 DEBUG: Creating new fault type controller with service ID: $serviceId");
-
-              FaultTypeController faultTypeController =
-                  Get.put(FaultTypeController());
-
-              faultTypeController.loadFaultTypes(serviceId);
-            }
 
             allServiceItems = allSubServices;
 
@@ -744,6 +785,7 @@ class ProductByCarController extends GetxController {
                 isSpecificSubService: true,
                 targetSubServiceId: subServiceId,
                 discountPercentage: discountPercentage);
+            await _loadProductByCar();
           } else {
             print("⚠️ WARNING: No sub-services found in response");
             _createPlaceholderService(subServiceId, discountPercentage);
@@ -754,7 +796,7 @@ class ProductByCarController extends GetxController {
         }
       });
     } catch (e) {
-      print("❌ ERROR in _loadServiceDetailsFromOffer: $e");
+      print("❌ ERROR in loadServiceDetailsFromOffer: $e");
       statusRequest = StatusRequest.serverFailure;
       allServiceItems = [];
       filteredServiceItems.clear();
@@ -991,16 +1033,6 @@ class ProductByCarController extends GetxController {
 
     // Ensure fault types are loaded for the current service
 
-    try {
-      final faultTypeController = Get.find<FaultTypeController>();
-
-      // Pass the main service ID to the fault type controller
-
-      faultTypeController.reloadForService(serviceId);
-    } catch (e) {
-      print("Error updating fault types: $e");
-    }
-
     update();
   }
 
@@ -1123,6 +1155,7 @@ class ProductByCarController extends GetxController {
               isEditingVehicle.value
                   ? 'vehicle_updated'.tr
                   : 'vehicle_added'.tr);
+          loadUserVehicles();
           update();
         } else if (response['status'] == "error") {
           showErrorSnackbar('error'.tr, response['message'] ?? 'error'.tr);
@@ -1238,75 +1271,6 @@ class ProductByCarController extends GetxController {
     update();
   }
 
-  // Order completion
-  Future<void> completeOrder() async {
-    try {
-      if (!_validateOrderDetails()) {
-        return;
-      }
-
-      statusRequest = StatusRequest.loading;
-      update();
-
-      // Get the selected service
-      SubServiceModel? selectedService;
-      try {
-        selectedService = filteredServiceItems.firstWhere(
-          (service) => service.isSelected,
-        );
-      } catch (e) {
-        showErrorSnackbar('error'.tr, 'please_select_service'.tr);
-        statusRequest = StatusRequest.none;
-        update();
-        return;
-      }
-
-      // Get the selected fault type
-      final faultTypeController = Get.find<FaultTypeController>();
-      final selectedFaultType = faultTypeController.selectedFaultType;
-
-      if (selectedFaultType == null) {
-        showErrorSnackbar('error'.tr, 'please_select_fault_type'.tr);
-        statusRequest = StatusRequest.none;
-        update();
-        return;
-      }
-
-      // Determine which vehicle ID to use
-      String vehicleId;
-      if (userVehicles.isNotEmpty && selectedVehicleIndex.value >= 0) {
-        // Use saved vehicle
-        vehicleId =
-            userVehicles[selectedVehicleIndex.value].vehicleId.toString();
-      } else {
-        // No saved vehicle, use "0" to indicate using form data
-        vehicleId = "0";
-      }
-
-      // save attachments
-
-      // Navigate to checkout with all the necessary data
-      Get.toNamed(
-        AppRoute.checkout,
-        arguments: {
-          'selectedServices': selectedService,
-          'orderNotes': notesController.text,
-          'selected_vehicle_id': vehicleId,
-          'fault_type_id': selectedFaultType.faultId.toString(),
-          'attachments': attachments.toList(), // <-- safer
-        },
-      );
-
-      statusRequest = StatusRequest.success;
-      update();
-    } catch (e) {
-      print("Error completing order: $e");
-      statusRequest = StatusRequest.failure;
-      update();
-      showErrorSnackbar('error'.tr, 'failed_to_place_order'.tr);
-    }
-  }
-
   bool _validateOrderDetails() {
     // Check if license plate is empty
 
@@ -1317,13 +1281,7 @@ class ProductByCarController extends GetxController {
 
       return false;
     }
-    if (userVehicles.isEmpty) {
-      showErrorSnackbar(
-        'error'.tr,
-        'please_select_vehicle'.tr,
-      );
-      return false;
-    }
+
     // Check if any service is selected
 
     bool isServiceSelected =
@@ -1338,14 +1296,14 @@ class ProductByCarController extends GetxController {
       return false;
     }
 
-    // Get the fault type controller
+    // Only validate fault types if they are actually required for this service
 
-    try {
-      final faultTypeController = Get.find<FaultTypeController>();
+    if (_shouldValidateFaultTypes()) {
+      String? selectedFaultTypeId = _getSelectedFaultTypeId();
 
-      // Check if fault type is selected
+      if (selectedFaultTypeId == null) {
+        // This means fault types are required but none selected
 
-      if (faultTypeController.selectedFaultTypeIndex.value < 0) {
         showErrorSnackbar(
           'error'.tr,
           'please_select_fault_type'.tr,
@@ -1353,22 +1311,185 @@ class ProductByCarController extends GetxController {
 
         return false;
       }
-    } catch (e) {
-      // If fault type controller isn't found, this is a serious error
-
-      print("Error accessing fault type controller: $e");
-
-      showErrorSnackbar(
-        'error'.tr,
-        'please_select_fault_type'.tr,
-      );
-
-      return false;
+    } else {
+      print("Fault types not required for this service - skipping validation");
     }
 
     // All validations passed
 
     return true;
+  }
+
+// Helper method to safely get selected fault type ID
+
+  String? _getSelectedFaultTypeId() {
+    try {
+      final faultTypeController = Get.find<FaultTypeController>();
+
+      // Check if fault types are available for this service
+
+      if (faultTypeController.faultTypes.isEmpty) {
+        print(
+            "No fault types available for this service - skipping fault type validation");
+
+        return "0"; // Return "0" to indicate no fault type needed
+      }
+
+      // Check if fault types failed to load or service doesn't support them
+
+      if (faultTypeController.statusRequest == StatusRequest.failure ||
+          faultTypeController.statusRequest == StatusRequest.serverFailure ||
+          faultTypeController.faultTypes.isEmpty) {
+        print(
+            "Fault types not available or failed to load - treating as service without fault types");
+
+        return "0"; // Return "0" to indicate no fault type needed
+      }
+
+      // If fault types exist and loaded successfully, validate selection
+
+      if (faultTypeController.selectedFaultTypeIndex.value < 0) {
+        return null; // No fault type selected when required
+      }
+
+      // Return the selected fault type ID
+
+      final selectedFaultType = faultTypeController.selectedFaultType;
+
+      return selectedFaultType?.faultId.toString() ?? "0";
+    } catch (e) {
+      // If fault type controller isn't found, assume no fault types needed
+
+      print(
+          "FaultTypeController not found - assuming no fault types needed for this service: $e");
+
+      return "0"; // Return "0" to indicate no fault type needed
+    }
+  }
+
+// Alternative approach - check if fault types are actually required for this service
+
+  bool _shouldValidateFaultTypes() {
+    try {
+      final faultTypeController = Get.find<FaultTypeController>();
+
+      // If fault types list is empty, no validation needed
+
+      if (faultTypeController.faultTypes.isEmpty) {
+        return false;
+      }
+
+      // If loading failed, no validation needed
+
+      if (faultTypeController.statusRequest == StatusRequest.failure ||
+          faultTypeController.statusRequest == StatusRequest.serverFailure) {
+        return false;
+      }
+
+      // If we're still loading, don't validate yet
+
+      if (faultTypeController.statusRequest == StatusRequest.loading) {
+        return false;
+      }
+
+      // Only validate if we have successfully loaded fault types
+
+      return faultTypeController.statusRequest == StatusRequest.success &&
+          faultTypeController.faultTypes.isNotEmpty;
+    } catch (e) {
+      print("Error checking if fault types should be validated: $e");
+
+      return false; // Don't validate if there's any error
+    }
+  }
+
+// Updated completeOrder method
+
+  Future<void> completeOrder() async {
+    try {
+      if (!_validateOrderDetails()) {
+        return;
+      }
+
+      statusRequest = StatusRequest.loading;
+
+      update();
+
+      // Get the selected service
+
+      SubServiceModel? selectedService;
+
+      try {
+        selectedService = filteredServiceItems.firstWhere(
+          (service) => service.isSelected,
+        );
+      } catch (e) {
+        showErrorSnackbar('error'.tr, 'please_select_service'.tr);
+
+        statusRequest = StatusRequest.none;
+
+        update();
+
+        return;
+      }
+
+      // Get the selected fault type ID (safely) - always returns a value
+
+      String selectedFaultTypeId = "0"; // Default to "0"
+
+      if (_shouldValidateFaultTypes()) {
+        final faultTypeId = _getSelectedFaultTypeId();
+
+        selectedFaultTypeId = faultTypeId ?? "0";
+      }
+
+      print("Using fault type ID: $selectedFaultTypeId");
+
+      // Determine which vehicle ID to use
+
+      String vehicleId;
+
+      if (userVehicles.isNotEmpty && selectedVehicleIndex.value >= 0) {
+        // Use saved vehicle
+
+        vehicleId =
+            userVehicles[selectedVehicleIndex.value].vehicleId.toString();
+      } else {
+        // No saved vehicle, use "0" to indicate using form data
+
+        vehicleId =
+            userVehicles[vehicleToEditIndex!.value].vehicleId.toString();
+      }
+
+      // Navigate to checkout with all the necessary data
+
+      Get.toNamed(
+        AppRoute.checkout,
+        arguments: {
+          'selectedServices': selectedService,
+
+          'orderNotes': notesController.text,
+
+          'selected_vehicle_id': vehicleId,
+
+          'fault_type_id': selectedFaultTypeId, // Always a valid string
+
+          'attachments': attachments.toList(),
+        },
+      );
+
+      statusRequest = StatusRequest.success;
+
+      update();
+    } catch (e) {
+      print("Error completing order: $e");
+
+      statusRequest = StatusRequest.failure;
+
+      update();
+
+      showErrorSnackbar('error'.tr, 'failed_to_place_order'.tr);
+    }
   }
 
   void resetForm() {

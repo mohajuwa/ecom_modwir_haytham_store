@@ -1,5 +1,6 @@
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:flutter/material.dart';
 
 class SectionTitle extends StatelessWidget {
@@ -25,9 +26,10 @@ class SectionTitle extends StatelessWidget {
           SizedBox(width: AppDimensions.smallSpacing),
           Text(
             title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+            style: MyTextStyle.styleBold(context).copyWith(
               fontSize: subTitle ? 14 : 16,
+              fontFamily: "Khebrat",
+              fontWeight: FontWeight.normal,
             ),
           ),
         ],

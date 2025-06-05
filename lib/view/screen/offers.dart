@@ -2,7 +2,6 @@
 import 'package:ecom_modwir/controller/offers_contrller.dart';
 import 'package:ecom_modwir/core/class/handlingdataview.dart';
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/data/model/home_offers_model.dart';
 import 'package:ecom_modwir/linkapi.dart';
 import 'package:ecom_modwir/view/widget/custom_title.dart';
@@ -16,9 +15,9 @@ class OffersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(OfferController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).splashColor,
       body: RefreshIndicator(
         onRefresh: () => controller.refreshOffers(),
         child: CustomScrollView(
@@ -28,12 +27,15 @@ class OffersView extends StatelessWidget {
               expandedHeight: 120,
               floating: true,
               pinned: true,
+              backgroundColor: Theme.of(context).colorScheme.scrim,
+              surfaceTintColor: Theme.of(context).colorScheme.scrim,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   'special_offers'.tr,
                   style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Khebrat',
                   ),
                 ),
                 background: Container(
@@ -42,8 +44,8 @@ class OffersView extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppColor.primaryColor.withOpacity(0.8),
-                        AppColor.secondaryColor.withOpacity(0.6),
+                        Theme.of(context).colorScheme.scrim,
+                        Theme.of(context).colorScheme.primaryContainer,
                       ],
                     ),
                   ),
@@ -115,16 +117,16 @@ class OffersView extends StatelessWidget {
             size: 80,
             color: Colors.grey[400],
           ),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             'no_offers_available'.tr,
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               color: Colors.grey[600],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.smallSpacing),
           Text(
             'check_back_later'.tr,
             style: TextStyle(
@@ -199,20 +201,22 @@ class _FeatureOfferCard extends StatelessWidget {
                       offer.offerTitle ?? 'Special Offer',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Khebrat',
+                        fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppDimensions.smallSpacing),
                     Text(
                       offer.offerDescription ?? '',
                       style: const TextStyle(
                         color: Colors.white70,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: AppDimensions.mediumSpacing),
+                    const SizedBox(height: AppDimensions.mediumSpacing),
                     if (offer.discountPercentage != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -226,7 +230,8 @@ class _FeatureOfferCard extends StatelessWidget {
                           '${offer.discountPercentage}% ${'discount'.tr}',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
+                            fontFamily: 'Khebrat',
                             fontSize: 12,
                           ),
                         ),

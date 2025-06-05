@@ -72,8 +72,9 @@ class CustomListItemsOffer extends StatelessWidget {
                     Text(
                       offer.offerTitle ?? 'Special Offer',
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 12,
+                        fontFamily: "Khebrat",
+                        fontWeight: FontWeight.normal,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -88,7 +89,7 @@ class CustomListItemsOffer extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppDimensions.smallSpacing),
 
                     // Discount badge if available
                     if (offer.discountPercentage != null)
@@ -104,7 +105,8 @@ class CustomListItemsOffer extends StatelessWidget {
                           '${offer.discountPercentage}% ${'discount'.tr}',
                           style: const TextStyle(
                             color: Colors.green,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
+                            fontFamily: 'Khebrat',
                             fontSize: 12,
                           ),
                         ),

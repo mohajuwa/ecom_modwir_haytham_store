@@ -52,7 +52,7 @@ class PaymentMethodSelector extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
 
           // Cash payment option
           _buildPaymentOption(
@@ -187,14 +187,10 @@ class PaymentMethodSelector extends StatelessWidget {
                   // Title
                   Text(
                     title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: MyTextStyle.styleBold(context).copyWith(
+                      fontFamily: "Khebrat",
+                      fontWeight: FontWeight.normal,
                       fontSize: 14,
-                      color: isSelected
-                          ? AppColor.primaryColor
-                          : isDark
-                              ? Colors.white
-                              : Colors.black87,
                     ),
                   ),
 
@@ -210,7 +206,7 @@ class PaymentMethodSelector extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppDimensions.smallSpacing),
 
                   // Features
                   Row(

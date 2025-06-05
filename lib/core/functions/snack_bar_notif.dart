@@ -6,19 +6,19 @@ void showErrorSnackbar(String title, String message) {
   Get.snackbar(
     '', // Empty title since we're using custom titleText
     '', // Empty message since we're using custom messageText
-    backgroundColor: AppColor.deleteColor.withOpacity(0.1),
+    backgroundColor: AppColor.deleteColor.withOpacity(0.4),
     titleText: Text(
       title,
       style: TextStyle(
         color: AppColor.deleteColor,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         fontSize: 16,
       ),
     ),
     messageText: Text(
       message,
       style: TextStyle(
-        color: Colors.black87,
+        color: Colors.white,
         fontSize: 14,
       ),
     ),
@@ -33,19 +33,19 @@ void showSuccessSnackbar(String title, String message) {
   Get.snackbar(
     '', // Empty title since we're using custom titleText
     '', // Empty message since we're using custom messageText
-    backgroundColor: AppColor.greenColor.withOpacity(0.1),
+    backgroundColor: AppColor.greenColor.withOpacity(0.4),
     titleText: Text(
       title,
       style: TextStyle(
         color: AppColor.greenColor,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         fontSize: 16,
       ),
     ),
     messageText: Text(
       message,
       style: TextStyle(
-        color: Colors.black87,
+        color: Colors.white,
         fontSize: 14,
       ),
     ),

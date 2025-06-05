@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/data/datasource/remote/auth/login.dart';
 import 'package:ecom_modwir/view/widget/custom_title.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/services/services.dart';
-import 'package:ecom_modwir/view/widget/services/cars/primary_button.dart';
+import 'package:ecom_modwir/view/widget/primary_button.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ecom_modwir/data/datasource/remote/auth/signup.dart';
 import 'package:geocoding/geocoding.dart';
@@ -186,7 +187,7 @@ class AuthService extends GetxController {
               onTap: () => _handleLoginSubmit(),
               isLoading: isLoading.value,
             )),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         Center(
           child: TextButton(
             onPressed: toggleMode,
@@ -214,7 +215,7 @@ class AuthService extends GetxController {
         ),
         const SizedBox(height: 20),
         _buildNameFields(context),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         _buildPhoneField(context),
         SizedBox(height: AppDimensions.largeSpacing),
         Obx(() => PrimaryButton(
@@ -222,7 +223,7 @@ class AuthService extends GetxController {
               onTap: () => _handleSignupSubmit(),
               isLoading: isLoading.value,
             )),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         Center(
           child: TextButton(
             onPressed: toggleMode,
@@ -248,7 +249,7 @@ class AuthService extends GetxController {
             style: MyTextStyle.styleBold(context),
           ),
         ),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         Text(
           '${'code_sent_to'.tr} ${phoneController.text}',
           style: MyTextStyle.meduimBold(context),
@@ -261,7 +262,7 @@ class AuthService extends GetxController {
               onTap: () => _verifyOtp(),
               isLoading: isLoading.value,
             )),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -304,7 +305,7 @@ class AuthService extends GetxController {
         ),
         const SizedBox(height: 20),
         _buildNameFields(context),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         _buildPhoneField(context),
         SizedBox(height: AppDimensions.largeSpacing),
         Obx(() => PrimaryButton(
@@ -312,7 +313,7 @@ class AuthService extends GetxController {
               onTap: () => _updateSignupInfo(),
               isLoading: isLoading.value,
             )),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         Center(
           child: TextButton(
             onPressed: () {
@@ -341,7 +342,7 @@ class AuthService extends GetxController {
             style: MyTextStyle.styleBold(context),
           ),
         ),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         Text(
           'we_need_your_address'.tr,
           style: MyTextStyle.meduimBold(context),
@@ -385,7 +386,7 @@ class AuthService extends GetxController {
               onTap: () => _getCurrentLocation(),
               isLoading: isLoading.value,
             )),
-        SizedBox(height: AppDimensions.mediumSpacing),
+        const SizedBox(height: AppDimensions.mediumSpacing),
         OutlinedButton(
           onPressed: () => _showManualAddressDialog(context),
           style: OutlinedButton.styleFrom(
@@ -420,9 +421,9 @@ class AuthService extends GetxController {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'first_name'.tr,
-                style: MyTextStyle.meduimBold(context),
+              SectionTitle(
+                title: 'first_name'.tr,
+                subTitle: true,
               ),
               SizedBox(height: AppDimensions.smallSpacing),
               Container(
@@ -447,9 +448,9 @@ class AuthService extends GetxController {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'last_name'.tr,
-                style: MyTextStyle.meduimBold(context),
+              SectionTitle(
+                title: 'last_name'.tr,
+                subTitle: true,
               ),
               const SizedBox(height: AppDimensions.smallSpacing),
               Container(
@@ -578,9 +579,16 @@ class AuthService extends GetxController {
       var response = await loginData.postData(phoneController.text);
 
       if (response['status'] == "success") {
+        try {
+          loginData.sendWhatsAppVerification(
+              loginData.formatPhoneForWhatsApp(response['data']['phone']));
+        } catch (e) {
+          return;
+        }
         myServices.sharedPreferences.setString("step", "2");
         myServices.sharedPreferences
             .setString("userId", response['data']['user_id'].toString());
+        String userId = myServices.sharedPreferences.getString("userId")!;
         myServices.sharedPreferences
             .setString("username", response['data']['full_name'].toString());
         myServices.sharedPreferences
@@ -588,6 +596,9 @@ class AuthService extends GetxController {
 
         isLoginFor.value = true;
         isVerifying.value = true;
+
+        FirebaseMessaging.instance.subscribeToTopic("users");
+        FirebaseMessaging.instance.subscribeToTopic("users${userId}");
       } else {
         showErrorSnackbar('error'.tr, 'login_failed'.tr);
       }
@@ -811,14 +822,14 @@ class AuthService extends GetxController {
                 'enter_address'.tr,
                 style: MyTextStyle.styleBold(context),
               ),
-              SizedBox(height: AppDimensions.mediumSpacing),
+              const SizedBox(height: AppDimensions.mediumSpacing),
 
               // City field
               Text(
                 'city'.tr,
                 style: MyTextStyle.meduimBold(context),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimensions.smallSpacing),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -842,7 +853,7 @@ class AuthService extends GetxController {
                 'street'.tr,
                 style: MyTextStyle.meduimBold(context),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimensions.smallSpacing),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -863,7 +874,7 @@ class AuthService extends GetxController {
 
               // Full address field
               Text('full_address'.tr, style: MyTextStyle.meduimBold(context)),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimensions.smallSpacing),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,

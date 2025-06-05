@@ -3,7 +3,10 @@ import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
 import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/order_details_model.dart';
+import 'package:ecom_modwir/view/widget/custom_title.dart';
 import 'package:ecom_modwir/view/widget/offers/order_rating_dialog.dart';
+import 'package:ecom_modwir/view/widget/orders/scheduled_order_info_banner.dart';
+import 'package:ecom_modwir/view/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,14 +25,25 @@ class OrdersDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("order_details".tr),
+        title: Text(
+          "order_details".tr,
+          style: TextStyle(
+            fontFamily: 'Khebrat',
+          ),
+        ),
         centerTitle: true,
       ),
       body: GetBuilder<OrdersDetailsController>(
         builder: (controller) => HandlingDataView(
           statusRequest: controller.statusRequest,
           widget: controller.enhancedOrder == null
-              ? Center(child: Text("no_details_found".tr))
+              ? Center(
+                  child: Text(
+                  "no_details_found".tr,
+                  style: TextStyle(
+                    fontFamily: 'Khebrat',
+                  ),
+                ))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -88,10 +102,10 @@ class OrdersDetails extends StatelessWidget {
   Widget _buildOrderHeader(
       BuildContext context, OrdersDetailsController controller) {
     final enhancedOrder = controller.enhancedOrder!;
-    final orderStatus = _getOrderStatusText(enhancedOrder.orderStatus);
+    final orderStatusKey = _getOrderStatusText(enhancedOrder.orderStatus);
     final statusColor = _getOrderStatusColor(enhancedOrder.orderStatus);
 
-    String formattedDate = '';
+    String formattedDate = ''; // For order placement date
     if (enhancedOrder.orderDate != null) {
       try {
         final datetime = DateTime.parse(enhancedOrder.orderDate!);
@@ -100,6 +114,8 @@ class OrdersDetails extends StatelessWidget {
         formattedDate = enhancedOrder.orderDate ?? '';
       }
     }
+
+    // The logic for scheduledInfoText is now inside ScheduledOrderInfoBanner
 
     return Card(
       margin: EdgeInsets.zero,
@@ -110,15 +126,18 @@ class OrdersDetails extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Row 1: Order Number and Status Chip
             Row(
               children: [
                 Text('${'order_number'.tr}#${enhancedOrder.orderNumber}',
                     style:
                         MyTextStyle.notBold(context, letterSpacing: 2).copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.normal,
                       color: AppColor.grey,
+                      fontFamily: 'Khebrat',
                     )),
                 const Spacer(),
                 Container(
@@ -130,72 +149,60 @@ class OrdersDetails extends StatelessWidget {
                         BorderRadius.circular(AppDimensions.borderRadius),
                   ),
                   child: Text(
-                    orderStatus.tr,
+                    orderStatusKey.tr,
                     style: TextStyle(
                       color: statusColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.normal,
                       fontSize: 12,
+                      fontFamily: 'Khebrat',
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppDimensions.mediumSpacing),
+
+            // Widget 2: Order Placement Date
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_outlined,
-                      size: 16,
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.color
-                          ?.withOpacity(0.7),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      formattedDate,
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.color
-                            ?.withOpacity(0.7),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 16,
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withOpacity(0.7),
                 ),
-                if (enhancedOrder.userName != null)
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person_outline,
-                        size: 16,
-                        color: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.color
-                            ?.withOpacity(0.7),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        enhancedOrder.userName!,
-                        style: TextStyle(
-                          color: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.color
-                              ?.withOpacity(0.7),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                const SizedBox(width: 4),
+                Text(
+                  formattedDate,
+                  style: TextStyle(
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.color
+                        ?.withOpacity(0.7),
+                    fontSize: 12,
+                    fontFamily: 'Khebrat',
                   ),
+                ),
               ],
+            ),
+
+            // Widget 3: Scheduled Information (using the new reusable widget)
+            // Add spacing only if the banner is likely to show content.
+            // The banner itself returns SizedBox.shrink() if not applicable.
+            if (enhancedOrder.isScheduled == 1 &&
+                enhancedOrder.scheduledDatetime != null &&
+                enhancedOrder.scheduledDatetime!.isNotEmpty)
+              const SizedBox(
+                  height:
+                      AppDimensions.mediumSpacing), // Space before the banner
+
+            ScheduledOrderInfoBanner(
+              isScheduled: enhancedOrder.isScheduled,
+              scheduledDatetime: enhancedOrder.scheduledDatetime,
             ),
           ],
         ),
@@ -224,8 +231,9 @@ class OrdersDetails extends StatelessWidget {
                   child: Text(
                     '${enhancedOrder.makeName ?? ''} ${enhancedOrder.modelName ?? ''}',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.normal,
                       fontSize: 14,
+                      fontFamily: 'Khebrat',
                     ),
                   ),
                 ),
@@ -273,6 +281,7 @@ class OrdersDetails extends StatelessWidget {
             fontSize: 12,
             color:
                 Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+            fontFamily: 'Khebrat',
           ),
         ),
         const SizedBox(height: 4),
@@ -291,7 +300,7 @@ class OrdersDetails extends StatelessWidget {
                       child: Text(
                         order.licensePlateEn!,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.normal,
                           fontFamily: 'Roboto',
                           letterSpacing: 1.0,
                         ),
@@ -309,11 +318,10 @@ class OrdersDetails extends StatelessWidget {
                       child: Text(
                         order.licensePlateAr!,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.normal,
                           letterSpacing: 1.0,
                         ),
                         textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
                       ),
                     ),
                   ],
@@ -351,8 +359,9 @@ class OrdersDetails extends StatelessWidget {
                       child: Text(
                         enhancedOrder.serviceName!,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.normal,
                           fontSize: 16,
+                          fontFamily: 'Khebrat',
                         ),
                       ),
                     ),
@@ -378,6 +387,7 @@ class OrdersDetails extends StatelessWidget {
                           serviceName,
                           style: TextStyle(
                             fontWeight: FontWeight.normal,
+                            fontFamily: 'Khebrat',
                           ),
                         ),
                       ),
@@ -395,14 +405,16 @@ class OrdersDetails extends StatelessWidget {
                 Text(
                   'services_total'.tr,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Khebrat',
                   ),
                 ),
                 Text(
                   '${'currency_symbol'.tr}  ${enhancedOrder.servicesTotalPrice ?? '0.00'}',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                     color: AppColor.primaryColor,
+                    fontFamily: 'Khebrat',
                   ),
                 ),
               ],
@@ -426,8 +438,9 @@ class OrdersDetails extends StatelessWidget {
                         Text(
                           'notes'.tr,
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             fontSize: 12,
+                            fontFamily: 'Khebrat',
                           ),
                         ),
                         Text(enhancedOrder.notes!),
@@ -468,7 +481,10 @@ class OrdersDetails extends StatelessWidget {
                       if (enhancedOrder.addressName != null)
                         Text(
                           enhancedOrder.addressName!,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontFamily: 'Khebrat',
+                          ),
                         ),
                       Text(
                         '${enhancedOrder.addressStreet ?? ''}, ${enhancedOrder.addressCity ?? ''}',
@@ -478,7 +494,7 @@ class OrdersDetails extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: AppDimensions.mediumSpacing),
+            const SizedBox(height: AppDimensions.mediumSpacing),
             if (enhancedOrder.addressLatitude != null &&
                 enhancedOrder.addressLongitude != null)
               ClipRRect(
@@ -530,8 +546,9 @@ class OrdersDetails extends StatelessWidget {
                   Text(
                     enhancedOrder.vendorName ?? 'unknown_vendor'.tr,
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.normal,
                       fontSize: 16,
+                      fontFamily: 'Khebrat',
                     ),
                   ),
                   if (enhancedOrder.vendorType != null)
@@ -543,6 +560,7 @@ class OrdersDetails extends StatelessWidget {
                             .bodyMedium
                             ?.color
                             ?.withOpacity(0.7),
+                        fontFamily: 'Khebrat',
                       ),
                     ),
                 ],
@@ -600,7 +618,8 @@ class OrdersDetails extends StatelessWidget {
               'total_amount'.tr,
               formatCurrency(totalAmount),
               valueStyle: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'Khebrat',
                 fontSize: 16,
                 color: AppColor.primaryColor,
               ),
@@ -629,7 +648,12 @@ class OrdersDetails extends StatelessWidget {
           Get.back();
         },
         icon: Icon(Icons.cancel_outlined),
-        label: Text('cancel_order'.tr),
+        label: Text(
+          'cancel_order'.tr,
+          style: TextStyle(
+            fontFamily: 'Khebrat',
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.redAccent,
           foregroundColor: Colors.white,
@@ -646,7 +670,12 @@ class OrdersDetails extends StatelessWidget {
           arguments: {"ordersmodel": controller.ordersModel},
         ),
         icon: Icon(Icons.map_outlined),
-        label: Text('track_order'.tr),
+        label: Text(
+          'track_order'.tr,
+          style: TextStyle(
+            fontFamily: 'Khebrat',
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
@@ -661,7 +690,12 @@ class OrdersDetails extends StatelessWidget {
         onPressed: () =>
             showDialogRating(Get.context!, enhancedOrder.orderId.toString()),
         icon: Icon(Icons.star_outline),
-        label: Text('rate_order'.tr),
+        label: Text(
+          'rate_order'.tr,
+          style: TextStyle(
+            fontFamily: 'Khebrat',
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
@@ -672,32 +706,19 @@ class OrdersDetails extends StatelessWidget {
         ),
       );
     } else {
-      return ElevatedButton.icon(
-        onPressed: () => Get.back(),
-        icon: Icon(Icons.arrow_back),
-        label: Text('back_to_orders'.tr),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColor.primaryColor,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-          ),
-        ),
+      return PrimaryButton(
+        text: 'back_to_orders'.tr,
+        onTap: () {
+          Get.back();
+        },
       );
     }
   }
 
   Widget _buildSectionTitle(BuildContext context, String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Text(
-        title.tr,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-      ),
+    return SectionTitle(
+      title: title.tr,
+      subTitle: false,
     );
   }
 
@@ -716,6 +737,7 @@ class OrdersDetails extends StatelessWidget {
             fontSize: 12,
             color:
                 Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+            fontFamily: 'Khebrat',
           ),
         ),
         const SizedBox(height: 4),
@@ -728,7 +750,7 @@ class OrdersDetails extends StatelessWidget {
             Expanded(
               child: Text(
                 value,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.normal),
               ),
             ),
           ],
@@ -746,13 +768,19 @@ class OrdersDetails extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label.tr),
+        Text(
+          label.tr,
+          style: TextStyle(
+            fontFamily: 'Khebrat',
+          ),
+        ),
         Text(
           value,
           style: valueStyle ??
               TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
                 color: valueColor,
+                fontFamily: 'Khebrat',
               ),
         ),
       ],
@@ -773,6 +801,8 @@ class OrdersDetails extends StatelessWidget {
         return 'order_status_archived';
       case 5:
         return 'order_status_canceled';
+      case 6:
+        return 'order_status_scheduled';
       default:
         return 'unknown';
     }
@@ -792,6 +822,8 @@ class OrdersDetails extends StatelessWidget {
         return Colors.green;
       case 5:
         return Colors.red;
+      case 6:
+        return Colors.orange.shade700;
       default:
         return Colors.grey;
     }
@@ -802,6 +834,7 @@ class OrdersDetails extends StatelessWidget {
     if (status.toLowerCase().contains('paid')) return Colors.green;
     if (status.toLowerCase().contains('pending')) return Colors.amber;
     if (status.toLowerCase().contains('failed')) return Colors.red;
+    if (status.toLowerCase().contains('canceld')) return Colors.blueGrey;
     return Colors.grey;
   }
 }

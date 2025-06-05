@@ -1,6 +1,7 @@
 import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/core/constant/color.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+import 'package:ecom_modwir/core/functions/format_currency.dart';
 import 'package:ecom_modwir/data/model/cars/make_model.dart';
 import 'package:ecom_modwir/data/model/cars/user_cars.dart';
 import 'package:ecom_modwir/data/model/services/fault_type_model.dart';
@@ -58,7 +59,9 @@ class OrderSummaryWidget extends StatelessWidget {
         children: [
           Text(
             'order_summary'.tr,
-            style: MyTextStyle.styleBold(context),
+            style: MyTextStyle.styleBold(context).copyWith(
+              fontFamily: "Khebrat",
+            ),
           ),
           SizedBox(height: AppDimensions.smallSpacing),
 
@@ -83,7 +86,7 @@ class OrderSummaryWidget extends StatelessWidget {
           if (selectedService != null)
             _summaryItem(
               'price'.tr,
-              "${selectedService!.price ?? 0} SR",
+              formatCurrency(selectedService!.price),
               context,
               valueColor: AppColor.primaryColor,
             ),
@@ -118,7 +121,7 @@ class OrderSummaryWidget extends StatelessWidget {
           if (discount != null && discount! > 0)
             _summaryItem(
               'discount'.tr,
-              "- $discount SR",
+              "- ${formatCurrency(discount!)}",
               context,
               valueColor: Colors.green,
             ),
@@ -128,7 +131,7 @@ class OrderSummaryWidget extends StatelessWidget {
             const Divider(height: 24),
             _summaryItem(
               'total'.tr,
-              "${_calculateTotal()} SR",
+              formatCurrency(_calculateTotal().toDouble()),
               context,
               valueColor: AppColor.primaryColor,
               isTotal: true,
@@ -165,15 +168,22 @@ class OrderSummaryWidget extends StatelessWidget {
           Text(
             label,
             style: isTotal
-                ? MyTextStyle.styleBold(context)
-                : MyTextStyle.meduimBold(context),
+                ? MyTextStyle.styleBold(context).copyWith(
+                    fontFamily: "Khebrat",
+                    fontWeight: FontWeight.normal,
+                  )
+                : MyTextStyle.meduimBold(context).copyWith(
+                    fontFamily: "Khebrat",
+                  ),
           ),
           Text(
             value,
             style: isTotal
                 ? MyTextStyle.styleBold(context)
-                    .copyWith(color: valueColor, fontSize: 16)
-                : MyTextStyle.meduimBold(context).copyWith(color: valueColor),
+                    .copyWith(color: valueColor, fontSize: 14)
+                : MyTextStyle.meduimBold(context)
+                    .copyWith(color: valueColor, fontSize: 9),
+            maxLines: 1,
           ),
         ],
       ),

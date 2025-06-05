@@ -62,7 +62,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
 
           // Services list
           ...selectedServices
@@ -78,15 +78,14 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 context,
                 "sub_total".tr,
                 formatCurrency(subtotal),
-                titleStyle: MyTextStyle.meduimBold(context),
                 valueStyle: MyTextStyle.bigCapiton(context).copyWith(
                   color: AppColor.primaryColor,
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimensions.smallSpacing),
 
               // Delivery fee (if applicable)
               if (isDelivery)
@@ -121,11 +120,15 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 context,
                 "total".tr,
                 formatCurrency(total),
-                titleStyle: MyTextStyle.styleBold(context),
+                titleStyle: MyTextStyle.styleBold(context).copyWith(
+                  fontFamily: "Khebrat",
+                  fontWeight: FontWeight.normal,
+                  fontSize: 14,
+                ),
                 valueStyle: MyTextStyle.bigCapiton(context).copyWith(
                   color: AppColor.primaryColor,
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                 ),
               ),
             ],
@@ -147,13 +150,13 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: AppColor.primaryColor.withOpacity(0.1),
+              color: AppColor.greenColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Icon(
                 Icons.check,
-                color: AppColor.primaryColor,
+                color: AppColor.greenColor,
                 size: 16,
               ),
             ),
@@ -165,9 +168,9 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
               children: [
                 Text(
                   service.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
+                  style: MyTextStyle.styleBold(context).copyWith(
+                    fontFamily: "Khebrat",
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
                 if (service.notes.isNotEmpty)
@@ -193,7 +196,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
             style: MyTextStyle.styleBold(context).copyWith(
               color: AppColor.primaryColor,
               fontSize: 12,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
             ),
           ),
         ],
@@ -220,10 +223,10 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
           Text(
             title,
             style: titleStyle ??
-                TextStyle(
-                  fontSize: 12, // Reduced font size
-                  color: valueColor ?? (isDark ? Colors.white : Colors.black87),
-                  fontWeight: FontWeight.bold,
+                MyTextStyle.styleBold(context).copyWith(
+                  fontFamily: "Khebrat",
+                  fontWeight: FontWeight.normal,
+                  fontSize: 12,
                 ),
           ),
           Text(
@@ -232,7 +235,7 @@ class EnhancedOrderSummaryWidget extends StatelessWidget {
                 TextStyle(
                   fontSize: 12, // Reduced font size
                   color: valueColor ?? (isDark ? Colors.white : Colors.black87),
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                 ),
           ),
         ],

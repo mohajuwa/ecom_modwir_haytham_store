@@ -15,7 +15,7 @@ class ThemeController extends GetxController {
 
   void loadThemeMode() {
     final savedTheme =
-        myServices.sharedPreferences.getString("theme") ?? "system";
+        myServices.sharedPreferences.getString("theme") ?? "dark";
     themeMode.value = savedTheme;
     updateTheme();
   }

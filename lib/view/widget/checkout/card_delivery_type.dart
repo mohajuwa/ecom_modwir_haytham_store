@@ -32,7 +32,7 @@ class CardDeliveryTypeChecout extends StatelessWidget {
             title,
             style: TextStyle(
               color: isActive ? Colors.white : AppColor.secondaryColor,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
             ),
           ),
         ],

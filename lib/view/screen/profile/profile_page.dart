@@ -44,7 +44,7 @@ class ProfilePage extends GetView<ProfileController> {
                           color: AppColor.primaryColor,
                         ),
                       ),
-                      SizedBox(height: AppDimensions.mediumSpacing),
+                      const SizedBox(height: AppDimensions.mediumSpacing),
                       Text(
                         controller.username.value,
                         style: MyTextStyle.styleBold(context),

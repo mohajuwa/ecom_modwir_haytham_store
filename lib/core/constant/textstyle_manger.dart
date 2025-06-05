@@ -4,28 +4,28 @@ import 'package:flutter/material.dart';
 
 class MyTextStyle {
   static TextStyle styleBold(BuildContext context) => TextStyle(
-        fontFamily: "El_Messiri",
+        fontFamily: "Cairo",
         fontWeight: FontWeight.bold,
-        fontSize: UIUtils.getResponsiveTextSize(context, 14),
+        fontSize: UIUtils.getResponsiveTextSize(context, 12),
         color: Theme.of(context).textTheme.displayLarge?.color,
       );
 
   static TextStyle meduimBold(BuildContext context) => TextStyle(
         fontSize: UIUtils.getResponsiveTextSize(context, 12),
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         color: Theme.of(context).textTheme.displayMedium?.color,
       );
 
   static TextStyle bigCapiton(BuildContext context) => TextStyle(
-        fontFamily: "El_Messiri",
+        fontFamily: "Cairo",
         color: Theme.of(context).textTheme.bodyMedium?.color,
         fontSize: UIUtils.getResponsiveTextSize(context, 14),
       );
 
   static TextStyle smallBold(BuildContext context) => TextStyle(
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         fontSize: UIUtils.getResponsiveTextSize(context, 10),
-        color: Theme.of(context).textTheme.bodyLarge?.color,
+        color: Theme.of(context).textTheme.bodySmall?.color,
       );
 
   static TextStyle notBold(BuildContext context,
@@ -42,7 +42,7 @@ class MyTextStyle {
       );
 
   static TextStyle textButtonTow(BuildContext context) => TextStyle(
-        fontFamily: "El_Messiri",
+        fontFamily: "Cairo",
         fontSize: UIUtils.getResponsiveTextSize(context, 12),
         fontWeight: FontWeight.normal,
         color: Theme.of(context).colorScheme.primary,

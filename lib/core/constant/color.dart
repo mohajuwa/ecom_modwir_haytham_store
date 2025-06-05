@@ -14,9 +14,13 @@ class AppColor {
   static const Color deleteColor = Color(0xFFC41401);
 
   static const Color fourthColor = Color(0xFF084B93);
-  static Color thirdColor = HexColor('#C0EEF2');
+  static Color thirdColor = Colors.orange.shade800;
 
-  static Color primaryColor = Color(0xFFA48F2E);
+  // static Color primaryColor = Color(0xFFA48F2E);
+  static Color primaryColor = Color(0xFFBB9751);
+
+  static const Color goldColor = Color(0xFFBB9751);
+
   static Color secondaryColor = Color(0xFFD6B58A);
   static Color blackColor = HexColor('#212121');
 

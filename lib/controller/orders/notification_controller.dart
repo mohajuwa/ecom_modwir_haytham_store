@@ -1,7 +1,8 @@
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/services/services.dart';
-import 'package:ecom_modwir/data/datasource/remote/orders/notificatoin_data.dart';
+import 'package:ecom_modwir/data/datasource/remote/orders/notificatoin_data.dart'; // Corrected typo in original filename
+import 'package:flutter/foundation.dart'; // Added for kDebugMode
 import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
@@ -10,20 +11,26 @@ class NotificationController extends GetxController {
   String lang = "ar";
 
   List data = [];
-  late StatusRequest statusRequest;
+  StatusRequest statusRequest = StatusRequest.none;
   int unreadCount = 0;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getData();
+  }
 
   Future<void> getData() async {
     lang = myServices.sharedPreferences.getString("lang")?.trim() ?? "en";
-
-    data.clear();
     statusRequest = StatusRequest.loading;
-    update();
+    update(); // Notify UI that loading has started
 
     try {
       final userId = myServices.sharedPreferences.getString("userId");
       if (userId == null || userId.isEmpty) {
         statusRequest = StatusRequest.failure;
+        data.clear();
+        unreadCount = 0;
         update();
         return;
       }
@@ -34,72 +41,144 @@ class NotificationController extends GetxController {
       if (StatusRequest.success == statusRequest) {
         if (response['status'] == "success") {
           List responseData = response['data'] ?? [];
+          data.clear();
           data.addAll(responseData);
-
-          // Count unread notifications
-          unreadCount =
-              data.where((item) => item['notification_read'] == '0').length;
+          unreadCount = data
+              .where((item) => item['notification_read']?.toString() == '0')
+              .length;
         } else {
           statusRequest = StatusRequest.failure;
+          data.clear();
+          unreadCount = 0;
         }
+      } else {
+        data.clear();
+        unreadCount = 0;
       }
     } catch (e) {
-      print("Error fetching notifications: $e");
+      if (kDebugMode) {
+        print("Error fetching notifications: $e");
+      }
       statusRequest = StatusRequest.serverFailure;
+      data.clear();
+      unreadCount = 0;
     }
-
-    update();
+    update(); // Notify UI with new data or error state
   }
 
-  // Mark a notification as read
   Future<void> markAsRead(String notificationId) async {
+    // Store current unread count in case we need to revert
+    int previousUnreadCount = unreadCount;
+    String? previousReadStatus;
+    final index = data.indexWhere(
+        (item) => item['notification_id']?.toString() == notificationId);
+
+    // Optimistically update UI
+    if (index >= 0 && data[index]['notification_read']?.toString() == '0') {
+      previousReadStatus = data[index]['notification_read']?.toString();
+      data[index]['notification_read'] = '1';
+      if (unreadCount > 0) {
+        unreadCount--;
+      }
+      update(); // <<--- RE-ADDED update() for immediate UI change
+    } else {
+      // If already read or not found, no need to proceed with API or UI update
+      return;
+    }
+
     try {
-      final response = await notificationData.markAsRead(notificationId);
-      if (response['status'] == "success") {
-        // Update the notification in the local list
-        final index = data.indexWhere(
-            (item) => item['notification_id'].toString() == notificationId);
+      String? userId = myServices.sharedPreferences.getString('userId');
+      if (userId == null || userId.isEmpty) {
+        // Revert optimistic update if no user ID
+        if (index >= 0 && previousReadStatus != null) {
+          data[index]['notification_read'] = previousReadStatus;
+          unreadCount = previousUnreadCount;
+          update(); // Revert UI
+        }
+        return;
+      }
 
-        if (index >= 0) {
-          data[index]['notification_read'] = '1';
+      final response =
+          await notificationData.markAsRead(notificationId, userId);
 
-          // Update unread count
-          unreadCount--;
-
-          update();
+      if (response['status'] != "success") {
+        // API call failed, revert optimistic UI update
+        if (index >= 0 && previousReadStatus != null) {
+          data[index]['notification_read'] = previousReadStatus;
+          unreadCount = previousUnreadCount;
+          update(); // Revert UI
+        }
+        if (kDebugMode) {
+          print(
+              "API Error marking notification as read: ${response['message']}");
         }
       }
+      // If API success, the optimistic update is already correct.
     } catch (e) {
-      print("Error marking notification as read: $e");
+      // Exception occurred, revert optimistic UI update
+      if (index >= 0 && previousReadStatus != null) {
+        data[index]['notification_read'] = previousReadStatus;
+        unreadCount = previousUnreadCount;
+        update(); // Revert UI
+      }
+      if (kDebugMode) {
+        print("Error marking notification as read: $e");
+      }
     }
   }
 
-  // Mark all notifications as read
   Future<void> markAllAsRead() async {
+    // Store current state in case we need to revert
+    List originalDataState = List.from(data.map((item) => Map.from(item)));
+    int previousUnreadCount = unreadCount;
+
+    // Optimistically update UI
+    bool anyChanged = false;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i]['notification_read']?.toString() == '0') {
+        data[i]['notification_read'] = '1';
+        anyChanged = true;
+      }
+    }
+    if (anyChanged) {
+      unreadCount = 0;
+      update(); // <<--- RE-ADDED update() for immediate UI change
+    } else {
+      // If nothing changed (all were already read), no need for API call or UI update
+      return;
+    }
+
     try {
       final userId = myServices.sharedPreferences.getString("userId");
-      if (userId == null || userId.isEmpty) return;
+      if (userId == null || userId.isEmpty) {
+        // Revert optimistic update if no user ID
+        data = originalDataState;
+        unreadCount = previousUnreadCount;
+        update(); // Revert UI
+        return;
+      }
 
       final response = await notificationData.markAllAsRead(userId);
-      if (response['status'] == "success") {
-        // Update all notifications in the local list
-        for (var i = 0; i < data.length; i++) {
-          data[i]['notification_read'] = '1';
+
+      if (response['status'] != "success") {
+        // API call failed, revert optimistic UI update
+        data = originalDataState;
+        unreadCount = previousUnreadCount;
+        update(); // Revert UI
+        if (kDebugMode) {
+          print(
+              "API Error marking all notifications as read: ${response['message']}");
         }
-
-        // Reset unread count
-        unreadCount = 0;
-
-        update();
       }
+      // If API success, the optimistic update is correct.
     } catch (e) {
-      print("Error marking all notifications as read: $e");
+      // Exception occurred, revert optimistic UI update
+      data = originalDataState;
+      unreadCount = previousUnreadCount;
+      update(); // Revert UI
+      if (kDebugMode) {
+        print("Error marking all notifications as read: $e");
+      }
     }
-  }
-
-  @override
-  void onInit() {
-    getData();
-    super.onInit();
   }
 }

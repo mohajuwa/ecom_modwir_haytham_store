@@ -35,7 +35,8 @@ dependencies:
   carousel_slider: ^5.0.0
   file_picker: ^10.0.0
   pin_code_fields: ^8.0.1
-
+  whatsapp: ^3.0.0
+  string_similarity:
  
 
 dev_dependencies:
@@ -51,6 +52,7 @@ flutter_icons:
   adaptive_icon_foreground: "assets/images/logo.png"
   min_sdk_android: 21
   remove_alpha_ios: true
+                         
 
 
 flutter:
@@ -65,7 +67,6 @@ flutter:
       fonts:
         - asset: assets/fonts/Cairo/Cairo-Regular.ttf
           weight: 700
-    - family: El_Messiri
+    - family: Khebrat
       fonts:
-        - asset: assets/fonts/El_Messiri/ElMessiri-Regular.ttf
-          weight: 700
+        - asset: assets/fonts/Khebrat/18 Khebrat Musamim Regular.ttf

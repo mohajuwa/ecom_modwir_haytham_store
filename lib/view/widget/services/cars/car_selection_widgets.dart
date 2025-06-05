@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 
 // Car Make Slider
 class CarMakeSlider extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
 
   const CarMakeSlider({super.key, required this.controller});
 
@@ -56,7 +56,7 @@ class CarMakeSlider extends StatelessWidget {
         ),
         SizedBox(
           height: 80,
-          child: GetBuilder<ProductByCarController>(
+          child: GetBuilder<SubServicesController>(
             init: controller,
             builder: (ctrl) {
               return ListView.builder(
@@ -79,7 +79,7 @@ class CarMakeSlider extends StatelessWidget {
 
 // Car Model Slider
 class CarModelSlider extends StatelessWidget {
-  final ProductByCarController controller;
+  final SubServicesController controller;
 
   const CarModelSlider({super.key, required this.controller});
 
@@ -125,7 +125,7 @@ class CarModelSlider extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             height: 35,
-            child: GetBuilder<ProductByCarController>(
+            child: GetBuilder<SubServicesController>(
               init: controller,
               builder: (ctrl) {
                 return ListView.builder(
@@ -174,7 +174,9 @@ class SectionHeader extends StatelessWidget {
               ontap: onShowAll,
               paddinghorizontal: 0,
               paddingvertical: 0,
-              textStyle: MyTextStyle.textButtonTow(context),
+              textStyle: MyTextStyle.textButtonTow(context).copyWith(
+                fontFamily: 'Khebrat',
+              ),
             ),
         ],
       ),

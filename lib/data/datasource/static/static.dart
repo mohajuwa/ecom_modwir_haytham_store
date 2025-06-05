@@ -1,19 +1,34 @@
+// lib/data/datasource/static/static.dart
 import 'package:ecom_modwir/core/constant/imgaeasset.dart';
 import 'package:ecom_modwir/data/model/onboardingmodel.dart';
-import 'package:get/get_utils/get_utils.dart';
+import 'package:get/get.dart';
 
-List<OnBoardingModel> onBoardingList = [
-  OnBoardingModel(
-      title: "show_more".tr,
-      body: "3".tr,
-      image: AppImageAsset.onBoardingImageOne),
-  OnBoardingModel(
-      title: "4".tr, body: "5".tr, image: AppImageAsset.onBoardingImageTwo),
-  OnBoardingModel(
-      title: "6".tr, body: "7".tr, image: AppImageAsset.onBoardingImageThree),
-  // OnBoardingModel(
-  //     title: "Fast Delivery",
-  //     body:
-  //         "We Have a 100k Product , Choose \n Your Product From Our E-commerce Shop",
-  //     image: AppImageAsset.onBoardingImageFour),
-];
+class AppStaticData extends GetxController {
+  static final AppStaticData _instance = AppStaticData._internal();
+  factory AppStaticData() => _instance;
+  AppStaticData._internal();
+
+  late RxList<OnBoardingModel> onBoardingList;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadLocalizedContent();
+  }
+
+  void _loadLocalizedContent() {
+    onBoardingList = [
+      OnBoardingModel(
+          title: "show_more".tr, body: "3".tr, image: AppImageAsset.logo),
+      OnBoardingModel(title: "4".tr, body: "5".tr, image: AppImageAsset.logo),
+      OnBoardingModel(title: "6".tr, body: "7".tr, image: AppImageAsset.logo),
+    ].obs;
+  }
+
+  void refreshLocalizedContent() {
+    _loadLocalizedContent();
+    update();
+  }
+}
+
+final appStaticData = AppStaticData();

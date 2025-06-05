@@ -10,7 +10,7 @@ String _basicAuth =
     'Basic ${base64Encode(utf8.encode('dddd:sdfsdfsdfsdfsdfsdfsdf'))}';
 Map<String, String> _myheaders = {
   // 'content-type': 'application/json',
-  // 'accept': 'application/json',
+  'accept': 'application/json',
   'authorization': _basicAuth
 };
 
@@ -129,8 +129,7 @@ class Crud {
     required List<File> files,
     required String fieldName,
     Map<String, String>? fields,
-    required void Function(double progress)
-        onProgress, // <-- callback for progress
+    required void Function(double progress) onProgress,
   }) async {
     try {
       if (!await checkInternet()) {
@@ -141,52 +140,51 @@ class Crud {
       var request = http.MultipartRequest('POST', uri);
       request.headers.addAll(_myheaders);
 
-      int totalLength = 0;
-      List<http.MultipartFile> multipartFiles = [];
+      int totalBytes = 0;
+      int bytesSent = 0;
 
-      // Prepare files and calculate total size
       for (var file in files) {
-        var length = await file.length();
-        totalLength += length;
-
-        var stream = http.ByteStream(file.openRead());
-        var multipartFile = http.MultipartFile(
-          fieldName,
-          stream,
-          length,
-          filename: file.path.split("/").last,
-        );
-        multipartFiles.add(multipartFile);
+        int fileLength = await file.length();
+        totalBytes += fileLength;
       }
 
-      request.files.addAll(multipartFiles);
+      for (var file in files) {
+        int fileLength = await file.length();
+
+        var stream = http.ByteStream(file.openRead().transform(
+          StreamTransformer.fromHandlers(
+            handleData: (data, sink) {
+              bytesSent += data.length;
+              double progress = (bytesSent / totalBytes) * 100;
+              onProgress(progress);
+              sink.add(data);
+            },
+          ),
+        ));
+
+        var multipartFile = http.MultipartFile(
+          '$fieldName[]',
+          stream,
+          fileLength,
+          filename: file.path.split('/').last,
+        );
+
+        request.files.add(multipartFile);
+      }
 
       if (fields != null) {
         request.fields.addAll(fields);
       }
 
-      var byteStream = http.ByteStream(request.finalize());
-      var bytesSent = 0;
-
-      var streamWithProgress =
-          byteStream.transform<List<int>>(StreamTransformer.fromHandlers(
-        handleData: (data, sink) {
-          bytesSent += data.length;
-          double progress = bytesSent / totalLength;
-          onProgress(progress); // update UI or logs
-          sink.add(data);
-        },
-      ));
-
-      var response = await http.Response.fromStream(
-          await http.StreamedResponse(streamWithProgress, 200));
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final decoded = jsonDecode(response.body);
-        if (decoded is Map) {
-          return Right(Map<String, dynamic>.from(decoded));
+        if (decoded is Map<String, dynamic>) {
+          return Right(decoded);
         } else {
-          return Right({"data": decoded});
+          return Right({'data': decoded});
         }
       } else {
         return const Left(StatusRequest.serverFailure);

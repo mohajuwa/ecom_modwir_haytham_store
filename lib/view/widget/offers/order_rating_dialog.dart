@@ -18,7 +18,7 @@ void showDialogRating(BuildContext context, String orderId) {
         textAlign: TextAlign.center,
         style: const TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
         ),
       ),
       // encourage your user to leave a high rating?
@@ -36,7 +36,7 @@ void showDialogRating(BuildContext context, String orderId) {
       submitButtonText: 'Submit',
       submitButtonTextStyle: TextStyle(
         color: AppColor.primaryColor,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
       commentHint: 'comment',
       // ignore: avoid_print

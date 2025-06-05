@@ -15,7 +15,7 @@ class CustomDotControllerOnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ...List.generate(
-                    onBoardingList.length,
+                    appStaticData.onBoardingList.length,
                     (index) => AnimatedContainer(
                           margin: const EdgeInsets.only(right: 5),
                           duration: const Duration(milliseconds: 900),

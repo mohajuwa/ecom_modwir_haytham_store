@@ -117,7 +117,7 @@ class CustomCarSelectionSlider extends StatelessWidget {
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 28,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.normal,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,

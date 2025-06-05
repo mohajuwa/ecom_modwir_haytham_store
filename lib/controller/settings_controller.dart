@@ -1,16 +1,20 @@
 // lib/controller/settings_controller.dart
 import 'package:ecom_modwir/controller/auth/auth_service.dart';
 import 'package:ecom_modwir/controller/home_controller.dart';
+import 'package:ecom_modwir/controller/offers_contrller.dart';
 import 'package:ecom_modwir/controller/orders/filtered_orders_controller.dart';
 import 'package:ecom_modwir/controller/theme_controller.dart';
 import 'package:ecom_modwir/core/class/statusrequest.dart';
 import 'package:ecom_modwir/core/constant/routes.dart';
 import 'package:ecom_modwir/core/constant/textstyle_manger.dart';
+import 'package:ecom_modwir/core/functions/fcm_config.dart';
 import 'package:ecom_modwir/core/functions/handingdatacontroller.dart';
 import 'package:ecom_modwir/core/functions/snack_bar_notif.dart';
 import 'package:ecom_modwir/core/services/services.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/archive_data.dart';
 import 'package:ecom_modwir/data/datasource/remote/orders/pending_data.dart';
+import 'package:ecom_modwir/data/datasource/static/static.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -166,43 +170,30 @@ class SettingsController extends GetxController {
     if (langCode == currentLang.value) return;
 
     try {
-      // Update language code
       currentLang.value = langCode;
-
-      // Save to preferences
       _myServices.sharedPreferences.setString("lang", langCode);
 
-      // Update app locale
+      // تحديث اللغة في GetX
       Get.updateLocale(Locale(langCode));
 
-      // Refresh home data with new language
-      final homeController = Get.find<HomeControllerImp>();
-      homeController.getdata();
+      // تحديث بيانات الصفحة الرئيسية إذا موجود
+      if (Get.isRegistered<HomeControllerImp>()) {
+        Get.find<HomeControllerImp>().initialData();
+      }
 
-      // Show success message
-      showSuccessSnackbar("success".tr, 'language_changed_successfully'.tr);
+      // تحديث بيانات الصفحة  إذا موجود
+      if (Get.isRegistered<OfferController>()) {
+        Get.find<OfferController>().refreshOffers();
+      }
+
+      // تحديث المحتوى الثابت للغة الجديدة
+      appStaticData.refreshLocalizedContent();
+
+      // تحديث إعدادات الإشعارات للغة الجديدة
+      fcmConfig(langCode);
     } catch (e) {
       showErrorSnackbar("error".tr, 'language_change_failed'.tr);
-      debugPrint('Error changing language: $e');
-    }
-  }
-
-  /// Toggles app notifications
-  void toggleNotifications(bool value) {
-    try {
-      // Update observable
-      notificationsEnabled.value = value;
-
-      // Save to preferences
-      _myServices.sharedPreferences.setBool("notifications_enabled", value);
-
-      // Show feedback
-      final message =
-          value ? 'notifications_enabled'.tr : 'notifications_disabled'.tr;
-
-      showSuccessSnackbar('success'.tr, message);
-    } catch (e) {
-      debugPrint('Error toggling notifications: $e');
+      debugPrint('Language change error: $e');
     }
   }
 
@@ -217,9 +208,6 @@ class SettingsController extends GetxController {
       _promptLogin(context);
       return;
     }
-
-    // Navigate to profile screen
-    Get.toNamed('/profile');
   }
 
   /// Navigates to addresses screen
@@ -297,6 +285,10 @@ class SettingsController extends GetxController {
       final themeMode = _themeController.themeMode.value;
       final language = currentLang.value;
 
+      // To get notifications from firebase  services
+      String userId = _myServices.sharedPreferences.getString("userId")!;
+      FirebaseMessaging.instance.subscribeToTopic("users");
+      FirebaseMessaging.instance.subscribeToTopic("users${userId}");
       // Clear all preferences
       await _myServices.sharedPreferences.clear();
 

@@ -43,11 +43,7 @@ class OfferController extends GetxController {
     try {
       String lang = myServices.sharedPreferences.getString("lang") ?? "en";
 
-      var response = await homeOffersData
-          .getOffers(lang)
-          .timeout(const Duration(seconds: 15), onTimeout: () {
-        throw TimeoutException("API call timed out");
-      });
+      var response = await homeOffersData.getOffers(lang);
 
       statusRequest = handlingData(response);
 
@@ -98,5 +94,7 @@ class OfferController extends GetxController {
       print('Invalid offer - missing sub-service ID');
       showErrorSnackbar('Error', 'Invalid offer details');
     }
+
+    update();
   }
 }

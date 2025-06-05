@@ -72,8 +72,8 @@ class AddressSelectorWidget extends StatelessWidget {
                       Text(
                         "add_new".tr,
                         style: TextStyle(
-                          color: AppColor.primaryColor,
-                          fontWeight: FontWeight.bold,
+                          color: AppColor.blackColor,
+                          fontWeight: FontWeight.normal,
                           fontSize: 12,
                         ),
                       ),
@@ -84,7 +84,7 @@ class AddressSelectorWidget extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
 
           // Address list or empty state
           addresses.isEmpty
@@ -118,16 +118,16 @@ class AddressSelectorWidget extends StatelessWidget {
             color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
             size: 48,
           ),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           Text(
             "no_shipping_addresses".tr,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               color: isDark ? Colors.white : Colors.black87,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.smallSpacing),
           Text(
             "add_address_to_continue".tr,
             style: TextStyle(
@@ -136,7 +136,7 @@ class AddressSelectorWidget extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppDimensions.mediumSpacing),
+          const SizedBox(height: AppDimensions.mediumSpacing),
           ElevatedButton.icon(
             onPressed: onAddAddress,
             icon: const Icon(Icons.add_location_alt_outlined),
@@ -231,7 +231,7 @@ class AddressSelectorWidget extends StatelessWidget {
                     Text(
                       address.addressName ?? "Address",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         color: isSelected
                             ? AppColor.primaryColor
                             : isDark
