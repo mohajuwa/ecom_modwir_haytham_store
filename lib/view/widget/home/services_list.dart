@@ -92,16 +92,16 @@ class ServiceCard extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: isDark
                     ? [
-                        const Color(0xFF000000),
+                        Theme.of(context).colorScheme.onPrimary,
                         const Color(0xFF1E1E1E),
-                        const Color(0xFF0F0F0F),
-                        const Color(0xFF000000),
+                        Theme.of(context).colorScheme.onPrimary,
+                        Theme.of(context).colorScheme.onPrimary,
                       ]
                     : [
-                        const Color(0xFFFFFFFF),
+                        Theme.of(context).colorScheme.onPrimary,
                         const Color(0xFFF5F7FA),
                         const Color(0xFFE8EAED),
-                        const Color(0xFFF0F2F5),
+                        Theme.of(context).colorScheme.onPrimary,
                       ],
                 stops: const [0.0, 0.3, 0.7, 1.0],
               ),
@@ -177,7 +177,7 @@ class ServiceCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: 8,
+            top: 2,
             left: 0,
             right: 0,
             child: Container(
@@ -187,7 +187,7 @@ class ServiceCard extends StatelessWidget {
                   colors: [
                     Colors.transparent,
                     AppColor.blackColor.withOpacity(0.6),
-                    AppColor.accentColor.withOpacity(0.4),
+                    AppColor.goldColor.withOpacity(0.4),
                     Colors.transparent,
                   ],
                 ),
@@ -199,14 +199,14 @@ class ServiceCard extends StatelessWidget {
             child: Hero(
               tag: 'service_${serviceModel.serviceId}',
               child: Container(
-                width: AppDimensions.getResponsiveWidth(context, 50),
-                height: AppDimensions.getResponsiveHeight(context, 50),
+                width: AppDimensions.getResponsiveWidth(context, 60),
+                height: AppDimensions.getResponsiveHeight(context, 60),
                 decoration: BoxDecoration(
                   gradient: SweepGradient(
                     center: Alignment.center,
                     colors: [
                       AppColor.primaryColor.withOpacity(0.2),
-                      AppColor.accentColor.withOpacity(0.15),
+                      AppColor.goldColor.withOpacity(0.15),
                       AppColor.secondaryColor.withOpacity(0.1),
                       AppColor.primaryColor.withOpacity(0.2),
                     ],
@@ -298,7 +298,7 @@ class ServiceCard extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       AppColor.primaryColor.withOpacity(0.8),
-                      AppColor.accentColor.withOpacity(0.6),
+                      AppColor.goldColor.withOpacity(0.6),
                     ],
                   ),
                   shape: BoxShape.circle,
@@ -319,7 +319,7 @@ class ServiceCard extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       Colors.transparent,
-                      AppColor.blackColor.withOpacity(0.5),
+                      AppColor.goldColor,
                       Colors.transparent,
                     ],
                   ),
@@ -333,14 +333,14 @@ class ServiceCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColor.accentColor.withOpacity(0.6),
+                      AppColor.goldColor.withOpacity(0.6),
                       AppColor.primaryColor.withOpacity(0.8),
                     ],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.accentColor.withOpacity(0.3),
+                      color: AppColor.goldColor.withOpacity(0.3),
                       blurRadius: 4,
                       spreadRadius: 1,
                     ),

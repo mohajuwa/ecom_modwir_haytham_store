@@ -64,26 +64,15 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 height: 150,
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                               ),
 
                               // Layer 2: base color
-                              ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  AppColor.accentColor,
-                                  BlendMode.srcIn,
-                                ),
-                                child: SvgPicture.asset(
-                                  "assets/images/logo.svg",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-
-                              // Layer 3: gold overlay
                               ColorFiltered(
                                 colorFilter: ColorFilter.mode(
                                   AppColor.goldColor,
@@ -95,17 +84,29 @@ class CustomCardHomeSlider extends StatelessWidget {
                                 ),
                               ),
 
-                              // Layer 4: white text mask
-                              ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  AppColor.accentColor,
-                                  BlendMode.dstIn,
-                                ),
-                                child: SvgPicture.asset(
-                                  "assets/images/logo.svg",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
+                              //   // Layer 3: gold overlay
+                              // ColorFiltered(
+                              //   colorFilter: ColorFilter.mode(
+                              //     AppColor.goldColor,
+                              //     BlendMode.srcIn,
+                              //   ),
+                              //   child: SvgPicture.asset(
+                              //     "assets/images/logo.svg",
+                              //     fit: BoxFit.contain,
+                              //   ),
+                              // ),
+
+                              // // Layer 4: white text mask
+                              // ColorFiltered(
+                              //   colorFilter: ColorFilter.mode(
+                              //     AppColor.goldColor,
+                              //     BlendMode.dstIn,
+                              //   ),
+                              //   child: SvgPicture.asset(
+                              //     "assets/images/logo.svg",
+                              //     fit: BoxFit.contain,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),

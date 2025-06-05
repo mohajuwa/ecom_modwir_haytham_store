@@ -19,9 +19,11 @@ class AppStaticData extends GetxController {
   void _loadLocalizedContent() {
     onBoardingList = [
       OnBoardingModel(
-          title: "show_more".tr, body: "3".tr, image: AppImageAsset.logo),
-      OnBoardingModel(title: "4".tr, body: "5".tr, image: AppImageAsset.logo),
-      OnBoardingModel(title: "6".tr, body: "7".tr, image: AppImageAsset.logo),
+          title: "show_more".tr, body: "3".tr, image: AppImageAsset.logoSvg),
+      OnBoardingModel(
+          title: "4".tr, body: "5".tr, image: AppImageAsset.logoSvg),
+      OnBoardingModel(
+          title: "6".tr, body: "7".tr, image: AppImageAsset.logoSvg),
     ].obs;
   }
 

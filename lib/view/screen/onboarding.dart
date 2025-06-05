@@ -1,11 +1,11 @@
 import 'package:ecom_modwir/controller/onboarding_controller.dart';
-import 'package:ecom_modwir/core/constant/color.dart';
+import 'package:ecom_modwir/core/constant/app_dimensions.dart';
 import 'package:ecom_modwir/view/widget/onboarding/custombutton.dart';
 import 'package:ecom_modwir/view/widget/onboarding/customslider.dart';
 import 'package:ecom_modwir/view/widget/onboarding/dotcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ecom_modwir/controller/settings_controller.dart'; // Add this import
+import 'package:ecom_modwir/controller/settings_controller.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({super.key});
@@ -13,19 +13,18 @@ class OnBoarding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(OnBoardingControllerImp());
-    final SettingsController settingsController =
-        Get.find(); // Get the controller
+    final SettingsController settingsController = Get.find();
 
     return Scaffold(
-      backgroundColor: AppColor.backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(children: [
-          // Add language switcher at top-right
+          // Language switcher at top-right
           Align(
             alignment: Alignment.topRight,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _buildLanguageSwitch(settingsController),
+              padding: EdgeInsets.all(AppDimensions.screenPadding),
+              child: _buildLanguageSwitch(context, settingsController),
             ),
           ),
           const Expanded(
@@ -38,7 +37,7 @@ class OnBoarding extends StatelessWidget {
               children: [
                 const CustomDotControllerOnBoarding(),
                 const Spacer(flex: 2),
-                const CustomButtonOnBoarding()
+                const CustomButtonOnBoarding(),
               ],
             ),
           )
@@ -47,7 +46,8 @@ class OnBoarding extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageSwitch(SettingsController controller) {
+  Widget _buildLanguageSwitch(
+      BuildContext context, SettingsController controller) {
     return Obx(
       () => GestureDetector(
         onTap: () {
@@ -55,10 +55,28 @@ class OnBoarding extends StatelessWidget {
           controller.changeLang(newLang);
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppDimensions.getResponsiveWidth(
+              context,
+              AppDimensions.mediumPadding,
+              minWidth: AppDimensions.smallPadding,
+              maxWidth: AppDimensions.screenPadding,
+            ),
+            vertical: AppDimensions.getResponsiveHeight(
+              context,
+              6,
+              minHeight: 4,
+              maxHeight: 8,
+            ),
+          ),
           decoration: BoxDecoration(
-            color: AppColor.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            borderRadius:
+                BorderRadius.circular(AppDimensions.borderRadiusLarge),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+              width: 1,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -66,15 +84,26 @@ class OnBoarding extends StatelessWidget {
               Text(
                 controller.currentLang.value.toUpperCase(),
                 style: TextStyle(
-                  color: AppColor.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.normal,
+                  fontSize: AppDimensions.getResponsiveWidth(
+                    context,
+                    12,
+                    minWidth: 10,
+                    maxWidth: 14,
+                  ),
                 ),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: AppDimensions.extraSmallSpacing),
               Icon(
                 Icons.translate,
-                color: AppColor.primaryColor,
-                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+                size: AppDimensions.getResponsiveWidth(
+                  context,
+                  AppDimensions.tabIconSize,
+                  minWidth: AppDimensions.smallButtonIconSize,
+                  maxWidth: AppDimensions.defaultIconSize,
+                ),
               ),
             ],
           ),
